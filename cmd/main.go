@@ -3,7 +3,7 @@ package main
 import (
 	// "fmt"
 	"log"
-	// "os"
+	"os"
 	// "prompt-game/external/openai"
     "prompt-game/internal"
 
@@ -34,7 +34,7 @@ func main() {
 
 
     router := gin.Default()
-    app := internal.Config{Router: router}
+    app := internal.Config{Router: router, ApiKey: os.Getenv("OPENAI_API_KEY")}
 
     router.Static("/static", "./static")
 

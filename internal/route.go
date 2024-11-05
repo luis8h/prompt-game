@@ -7,6 +7,7 @@ import (
 
 type Config struct {
     Router *gin.Engine
+    ApiKey string
 }
 
 func (app *Config) Routes() {
@@ -15,6 +16,6 @@ func (app *Config) Routes() {
     app.Router.GET("/", indexHandler.IndexPage())
 
     // prompt
-    promptHandler := handlers.NewPromptHandler()
+    promptHandler := handlers.NewPromptHandler(app.ApiKey)
     app.Router.POST("/prompt", promptHandler.PostPrompt())
 }

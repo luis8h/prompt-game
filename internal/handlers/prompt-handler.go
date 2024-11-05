@@ -1,21 +1,38 @@
 package handlers
 
 import (
-    "prompt-game/external/openai"
-    "github.com/gin-gonic/gin"
-    "net/http"
+	"net/http"
+	"prompt-game/external/openai"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PromptHandler struct {
-    api openai.Api
+    api *openai.Api
 }
 
-func NewPromptHandler() *PromptHandler {
-	return &PromptHandler{}
+func NewPromptHandler(apiKey string) *PromptHandler {
+	return &PromptHandler{
+        api: openai.NewApi(apiKey),
+    }
 }
 
 func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, "hallo zurück")
+        message := ctx.PostForm("prompt-input")
+
+        if message == "" {
+            ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
+            return
+        }
+
+        resp, err := h.api.Get(message)
+
+        if (err != nil) {
+            ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
+            return
+        }
+
+		ctx.JSON(http.StatusOK, resp)
 	}
 }

@@ -13,7 +13,7 @@ templ Index() {
 			<title>prompt-game</title>
 		</head>
 		<body>
-			<textarea id="prompt-input" class="border-black border"></textarea>
+			<textarea name="prompt-input" id="prompt-input" class="border-black border"></textarea>
 			<button hx-post="/prompt" hx-target="#prompt-output" hx-swap="innerHTML" hx-include="#prompt-input">
 				send
 			</button>
