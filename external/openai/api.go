@@ -8,18 +8,18 @@ import (
     "io"
 )
 
-type api struct {
+type Api struct {
     apiKey string
 }
 
-func NewApi(apiKey string) *api {
-    a := &api{
+func NewApi(apiKey string) *Api {
+    a := &Api{
         apiKey: apiKey,
     }
     return a
 }
 
-func (a* api) Get(content string) (string, error) {
+func (a* Api) Get(content string) (string, error) {
 	requestBody := OpenAIRequest{
 		Model: "gpt-4o",
 		Messages: []Message{

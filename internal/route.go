@@ -10,8 +10,11 @@ type Config struct {
 }
 
 func (app *Config) Routes() {
+    // index
     indexHandler := handlers.NewIndexHandler()
-
-    //views
     app.Router.GET("/", indexHandler.IndexPage())
+
+    // prompt
+    promptHandler := handlers.NewPromptHandler()
+    app.Router.POST("/prompt", promptHandler.PostPrompt())
 }

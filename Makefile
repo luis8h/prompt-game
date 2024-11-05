@@ -1,3 +1,11 @@
+.PHONY: tailwind-watch
+tailwind-watch:
+	npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
+
+# .PHONY: tailwind-build
+# tailwind-build:
+# 	./tailwindcss -i ./static/css/input.css -o ./static/css/style.min.css --minify
+
 .PHONY: templ-generate
 templ-generate:
 	templ generate

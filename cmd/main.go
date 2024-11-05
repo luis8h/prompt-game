@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
-	"os"
-	"prompt-game/external/openai"
+	// "os"
+	// "prompt-game/external/openai"
     "prompt-game/internal"
 
 	"github.com/gin-gonic/gin"
@@ -34,8 +34,9 @@ func main() {
 
 
     router := gin.Default()
-
     app := internal.Config{Router: router}
+
+    router.Static("/static", "./static")
 
     app.Routes()
 
