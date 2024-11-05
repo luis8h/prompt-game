@@ -19,12 +19,14 @@ func NewApi(apiKey string) *Api {
     return a
 }
 
-func (a* Api) Get(content string) (string, error) {
+func (a* Api) Get(content string, messages []Message) (string, error) {
+    // add new message to history
+    newMessage := Message{Role: "user", Content: content}
+    messages = append(messages, newMessage)
+
 	requestBody := OpenAIRequest{
 		Model: "gpt-4o",
-		Messages: []Message{
-			{Role: "user", Content: content},
-		},
+		Messages: messages,
 	}
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
