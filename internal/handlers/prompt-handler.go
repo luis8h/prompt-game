@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"prompt-game/external/openai"
+    "prompt-game/views/components"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,6 +44,11 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 		assistantMessage := openai.Message{Role: "assistant", Content: resp}
 		h.messages = append(h.messages, assistantMessage)
 
-		ctx.JSON(http.StatusOK, resp)
+        viewMessage := components.Message{Role: assistantMessage.Role, Content: assistantMessage.Content}
+		err = render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
+
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
 	}
 }

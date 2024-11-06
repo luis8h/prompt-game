@@ -1,0 +1,14 @@
+package components
+
+type Message struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+templ ChatMessage(message Message) {
+    <div>
+        <p>{ message.Role }:</p>
+        <p>{ message.Content }</p>
+        <br><br>
+    </div>
+}

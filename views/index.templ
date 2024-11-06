@@ -1,5 +1,6 @@
 package views
 
+// TODO:show user message (should be there immediatly) -> chatgpt chat
 templ Index() {
 	<!DOCTYPE html>
 	<html lang="en">
@@ -14,10 +15,10 @@ templ Index() {
 		</head>
 		<body>
 			<textarea name="prompt-input" id="prompt-input" class="border-black border"></textarea>
-			<button hx-post="/prompt" hx-target="#prompt-output" hx-swap="innerHTML" hx-include="#prompt-input">
+			<button hx-post="/prompt" hx-target="#chat" hx-swap="beforeend" hx-include="#prompt-input">
 				send
 			</button>
-			<div id="prompt-output"></div>
+			<div id="chat"></div>
 		</body>
 	</html>
 }
