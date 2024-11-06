@@ -1,71 +1,90 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
 	"prompt-game/views/components"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 type PromptHandler struct {
-    api *openai.Api
-    messages []openai.Message
+	api      *openai.Api
 }
 
 func NewPromptHandler(apiKey string) *PromptHandler {
 	return &PromptHandler{
-        api: openai.NewApi(apiKey),
-        messages: []openai.Message{},
-    }
+		api:      openai.NewApi(apiKey),
+	}
 }
 
 // TODO: save message history per session -> chatgpt chat
 func (h *PromptHandler) PostPromptUser() gin.HandlerFunc {
-    return func (ctx *gin.Context)  {
-        message := ctx.PostForm("prompt_input")
+	return func(ctx *gin.Context) {
+		message := ctx.PostForm("prompt_input")
 
-        if message == "" {
-            ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
-            return
-        }
+		if message == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
+			return
+		}
 
-        viewMessage := components.Message{Role: "user", Content: message}
-        err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
+		viewMessage := components.Message{Role: "user", Content: message}
+		err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
 
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
-    }
+	}
 }
 
 func (h *PromptHandler) PostPromptAssistant() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-        message := ctx.PostForm("prompt_input")
-        fmt.Println(ctx)
+		message := ctx.PostForm("prompt_input")
+		session := sessions.Default(ctx)
 
-        if message == "" {
-            ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
-            return
-        }
+        // get messages from session
+		messageData, ok := session.Get("messages").([]byte)
+		if !ok {
+			fmt.Println("Error: messages are not stored as []byte")
+			return
+		}
+		var messageSlice []openai.Message
+		if err := json.Unmarshal(messageData, &messageSlice); err != nil {
+			fmt.Println("Error unmarshalling messages:", err)
+			return
+		}
 
-        newMessage := openai.Message{Role: "user", Content: message}
-		h.messages = append(h.messages, newMessage)
+        // check wether the given message is valid
+		if message == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
+			return
+		}
 
-        resp, err := h.api.Get(message, h.messages)
+        // create new user message
+		newMessage := openai.Message{Role: "user", Content: message}
 
-        if (err != nil) {
-            ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
-            return
-        }
+        // openai api call
+		resp, err := h.api.Get(message, messageSlice)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
+			return
+		}
 
+        // create new assistant message
 		assistantMessage := openai.Message{Role: "assistant", Content: resp}
-		h.messages = append(h.messages, assistantMessage)
 
-        viewMessage := components.Message{Role: assistantMessage.Role, Content: assistantMessage.Content}
+        // save messages to session
+        messageSlice = append(messageSlice, newMessage, assistantMessage)
+		messageBytes, _ := json.Marshal(messageSlice)
+		session.Set("messages", messageBytes)
+		session.Save()
+
+        // render content
+		viewMessage := components.Message{Role: assistantMessage.Role, Content: assistantMessage.Content}
 		err = render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
-
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

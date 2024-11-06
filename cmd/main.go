@@ -5,8 +5,10 @@ import (
 	"log"
 	"os"
 	// "prompt-game/external/openai"
-    "prompt-game/internal"
+	"prompt-game/internal"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -20,14 +22,18 @@ func initEnv() {
 }
 
 func main() {
-    initEnv()
+	initEnv()
 
-    router := gin.Default()
-    app := internal.Config{Router: router, ApiKey: os.Getenv("OPENAI_API_KEY")}
+	router := gin.Default()
 
-    router.Static("/static", "./static")
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("mysession", store))
 
-    app.Routes()
+	app := internal.Config{Router: router, ApiKey: os.Getenv("OPENAI_API_KEY")}
 
-    router.Run(":8080")
+	router.Static("/static", "./static")
+
+	app.Routes()
+
+	router.Run(":8080")
 }
