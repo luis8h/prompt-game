@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
-    "prompt-game/views/components"
+	"prompt-game/views/components"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,9 +22,28 @@ func NewPromptHandler(apiKey string) *PromptHandler {
 }
 
 // TODO: save message history per session -> chatgpt chat
-func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
+func (h *PromptHandler) PostPromptUser() gin.HandlerFunc {
+    return func (ctx *gin.Context)  {
+        message := ctx.PostForm("prompt_input")
+
+        if message == "" {
+            ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
+            return
+        }
+
+        viewMessage := components.Message{Role: "user", Content: message}
+        err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
+
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
+    }
+}
+
+func (h *PromptHandler) PostPromptAssistant() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-        message := ctx.PostForm("prompt-input")
+        message := ctx.PostForm("prompt_input")
+        fmt.Println(ctx)
 
         if message == "" {
             ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
@@ -40,7 +60,6 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
             return
         }
 
-		// Append the assistant's response to the conversation history
 		assistantMessage := openai.Message{Role: "assistant", Content: resp}
 		h.messages = append(h.messages, assistantMessage)
 

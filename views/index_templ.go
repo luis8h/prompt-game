@@ -8,6 +8,8 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import ()
+
 // TODO:show user message (should be there immediatly) -> chatgpt chat
 func Index() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -30,7 +32,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://cdn.tailwindcss.com\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"static/css/style.css\"><link rel=\"stylesheet\" href=\"static/css/output.css\"><title>prompt-game</title></head><body><textarea name=\"prompt-input\" id=\"prompt-input\" class=\"border-black border\"></textarea> <button hx-post=\"/prompt\" hx-target=\"#chat\" hx-swap=\"beforeend\" hx-include=\"#prompt-input\">send</button><div id=\"chat\"></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://cdn.tailwindcss.com\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"static/css/style.css\"><link rel=\"stylesheet\" href=\"static/css/output.css\"><title>prompt-game</title></head><body><textarea name=\"prompt_input\" id=\"prompt-input\" class=\"border-black border\"></textarea> <button hx-post=\"/prompt/user\" hx-target=\"#chat\" hx-swap=\"beforeend\" hx-include=\"#prompt-input\" hx-trigger=\"click, hx:afterRequest:fetch-response\">send</button><div id=\"chat\"></div><script>\n                document.body.addEventListener(\"htmx:afterRequest\", function (evt) {\n                    if (evt.detail.pathInfo.requestPath === \"/prompt/user\") {\n                        const promptInput = document.querySelector(\"#prompt-input\");\n                        const body = { prompt_input: promptInput.value };\n                        promptInput.value = \"\"\n                        htmx.ajax('POST', '/prompt/assistant', { values: body, swap: \"beforeend\", target: \"#chat\" });\n                    }\n                });\n            </script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

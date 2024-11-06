@@ -17,5 +17,6 @@ func (app *Config) Routes() {
 
     // prompt
     promptHandler := handlers.NewPromptHandler(app.ApiKey)
-    app.Router.POST("/prompt", promptHandler.PostPrompt())
+    app.Router.POST("/prompt/user", promptHandler.PostPromptUser())
+    app.Router.POST("/prompt/assistant", promptHandler.PostPromptAssistant())
 }

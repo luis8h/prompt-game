@@ -1,5 +1,8 @@
 package views
 
+import (
+)
+
 // TODO:show user message (should be there immediatly) -> chatgpt chat
 templ Index() {
 	<!DOCTYPE html>
@@ -14,11 +17,30 @@ templ Index() {
 			<title>prompt-game</title>
 		</head>
 		<body>
-			<textarea name="prompt-input" id="prompt-input" class="border-black border"></textarea>
-			<button hx-post="/prompt" hx-target="#chat" hx-swap="beforeend" hx-include="#prompt-input">
+			<textarea name="prompt_input" id="prompt-input" class="border-black border"></textarea>
+			<button
+				hx-post="/prompt/user"
+				hx-target="#chat"
+				hx-swap="beforeend"
+				hx-include="#prompt-input"
+				hx-trigger="click, hx:afterRequest:fetch-response"
+			>
 				send
 			</button>
+
 			<div id="chat"></div>
+
+            <script>
+                document.body.addEventListener("htmx:afterRequest", function (evt) {
+                    if (evt.detail.pathInfo.requestPath === "/prompt/user") {
+                        const promptInput = document.querySelector("#prompt-input");
+                        const body = { prompt_input: promptInput.value };
+                        promptInput.value = ""
+                        htmx.ajax('POST', '/prompt/assistant', { values: body, swap: "beforeend", target: "#chat" });
+                    }
+                });
+            </script>
+
 		</body>
 	</html>
 }
