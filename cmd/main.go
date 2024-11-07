@@ -26,6 +26,7 @@ func main() {
 
 	router := gin.Default()
 
+    // TODO: chat history might be to big for the session at some point -> store server side (ask chatgpt)
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
 

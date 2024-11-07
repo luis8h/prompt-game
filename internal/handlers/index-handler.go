@@ -1,9 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"prompt-game/views"
+	"prompt-game/views/components"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,8 +20,23 @@ func NewIndexHandler() *IndexHandler {
 
 func (h *IndexHandler) IndexPage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		err := render(ctx, http.StatusOK, views.Index())
+		session := sessions.Default(ctx)
 
+        // get messages from session
+        // TODO: put this into an extra function in the model file to use in different functions (maybe a generic function)
+		messageData, ok := session.Get("messages").([]byte)
+		if !ok {
+			fmt.Println("Error: messages are not stored as []byte")
+			return
+		}
+		var messageSlice []components.Message
+		if err := json.Unmarshal(messageData, &messageSlice); err != nil {
+			fmt.Println("Error unmarshalling messages:", err)
+			return
+		}
+
+        // render page
+		err := render(ctx, http.StatusOK, views.Index(messageSlice))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

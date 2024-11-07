@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
+	"prompt-game/views"
 	"prompt-game/views/components"
 
 	"github.com/gin-contrib/sessions"
@@ -21,7 +22,21 @@ func NewPromptHandler(apiKey string) *PromptHandler {
 	}
 }
 
-// TODO: save message history per session -> chatgpt chat
+func (h *PromptHandler) DeletePromptReset() gin.HandlerFunc {
+    return func(ctx *gin.Context) {
+		session := sessions.Default(ctx)
+        emptyMessages := []components.Message{}
+        messageBytes, _ := json.Marshal(emptyMessages)
+        session.Set("messages", messageBytes)
+        session.Save()
+
+        err := render(ctx, http.StatusOK, views.ChatHistory(emptyMessages))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
+    }
+}
+
 func (h *PromptHandler) PostPromptUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		message := ctx.PostForm("prompt_input")
@@ -32,8 +47,8 @@ func (h *PromptHandler) PostPromptUser() gin.HandlerFunc {
 		}
 
 		viewMessage := components.Message{Role: "user", Content: message}
-		err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
 
+		err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
