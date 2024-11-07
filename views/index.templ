@@ -18,23 +18,35 @@ templ Index(messages []components.Message) {
     <title>prompt-game</title>
 </head>
 
-<body>
-    <textarea name="prompt_input" id="prompt-input" class="border-black border"></textarea>
-    <button hx-post="/prompt/user" hx-target="#chat" hx-swap="beforeend" hx-include="#prompt-input"
-        hx-trigger="click, hx:afterRequest:fetch-response">
-        send
-    </button>
-    <button type="button" hx-delete="/prompt/reset" hx-target="#chat" hx-swap="outerHTML">reset</button>
+<body class="flex flex-col min-h-screen justify-end">
+    <div class="fixed bottom-0 left-0 right-0 w-full mx-auto bg-white shadow-lg rounded-t-lg p-6">
+        <div id="chat" class="space-y-4 overflow-y-auto">
+            @ChatHistory(messages)
+        </div>
 
-    @ChatHistory(messages)
+        <div class="flex mt-4 space-x-2">
+            <textarea id="prompt-input" name="prompt_input" placeholder="Type your message..."
+                      class="w-full border border-gray-300 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows="1"></textarea>
+            <button hx-post="/prompt/user" hx-target="#chat" hx-swap="beforeend" hx-include="#prompt-input"
+                    hx-trigger="click, hx:afterRequest:fetch-response"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none">
+                Send
+            </button>
+            <button type="button" hx-delete="/prompt/reset" hx-target="#chat" hx-swap="outerHTML"
+                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none">
+                Reset
+            </button>
+        </div>
+    </div>
 
     <script>
         document.body.addEventListener("htmx:afterRequest", function (evt) {
             if (evt.detail.pathInfo.requestPath === "/prompt/user") {
                 const promptInput = document.querySelector("#prompt-input");
-                const body = {prompt_input: promptInput.value};
+                const body = { prompt_input: promptInput.value };
                 promptInput.value = ""
-                htmx.ajax('POST', '/prompt/assistant', {values: body, swap: "beforeend", target: "#chat"});
+                htmx.ajax('POST', '/prompt/assistant', { values: body, swap: "beforeend", target: "#chat" });
             }
         });
     </script>
@@ -44,9 +56,9 @@ templ Index(messages []components.Message) {
 }
 
 templ ChatHistory(messages []components.Message) {
-<div id="chat">
+<div id="chat" class="space-y-4">
     for _, message := range messages {
-    @components.ChatMessage(message)
+        @components.ChatMessage(message)
     }
 </div>
 }

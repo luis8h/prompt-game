@@ -25,7 +25,7 @@ func (a* Api) Get(content string, messages []Message) (string, error) {
     messages = append(messages, newMessage)
 
 	requestBody := OpenAIRequest{
-		Model: "gpt-4o",
+		Model: "gpt-4o-mini",
 		Messages: messages,
 	}
 	jsonData, err := json.Marshal(requestBody)
