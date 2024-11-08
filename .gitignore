@@ -2,5 +2,5 @@ bin
 tmp
 .env
 node_modules
-./views/**/*_templ.go
-./static/css/output.css
+views/**/*_templ.go
+static/css/output.css
