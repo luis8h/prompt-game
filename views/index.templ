@@ -14,67 +14,15 @@ templ Index(messages []components.Message) {
 			<link rel="stylesheet" href="static/css/output.css"/>
 			<title>prompt-game</title>
 		</head>
-		<body class="bg-gray-100 flex items-center justify-center h-screen">
-			<div class="flex flex-col w-full h-full rounded-lg overflow-hidden">
-				@ChatHistory(messages)
-				<div class="">
-					<div class="flex items-center space-x-3 px-80">
-						<textarea
-							id="prompt-input"
-							name="prompt_input"
-							placeholder="Type your message..."
-							class="flex-grow border border-gray-300 rounded-md px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-							rows="1"
-						></textarea>
-						<button
-                            id="send-button"
-							hx-post="/prompt/user"
-							hx-target="#chat"
-							hx-swap="beforeend"
-							hx-include="#prompt-input"
-							hx-trigger="click, hx:afterRequest:fetch-response"
-							class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-						>
-							Send
-						</button>
-						<button
-							type="button"
-							hx-delete="/prompt/reset"
-							hx-target="#chat"
-							hx-swap="outerHTML"
-							class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
-						>
-							Reset
-						</button>
-					</div>
-				</div>
-			</div>
-			<script>
-                document.body.addEventListener("htmx:afterRequest", function (evt) {
-                    if (evt.detail.pathInfo.requestPath === "/prompt/user") {
-                        const promptInput = document.querySelector("#prompt-input");
-                        const body = {prompt_input: promptInput.value};
-                        promptInput.value = "";
-                        htmx.ajax('POST', '/prompt/assistant', {values: body, swap: "beforeend", target: "#chat"});
-                    }
-                });
-
-                const textbox = document.querySelector("#prompt-input");
-                const button = document.querySelector("#send-button");
-                textbox.addEventListener("keydown", function (event) {
-                    if (event.keyCode == 13) {
-                        button.click();
-                    }
-                });
-            </script>
+		<body class="bg-gray-100 h-screen overflow-hidden">
+            <div class="grid grid-cols-2 h-full">
+                <div class="h-full overflow-hidden">
+                    @components.ChatPane(messages)
+                </div>
+                <div class="h-full overflow-hidden">
+                    @components.InstructionsPane()
+                </div>
+            </div>
 		</body>
 	</html>
-}
-
-templ ChatHistory(messages []components.Message) {
-	<div id="chat" class="flex-grow overflow-y-auto p-4 px-80 space-y-4">
-		for _, message := range messages {
-			@components.ChatMessage(message)
-		}
-	</div>
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
-	"prompt-game/views"
 	"prompt-game/views/components"
 
 	"github.com/gin-contrib/sessions"
@@ -30,7 +29,7 @@ func (h *PromptHandler) DeletePromptReset() gin.HandlerFunc {
         session.Set("messages", messageBytes)
         session.Save()
 
-        err := render(ctx, http.StatusOK, views.ChatHistory(emptyMessages))
+        err := render(ctx, http.StatusOK, components.ChatHistory(emptyMessages))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
