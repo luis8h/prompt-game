@@ -26,11 +26,7 @@ Reply in a json string and **nothing else** which has an attribute called verifi
 `
 
 type Level struct {
+    Title string
     Description string
     Technique string
-}
-
-var sampleLevel = Level{
-    Description: "Use the large language model to write a poem about pigs. To get better results, give the large language model a role.",
-    Technique: "The User should give the model he is talking to a role. In this context, the role should be something like a writer.",
 }
