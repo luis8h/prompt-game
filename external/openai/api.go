@@ -1,35 +1,37 @@
 package openai
 
 import (
-    "bytes"
-    "encoding/json"
-    "fmt"
-    "net/http"
-    "io"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 )
 
 type Api struct {
-    apiKey string
+	apiKey string
 }
 
 func NewApi(apiKey string) *Api {
-    a := &Api{
-        apiKey: apiKey,
-    }
-    return a
+	a := &Api{
+		apiKey: apiKey,
+	}
+	return a
 }
 
-func (a* Api) validateStrategy(prompt string) (bool, error) {
-    return false, nil
+func (a *Api) validateStrategy(prompt string) (bool, error) {
+    a.Get(prompt, []Message{})
+
+	return false, nil
 }
 
-func (a* Api) Get(content string, messages []Message) (string, error) {
-    // add new message to history
-    newMessage := Message{Role: "user", Content: content}
-    messages = append(messages, newMessage)
+func (a *Api) Get(content string, messages []Message) (string, error) {
+	// add new message to history
+	newMessage := Message{Role: "user", Content: content}
+	messages = append(messages, newMessage)
 
 	requestBody := OpenAIRequest{
-		Model: "gpt-4o-mini",
+		Model:    "gpt-4o-mini",
 		Messages: messages,
 	}
 	jsonData, err := json.Marshal(requestBody)
@@ -37,7 +39,7 @@ func (a* Api) Get(content string, messages []Message) (string, error) {
 		return "", fmt.Errorf("failed to marshal request body: %v", err)
 	}
 
-    // create request
+	// create request
 	apiURL := "https://api.openai.com/v1/chat/completions"
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
 	if err != nil {
@@ -54,7 +56,7 @@ func (a* Api) Get(content string, messages []Message) (string, error) {
 	}
 	defer resp.Body.Close()
 
-    // Read and handle the response
+	// Read and handle the response
 	body, err := io.ReadAll(resp.Body) // Use io.ReadAll instead of ioutil.ReadAll
 	if err != nil {
 		return "", fmt.Errorf("failed to read response body: %v", err)
@@ -79,6 +81,3 @@ func (a* Api) Get(content string, messages []Message) (string, error) {
 	// Return the content of the first choice
 	return apiResponse.Choices[0].Message.Content, nil
 }
-
-
-
