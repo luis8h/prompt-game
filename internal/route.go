@@ -20,4 +20,8 @@ func (app *Config) Routes() {
     app.Router.POST("/prompt/user", promptHandler.PostPromptUser())
     app.Router.POST("/prompt/assistant", promptHandler.PostPromptAssistant())
     app.Router.DELETE("/prompt/reset", promptHandler.DeletePromptReset())
+
+    // level
+    levelHandler := handlers.NewLevelHandler(app.ApiKey)
+    app.Router.POST("/level/submit", levelHandler.PostLevelSubmit())
 }

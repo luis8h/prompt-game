@@ -12,11 +12,30 @@ var sampleLevel = models.Level{
 
 templ InstructionsPane() {
     <div>
-        instructions
         @LevelHtml(sampleLevel)
     </div>
 }
 
 templ LevelHtml(level models.Level) {
-    { level.Title }
+    <h2>{ level.Title }</h2>
+    <p>{ level.Description }</p>
+    <button
+        id="submit-button"
+	    class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+        hx-post="/level/submit"
+        hx-swap="innerHTML"
+        hx-target="#level-feedback"
+    >
+        Submit
+    </button>
+    <div id="level-feedback"> </div>
+}
+
+templ LevelFeedbackHtml(verified bool) {
+    if verified {
+        <p class="text-green-600">valid answer</p>
+    }
+    else {
+        <p class="text-red-600">answer not valid</p>
+    }
 }
