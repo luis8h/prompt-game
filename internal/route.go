@@ -23,5 +23,5 @@ func (app *Config) Routes() {
 
     // level
     levelHandler := handlers.NewLevelHandler(app.ApiKey)
-    app.Router.GET("/level/submit", levelHandler.GetLevelSubmit())
+    app.Router.GET("/level/submit/:levelId", levelHandler.GetLevelSubmit())
 }
