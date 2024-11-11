@@ -5,3 +5,4 @@ node_modules
 views/**/*_templ.go
 views/**/*_templ.txt
 static/css/output.css
+.vscode

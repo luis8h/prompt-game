@@ -1,8 +1,7 @@
 package main
 
 import (
-	// "fmt"
-	"log"
+	"fmt"
 	"os"
 	// "prompt-game/external/openai"
 	"prompt-game/internal"
@@ -17,7 +16,7 @@ import (
 func initEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("No .env file found, relying on system environment variables.")
+		fmt.Println("No .env file found, relying on system environment variables.")
 	}
 }
 
