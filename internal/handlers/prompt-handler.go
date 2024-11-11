@@ -81,7 +81,7 @@ func (h *PromptHandler) PostPromptAssistant() gin.HandlerFunc {
 		newMessage := openai.Message{Role: "user", Content: message}
 
         // openai api call
-		resp, err := h.api.Get(message, messageSlice)
+		resp, err := h.api.GetAnswer(message, messageSlice)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
 			return

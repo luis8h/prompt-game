@@ -26,7 +26,11 @@ Reply in a json string and **nothing else** which has an attribute called verifi
 `
 
 type Level struct {
-    Title string
-    Description string
-    Technique string
+	Title       string
+	Description string
+	Technique   string
+}
+
+type VerificationResponse struct {
+	Verified bool `json:"verified"`
 }

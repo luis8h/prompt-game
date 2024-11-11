@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
+	"prompt-game/internal/models"
 	"prompt-game/views/components"
 
 	"github.com/gin-contrib/sessions"
@@ -38,13 +39,29 @@ func (h *PromptHandler) GetLevelSubmit() gin.HandlerFunc {
 		}
 
         // verify using openai api
+        valid, err := h.isValidStrategy(messageSlice)
 
-        verified := false
-
-        err := render(ctx, http.StatusOK, components.LevelFeedbackHtml(verified))
+        err = render(ctx, http.StatusOK, components.LevelFeedbackHtml(valid))
         if err != nil {
             ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
         }
     }
+}
+
+func (h *PromptHandler) isValidStrategy(messages []openai.Message) (bool, error) {
+    // TODO: use the right prompt
+    prompt := "hallo"
+    strResponse, err := h.api.GetAnswer(prompt, []openai.Message{})
+    if err != nil {
+        return false, err
+    }
+
+    var jsonResponse models.VerificationResponse
+    if err := json.Unmarshal(([]byte(strResponse)), &jsonResponse); err != nil {
+        fmt.Println("Error unmarshalling api response:", err)
+        return false, err
+    }
+
+    return jsonResponse.Verified, nil
 }
 

@@ -19,13 +19,7 @@ func NewApi(apiKey string) *Api {
 	return a
 }
 
-func (a *Api) validateStrategy(prompt string) (bool, error) {
-    a.Get(prompt, []Message{})
-
-	return false, nil
-}
-
-func (a *Api) Get(content string, messages []Message) (string, error) {
+func (a *Api) GetAnswer(content string, messages []Message) (string, error) {
 	// add new message to history
 	newMessage := Message{Role: "user", Content: content}
 	messages = append(messages, newMessage)
