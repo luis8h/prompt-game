@@ -28,7 +28,7 @@ Reply in a json string and **nothing else** which has an attribute called verifi
 type Level struct {
 	Title       string
 	Description string
-	Technique   string
+	Strategy    string
 }
 
 type VerificationResponse struct {
