@@ -66,32 +66,20 @@ func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
 	}
 }
 
-func (h *LevelHandler) trimResponse(response string) (string, error) {
-	jsonStart := strings.Index(response, "{")
-	jsonEnd := strings.Index(response, "}")
+func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
+    prompt := fmt.Sprintf(`
+        test
+    `)
 
-	if jsonStart == -1 || jsonEnd == -1 || jsonStart >= jsonEnd {
-		return "", errors.New("invalid json object: missing or misplaced '{' or '}'")
-	}
+    jsonResponse, err := h.getVerificationResponse(prompt)
+    if err != nil {
+        return false, err
+    }
 
-	return response[jsonStart : jsonEnd+1], nil
+	return jsonResponse.Verified, nil
 }
 
 func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
-	// configure prompt
-	var chatHistory string
-	for _, message := range messages {
-		if message.Role == "user" {
-			chatHistory = chatHistory + "\n\nuser:\n"
-		} else if message.Role == "assistant" {
-			chatHistory = chatHistory + "\n\nassistant:\n"
-		} else {
-			fmt.Println("role appart from 'assistant' and 'user' was found in message")
-			continue
-		}
-
-		chatHistory = chatHistory + fmt.Sprintf("'%s'", message.Content)
-	}
 	prompt := fmt.Sprintf(`
         Background: I created a game, where the users can learn prompt engineering by solving different tasks using various prompting techniques.
         Your task is to decide wether in the following chat between the user and the ai, a specific prompt engineering strategy was used by the user.
@@ -107,25 +95,64 @@ func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.L
 
         Your reply should be a json string and **nothing else** which has an attribute called "verified".
         This attribute should contain a true value if the user used the right strategy and a false value if he didn't.
-    `, chatHistory, level.Description, level.Strategy)
+    `, h.getChatHistory(messages), level.Description, level.Strategy)
 
+    jsonResponse, err := h.getVerificationResponse(prompt)
+    if err != nil {
+        return false, err
+    }
+
+	return jsonResponse.Verified, nil
+}
+
+func (h *LevelHandler) getVerificationResponse(prompt string) (*models.VerificationResponse, error) {
 	// get ai response
 	strResponse, err := h.api.GetAnswer(prompt, []openai.Message{})
 	if err != nil {
-		return false, fmt.Errorf("error in api request %v", err)
+		return nil, fmt.Errorf("error in api request %v", err)
 	}
 
 	// trim response (only take content between { })
 	trimmed, err := h.trimResponse(strResponse)
 	if err != nil {
-		return false, fmt.Errorf("error when trimming responsed: %v", err)
+		return nil, fmt.Errorf("error when trimming responsed: %v", err)
 	}
 
 	// convert json to object
 	var jsonResponse models.VerificationResponse
 	if err := json.Unmarshal(([]byte(trimmed)), &jsonResponse); err != nil {
-		return false, fmt.Errorf("failed to parse ai response '%s' to object: %v", trimmed, err)
+		return nil, fmt.Errorf("failed to parse ai response '%s' to object: %v", trimmed, err)
 	}
 
-	return jsonResponse.Verified, nil
+    return &jsonResponse, nil
+}
+
+func (h *LevelHandler) getChatHistory(messages []openai.Message) (string) {
+	var chatHistory string
+
+	for _, message := range messages {
+		if message.Role == "user" {
+			chatHistory = chatHistory + "\n\nuser:\n"
+		} else if message.Role == "assistant" {
+			chatHistory = chatHistory + "\n\nassistant:\n"
+		} else {
+			fmt.Println("role appart from 'assistant' and 'user' was found in message")
+			continue
+		}
+
+		chatHistory = chatHistory + fmt.Sprintf("'%s'", message.Content)
+	}
+
+    return chatHistory
+}
+
+func (h *LevelHandler) trimResponse(response string) (string, error) {
+	jsonStart := strings.Index(response, "{")
+	jsonEnd := strings.Index(response, "}")
+
+	if jsonStart == -1 || jsonEnd == -1 || jsonStart >= jsonEnd {
+		return "", errors.New("invalid json object: missing or misplaced '{' or '}'")
+	}
+
+	return response[jsonStart : jsonEnd+1], nil
 }
