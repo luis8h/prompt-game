@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"prompt-game/external/openai"
 	"prompt-game/internal/models"
+	"prompt-game/internal/stores"
 	"prompt-game/views/components"
+	"strconv"
 	"strings"
 
 	"github.com/gin-contrib/sessions"
@@ -18,17 +20,25 @@ type LevelHandler struct {
 	api *openai.Api
 }
 
-func NewLevelHandler(apiKey string) *PromptHandler {
-	return &PromptHandler{
+func NewLevelHandler(apiKey string) *LevelHandler {
+	return &LevelHandler{
 		api: openai.NewApi(apiKey),
 	}
 }
 
-func (h *PromptHandler) GetLevelSubmit() gin.HandlerFunc {
+func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
+		// get level from store
+		levelId := ctx.Param("levelId")
+		levelIdInt, err := strconv.Atoi(levelId)
+		if err != nil {
+			fmt.Println("error when converting id to integer: %v", err)
+			return
+		}
+		level := stores.Levels[levelIdInt]
 
 		// get messages from session
+		session := sessions.Default(ctx)
 		messageData, ok := session.Get("messages").([]byte)
 		if !ok {
 			fmt.Println("Error: messages are not stored as []byte")
@@ -40,21 +50,15 @@ func (h *PromptHandler) GetLevelSubmit() gin.HandlerFunc {
 			return
 		}
 
-		// create sample level
-		level := models.Level{
-			Title:       "Sample level",
-			Description: "Use the llm to write a poem in the style of the 19th century. To get better results you should give the llm a role first.",
-			Strategy:    "The user should use the Strategy called Role-Prompting. That means he should give the ai assistant a role which suits his needs.",
-		}
-
 		// verify using openai api
 		valid, err := h.isValidStrategy(messageSlice, level)
-        if err != nil {
-            fmt.Println("error when validating strategy: %v", err)
-            ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-            return
-        }
+		if err != nil {
+			fmt.Println("error when validating strategy: %v", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 
+		// render template
 		err = render(ctx, http.StatusOK, components.LevelFeedbackHtml(valid))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
@@ -62,18 +66,18 @@ func (h *PromptHandler) GetLevelSubmit() gin.HandlerFunc {
 	}
 }
 
-func (h *PromptHandler) trimResponse(response string) (string, error) {
-    jsonStart := strings.Index(response, "{")
-    jsonEnd := strings.Index(response, "}")
+func (h *LevelHandler) trimResponse(response string) (string, error) {
+	jsonStart := strings.Index(response, "{")
+	jsonEnd := strings.Index(response, "}")
 
-    if jsonStart == -1 || jsonEnd == -1 || jsonStart >= jsonEnd {
-        return "", errors.New("invalid json object: missing or misplaced '{' or '}'")
-    }
+	if jsonStart == -1 || jsonEnd == -1 || jsonStart >= jsonEnd {
+		return "", errors.New("invalid json object: missing or misplaced '{' or '}'")
+	}
 
-    return response[jsonStart : jsonEnd+1], nil
+	return response[jsonStart : jsonEnd+1], nil
 }
 
-func (h *PromptHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
+func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
 	// configure prompt
 	var chatHistory string
 	for _, message := range messages {
@@ -111,11 +115,11 @@ func (h *PromptHandler) isValidStrategy(messages []openai.Message, level models.
 		return false, fmt.Errorf("error in api request %v", err)
 	}
 
-    // trim response (only take content between { })
-    trimmed, err := h.trimResponse(strResponse)
-    if err != nil {
-        return false, fmt.Errorf("error when trimming responsed: %v", err)
-    }
+	// trim response (only take content between { })
+	trimmed, err := h.trimResponse(strResponse)
+	if err != nil {
+		return false, fmt.Errorf("error when trimming responsed: %v", err)
+	}
 
 	// convert json to object
 	var jsonResponse models.VerificationResponse
