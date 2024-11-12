@@ -2,22 +2,17 @@ package components
 
 import (
     "prompt-game/internal/models"
+    "prompt-game/internal/stores"
 )
-
-var sampleLevel = models.Level{
-    Title: "test level",
-    Description: "Use the large language model to write a poem about pigs. To get better results, give the large language model a role.",
-    Strategy: "The User should give the model he is talking to a role. In this context, the role should be something like a writer.",
-}
 
 templ InstructionsPane() {
     <div>
-        @LevelHtml(sampleLevel)
+        @LevelHtml(stores.Levels[0])
     </div>
 }
 
 templ LevelHtml(level models.Level) {
-    <h2>{ level.Title }</h2>
+    <h2 class="font-bold">{ level.Title }</h2>
     <p>{ level.Description }</p>
     <button
         id="submit-button"
@@ -31,8 +26,15 @@ templ LevelHtml(level models.Level) {
     <div id="level-feedback"> </div>
 }
 
-templ LevelFeedbackHtml(verified bool) {
-    if verified {
+templ LevelFeedbackHtml(validStrategy bool, validAnswer bool) {
+    if validStrategy {
+        <p class="text-green-600">valid strategy</p>
+    }
+    else {
+        <p class="text-red-600">stragety not valid</p>
+    }
+
+    if validAnswer {
         <p class="text-green-600">valid answer</p>
     }
     else {

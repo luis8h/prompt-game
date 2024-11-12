@@ -50,16 +50,24 @@ func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
 			return
 		}
 
-		// verify using openai api
-		valid, err := h.isValidStrategy(messageSlice, level)
+		// verify strategy
+		validStrategy, err := h.isValidStrategy(messageSlice, level)
 		if err != nil {
 			fmt.Println("error when validating strategy: %v", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
+        // verify answer
+        validAnswer, err := h.isValidAnswer(messageSlice, level)
+        if err != nil {
+            fmt.Println("error when validating answer: %v", err)
+            ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+            return
+        }
+
 		// render template
-		err = render(ctx, http.StatusOK, components.LevelFeedbackHtml(valid))
+		err = render(ctx, http.StatusOK, components.LevelFeedbackHtml(validStrategy, validAnswer))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
@@ -68,8 +76,18 @@ func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
 
 func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
     prompt := fmt.Sprintf(`
-        test
-    `)
+        In the following i will give you a chat between the user and an ai assistant. The user got a task which he should solve using the ai.
+
+        Chat of the user and the ai assistant:
+        %s
+
+        Task which should be solved by the user:
+        %s
+
+        Your task is to decide wether the user solved the task or he didn't.
+        Your reply should be a json string and **nothing else** which has an attribute called "verified".
+        This attribute should contain a true value if the user solved the task and a false value if he didn't.
+    `, h.getChatHistory(messages), level.Description)
 
     jsonResponse, err := h.getVerificationResponse(prompt)
     if err != nil {
