@@ -5,9 +5,9 @@ import (
     "prompt-game/internal/stores"
 )
 
-templ InstructionsPane() {
+templ InstructionsPane(currentLevel int) {
     <div>
-        @LevelHtml(stores.Levels[0])
+        @LevelHtml(stores.Levels[currentLevel])
     </div>
 }
 

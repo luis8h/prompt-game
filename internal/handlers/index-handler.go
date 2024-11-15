@@ -42,8 +42,15 @@ func (h *IndexHandler) IndexPage() gin.HandlerFunc {
 			return
 		}
 
+        // get current level
+        currentLevel, ok := session.Get("currentLevel").(int)
+        if !ok {
+            currentLevel = 0
+            session.Set("currentLevel", 0)
+        }
+
 		// render page
-		err := render(ctx, http.StatusOK, views.Index(messageSlice))
+		err := render(ctx, http.StatusOK, views.Index(messageSlice, currentLevel))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

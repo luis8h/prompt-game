@@ -2,7 +2,7 @@ package views
 
 import "prompt-game/views/components"
 
-templ Index(messages []components.Message) {
+templ Index(messages []components.Message, currentLevel int) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -20,7 +20,7 @@ templ Index(messages []components.Message) {
                     @components.ChatPane(messages)
                 </div>
                 <div class="h-full overflow-hidden">
-                    @components.InstructionsPane()
+                    @components.InstructionsPane(currentLevel)
                 </div>
             </div>
 		</body>
