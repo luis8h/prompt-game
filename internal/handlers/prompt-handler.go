@@ -12,28 +12,28 @@ import (
 )
 
 type PromptHandler struct {
-	api      *openai.Api
+	api *openai.Api
 }
 
 func NewPromptHandler(apiKey string) *PromptHandler {
 	return &PromptHandler{
-		api:      openai.NewApi(apiKey),
+		api: openai.NewApi(apiKey),
 	}
 }
 
 func (h *PromptHandler) DeletePromptReset() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-        emptyMessages := []components.Message{}
-        messageBytes, _ := json.Marshal(emptyMessages)
-        session.Set("messages", messageBytes)
-        session.Save()
+		emptyMessages := []components.Message{}
+		messageBytes, _ := json.Marshal(emptyMessages)
+		session.Set("messages", messageBytes)
+		session.Save()
 
-        err := render(ctx, http.StatusOK, components.ChatHistory(emptyMessages))
+		err := render(ctx, http.StatusOK, components.ChatHistory(emptyMessages))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
-    }
+	}
 }
 
 func (h *PromptHandler) PostPromptUser() gin.HandlerFunc {
@@ -59,7 +59,7 @@ func (h *PromptHandler) PostPromptAssistant() gin.HandlerFunc {
 		message := ctx.PostForm("prompt_input")
 		session := sessions.Default(ctx)
 
-        // get messages from session
+		// get messages from session
 		messageData, ok := session.Get("messages").([]byte)
 		if !ok {
 			fmt.Println("Error: messages are not stored as []byte")
@@ -71,32 +71,32 @@ func (h *PromptHandler) PostPromptAssistant() gin.HandlerFunc {
 			return
 		}
 
-        // check wether the given message is valid
+		// check wether the given message is valid
 		if message == "" {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
 			return
 		}
 
-        // create new user message
+		// create new user message
 		newMessage := openai.Message{Role: "user", Content: message}
 
-        // openai api call
+		// openai api call
 		resp, err := h.api.GetAnswer(message, messageSlice)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
 			return
 		}
 
-        // create new assistant message
+		// create new assistant message
 		assistantMessage := openai.Message{Role: "assistant", Content: resp}
 
-        // save messages to session
-        messageSlice = append(messageSlice, newMessage, assistantMessage)
+		// save messages to session
+		messageSlice = append(messageSlice, newMessage, assistantMessage)
 		messageBytes, _ := json.Marshal(messageSlice)
 		session.Set("messages", messageBytes)
 		session.Save()
 
-        // render content
+		// render content
 		viewMessage := components.Message{Role: assistantMessage.Role, Content: assistantMessage.Content}
 		err = render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
 		if err != nil {

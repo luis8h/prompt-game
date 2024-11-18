@@ -12,6 +12,8 @@ templ Index(messages []components.Message, currentLevel int) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href="static/css/style.css"/>
 			<link rel="stylesheet" href="static/css/output.css"/>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 			<title>prompt-game</title>
 		</head>
 		<body class="bg-gray-100 h-screen overflow-hidden">
@@ -23,6 +25,7 @@ templ Index(messages []components.Message, currentLevel int) {
                     @components.InstructionsPane(currentLevel)
                 </div>
             </div>
+            <script>hljs.highlightAll();</script>
 		</body>
 	</html>
 }
