@@ -17,18 +17,18 @@ templ ChatPane(messages []Message) {
 			<div class="flex items-center space-x-3">
 				<textarea
 					id="prompt-input"
-					name="prompt_input"
+					name="message"
 					placeholder="Type your message..."
 					class="flex-grow border border-gray-300 rounded-md px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
 					rows="1"
 				></textarea>
 				<button
 					id="send-button"
-					hx-post="/prompt/user"
+					hx-post="/message/user"
 					hx-target="#chat"
 					hx-swap="beforeend"
 					hx-include="#prompt-input"
-					hx-trigger="click, hx:afterRequest:fetch-response"
+					hx-trigger="click, hx:afterRequest:send-prompt"
 					class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
 				>
 					Send
@@ -46,11 +46,31 @@ templ ChatPane(messages []Message) {
 		</div>
 		<script>
             document.body.addEventListener("htmx:afterRequest", function (evt) {
-                if (evt.detail.pathInfo.requestPath === "/prompt/user") {
+                if (evt.detail.pathInfo.requestPath === "/message/user") {
                     const promptInput = document.querySelector("#prompt-input");
-                    const body = {prompt_input: promptInput.value};
+
+                    const messageHistory = localStorage.getItem("message-history");
+                    let messages = []
+                    if (messageHistory !== null) {
+                        messages = JSON.parse(messageHistory);
+                    }
+
+                    messages.push({role: "user", content: promptInput.value})
+                    const newChatHistory = JSON.stringify(messages)
                     promptInput.value = "";
-                    htmx.ajax('POST', '/prompt/assistant', {values: body, swap: "beforeend", target: "#chat"});
+
+                    localStorage.setItem("message-history", newChatHistory)
+                    const jsonBody = JSON.stringify({messages: messages});
+
+                    fetch("/prompt", {
+                        method: "POST",
+                        body: jsonBody
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        htmxBody = {message: data.answer}
+                        htmx.ajax("POST", "/message/assistant", {values: htmxBody, swap: "beforeend", target: "#chat"})
+                    })
                 }
             });
 

@@ -59,23 +59,30 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 
 func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
     return func(ctx *gin.Context) {
-		messages := ctx.PostForm("messages")
+        var payload struct {
+            Messages []openai.Message `json:"messages"`
+        }
 
-		var messageSlice []openai.Message
-		if err := json.Unmarshal([]byte(messages), &messageSlice); err != nil {
-			fmt.Println("Error unmarshalling messages:", err)
-            ctx.JSON(http.StatusBadRequest, gin.H{"error": "error unmarshalling messages"})
-			return
-		}
+        // Parse the JSON payload from the request
+        if err := ctx.ShouldBindJSON(&payload); err != nil {
+            fmt.Println("Error binding JSON:", err)
+            ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON payload"})
+            return
+        }
+
+        // Validate that messages are present
+        if len(payload.Messages) == 0 {
+            ctx.JSON(http.StatusBadRequest, gin.H{"error": "messages field is empty"})
+            return
+        }
 
 		// openai api call
-		resp, err := h.api.RequestApi(messageSlice)
+		resp, err := h.api.RequestApi(payload.Messages)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
 			return
 		}
 
-        // return answer
         ctx.JSON(http.StatusOK, gin.H{"answer": resp})
     }
 }

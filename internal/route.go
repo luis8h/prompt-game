@@ -19,8 +19,8 @@ func (app *Config) Routes() {
     promptHandler := handlers.NewPromptHandler(app.ApiKey)
     app.Router.POST("/prompt/user", promptHandler.PostPromptUser())
     app.Router.POST("/prompt/assistant", promptHandler.PostPromptAssistant())
-    app.Router.GET("/message/assistant", promptHandler.PostMessageAssistant())
-    app.Router.GET("/message/user", promptHandler.PostMessageUser())
+    app.Router.POST("/message/assistant", promptHandler.PostMessageAssistant())
+    app.Router.POST("/message/user", promptHandler.PostMessageUser())
     app.Router.POST("/prompt", promptHandler.PostPrompt())
     app.Router.DELETE("/prompt/reset", promptHandler.DeletePromptReset())
 
