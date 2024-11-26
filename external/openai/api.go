@@ -19,11 +19,14 @@ func NewApi(apiKey string) *Api {
 	return a
 }
 
-func (a *Api) GetAnswer(content string, messages []Message) (string, error) {
+func (a *Api) GetAnswer(prompt string, messages []Message) (string, error) {
 	// add new message to history
-	newMessage := Message{Role: "user", Content: content}
+	newMessage := Message{Role: "user", Content: prompt}
 	messages = append(messages, newMessage)
+    return a.RequestApi(messages)
+}
 
+func (a *Api) RequestApi(messages []Message) (string, error) {
 	requestBody := OpenAIRequest{
 		Model:    "gpt-4o-mini",
 		Messages: messages,

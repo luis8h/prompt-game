@@ -21,6 +21,65 @@ func NewPromptHandler(apiKey string) *PromptHandler {
 	}
 }
 
+func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
+    return func(ctx *gin.Context) {
+		message := ctx.PostForm("message")
+
+		if message == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
+			return
+		}
+
+		viewMessage := components.Message{Role: "user", Content: message}
+
+		err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
+    }
+}
+
+func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
+    return func(ctx *gin.Context) {
+		message := ctx.PostForm("message")
+
+		if message == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "empty request body"})
+			return
+		}
+
+		viewMessage := components.Message{Role: "assistant", Content: message}
+
+		err := render(ctx, http.StatusOK, components.ChatMessage(viewMessage))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
+    }
+}
+
+func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
+    return func(ctx *gin.Context) {
+		messages := ctx.PostForm("messages")
+
+		var messageSlice []openai.Message
+		if err := json.Unmarshal([]byte(messages), &messageSlice); err != nil {
+			fmt.Println("Error unmarshalling messages:", err)
+            ctx.JSON(http.StatusBadRequest, gin.H{"error": "error unmarshalling messages"})
+			return
+		}
+
+		// openai api call
+		resp, err := h.api.RequestApi(messageSlice)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
+			return
+		}
+
+        // return answer
+        ctx.JSON(http.StatusOK, gin.H{"answer": resp})
+    }
+}
+
 func (h *PromptHandler) DeletePromptReset() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
