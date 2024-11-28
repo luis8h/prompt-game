@@ -10,63 +10,106 @@ type Message struct {
 	Content string  `json:"content"`
 }
 
-templ ChatPane(messages []Message) {
+templ ChatPane() {
 	<div class="flex flex-col w-full h-full rounded-lg">
-		@ChatHistory(messages)
+        <div
+            id="chat"
+            class="flex-grow overflow-y-auto p-4 space-y-4"
+            hx-post="/history"
+            hx-trigger="load, reset-trigger from:body"
+            hx-swap="innerHTML"
+        >
+        </div>
 		<div class="">
 			<div class="flex items-center space-x-3">
 				<textarea
 					id="prompt-input"
-					name="prompt_input"
+					name="message"
 					placeholder="Type your message..."
 					class="flex-grow border border-gray-300 rounded-md px-4 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
 					rows="1"
 				></textarea>
 				<button
 					id="send-button"
-					hx-post="/prompt/user"
-					hx-target="#chat"
+					hx-post="/message/user"
+					hx-target="#chat-history"
 					hx-swap="beforeend"
 					hx-include="#prompt-input"
-					hx-trigger="click, hx:afterRequest:fetch-response"
+					hx-trigger="click, hx:afterRequest:send-prompt"
 					class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
 				>
 					Send
 				</button>
 				<button
+                    id="reset-button"
 					type="button"
-					hx-delete="/prompt/reset"
-					hx-target="#chat"
-					hx-swap="outerHTML"
 					class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+                    onclick="resetHistory()"
 				>
 					Reset
 				</button>
 			</div>
 		</div>
 		<script>
-            document.body.addEventListener("htmx:afterRequest", function (evt) {
-                if (evt.detail.pathInfo.requestPath === "/prompt/user") {
-                    const promptInput = document.querySelector("#prompt-input");
-                    const body = {prompt_input: promptInput.value};
-                    promptInput.value = "";
-                    htmx.ajax('POST', '/prompt/assistant', {values: body, swap: "beforeend", target: "#chat"});
+            document.body.addEventListener("htmx:configRequest", function (evt) {
+                if (evt.detail.target.id === "chat") {
+                    const messageHistory = localStorage.getItem("message-history") || "[]";
+                    evt.detail.parameters.messages = JSON.stringify(JSON.parse(messageHistory));
                 }
             });
 
-            const textbox = document.querySelector("#prompt-input");
-            const button = document.querySelector("#send-button");
-            textbox.addEventListener("keydown", function (event) {
+            document.body.addEventListener("htmx:afterRequest", function (evt) {
+                if (evt.detail.pathInfo.requestPath === "/message/user") {
+                    const promptInput = document.querySelector("#prompt-input");
+
+                    let messages = getMessageHistory();
+
+                    const userMessage = promptInput.value
+                    messages.push({role: "user", content: userMessage})
+                    promptInput.value = "";
+
+                    fetch("/prompt", {
+                        method: "POST",
+                        body: JSON.stringify({messages: messages})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        htmx.ajax("POST", "/message/assistant", {values: {message: data.answer}, swap: "beforeend", target: "#chat-history"})
+                        messages.push({role: "assistant", content: data.answer})
+                        localStorage.setItem("message-history", JSON.stringify(messages))
+                    })
+                }
+            });
+
+            document.querySelector("#prompt-input").addEventListener("keydown", function (event) {
+                const button = document.querySelector("#send-button");
                 if (event.keyCode == 13) {
                     button.click();
                 }
             });
+
+            function resetHistory () {
+                localStorage.setItem("message-history", JSON.stringify([]));
+                htmx.trigger(document.body, "reset-trigger");
+            }
+
+            function getMessageHistory() {
+                const messageHistory = localStorage.getItem("message-history");
+                let messages = []
+                if (messageHistory !== null) {
+                    messages = JSON.parse(messageHistory);
+                }
+                return messages
+            }
         </script>
 	</div>
 }
 
 templ ChatHistory(messages []Message) {
-	<div id="chat" class="flex-grow overflow-y-auto p-4 space-y-4">
+	<div
+        id="chat-history"
+        class="flex-grow overflow-y-auto p-4 space-y-4"
+    >
 		for _, message := range messages {
 			@ChatMessage(message)
 		}

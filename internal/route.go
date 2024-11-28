@@ -17,11 +17,12 @@ func (app *Config) Routes() {
 
     // prompt
     promptHandler := handlers.NewPromptHandler(app.ApiKey)
-    app.Router.POST("/prompt/user", promptHandler.PostPromptUser())
-    app.Router.POST("/prompt/assistant", promptHandler.PostPromptAssistant())
-    app.Router.DELETE("/prompt/reset", promptHandler.DeletePromptReset())
+    app.Router.POST("/message/assistant", promptHandler.PostMessageAssistant())
+    app.Router.POST("/message/user", promptHandler.PostMessageUser())
+    app.Router.POST("/prompt", promptHandler.PostPrompt())
+    app.Router.POST("/history", promptHandler.PostHistory())
 
     // level
     levelHandler := handlers.NewLevelHandler(app.ApiKey)
-    app.Router.GET("/level/submit/:levelId", levelHandler.GetLevelSubmit())
+    app.Router.POST("/level/submit/:levelId", levelHandler.PostLevelSubmit())
 }
