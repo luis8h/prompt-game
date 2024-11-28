@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +25,7 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 	}
 }
 
-func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
+func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// get level from store
 		levelId := ctx.Param("levelId")
@@ -37,21 +36,16 @@ func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
 		}
 		level := stores.Levels[levelIdInt]
 
-		// get messages from session
-		session := sessions.Default(ctx)
-		messageData, ok := session.Get("messages").([]byte)
-		if !ok {
-			fmt.Println("Error: messages are not stored as []byte")
-			return
-		}
-		var messageSlice []openai.Message
-		if err := json.Unmarshal(messageData, &messageSlice); err != nil {
+        // get messages
+        messagesJson := ctx.PostForm("messages")
+        messages := []openai.Message{}
+		if err := json.Unmarshal([]byte(messagesJson), &messages); err != nil {
 			fmt.Println("Error unmarshalling messages:", err)
 			return
 		}
 
 		// verify strategy
-		validStrategy, err := h.isValidStrategy(messageSlice, level)
+		validStrategy, err := h.isValidStrategy(messages, level)
 		if err != nil {
 			fmt.Println("error when validating strategy: %v", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -59,7 +53,7 @@ func (h *LevelHandler) GetLevelSubmit() gin.HandlerFunc {
 		}
 
         // verify answer
-        validAnswer, err := h.isValidAnswer(messageSlice, level)
+        validAnswer, err := h.isValidAnswer(messages, level)
         if err != nil {
             fmt.Println("error when validating answer: %v", err)
             ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

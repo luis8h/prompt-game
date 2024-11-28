@@ -17,9 +17,10 @@ templ LevelHtml(level models.Level) {
     <button
         id="submit-button"
 	    class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-        hx-get="/level/submit/0"
+        hx-post="/level/submit/0"
         hx-swap="innerHTML"
         hx-target="#level-feedback"
+        hx-vals="js:{messages: localStorage.getItem('message-history')}"
     >
         Submit
     </button>
