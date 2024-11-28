@@ -22,6 +22,7 @@ func (app *Config) Routes() {
     app.Router.POST("/message/assistant", promptHandler.PostMessageAssistant())
     app.Router.POST("/message/user", promptHandler.PostMessageUser())
     app.Router.POST("/prompt", promptHandler.PostPrompt())
+    app.Router.POST("/history", promptHandler.PostHistory())
     app.Router.DELETE("/prompt/reset", promptHandler.DeletePromptReset())
 
     // level

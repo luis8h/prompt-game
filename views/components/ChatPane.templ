@@ -12,7 +12,15 @@ type Message struct {
 
 templ ChatPane(messages []Message) {
 	<div class="flex flex-col w-full h-full rounded-lg">
-		@ChatHistory(messages)
+        <div
+            id="chat"
+            class="flex-grow overflow-y-auto p-4 space-y-4"
+            hx-post="/history"
+            hx-trigger="load"
+            hx-vals="js:{messages: JSON.stringify(getMessageHistory())}"
+            hx-swap="innerHTML"
+        >
+        </div>
 		<div class="">
 			<div class="flex items-center space-x-3">
 				<textarea
@@ -25,7 +33,7 @@ templ ChatPane(messages []Message) {
 				<button
 					id="send-button"
 					hx-post="/message/user"
-					hx-target="#chat"
+					hx-target="#chat-history"
 					hx-swap="beforeend"
 					hx-include="#prompt-input"
 					hx-trigger="click, hx:afterRequest:send-prompt"
@@ -64,7 +72,7 @@ templ ChatPane(messages []Message) {
                     })
                     .then(response => response.json())
                     .then(data => {
-                        htmx.ajax("POST", "/message/assistant", {values: {message: data.answer}, swap: "beforeend", target: "#chat"})
+                        htmx.ajax("POST", "/message/assistant", {values: {message: data.answer}, swap: "beforeend", target: "#chat-history"})
                         messages.push({role: "assistant", content: data.answer})
                         localStorage.setItem("message-history", JSON.stringify(messages))
                         console.log(localStorage.getItem("message-history"))
@@ -94,11 +102,8 @@ templ ChatPane(messages []Message) {
 
 templ ChatHistory(messages []Message) {
 	<div
-        id="chat"
+        id="chat-history"
         class="flex-grow overflow-y-auto p-4 space-y-4"
-        hx-post="/history"
-        hx-trigger="load"
-        hx-vals="js:{messages: getMessageHistory()}"
     >
 		for _, message := range messages {
 			@ChatMessage(message)

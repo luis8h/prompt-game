@@ -21,6 +21,23 @@ func NewPromptHandler(apiKey string) *PromptHandler {
 	}
 }
 
+func (h *PromptHandler) PostHistory() gin.HandlerFunc {
+    return func(ctx *gin.Context) {
+        messagesJson := ctx.PostForm("messages")
+
+        messages := []components.Message{}
+		if err := json.Unmarshal([]byte(messagesJson), &messages); err != nil {
+			fmt.Println("Error unmarshalling messages:", err)
+			return
+		}
+
+        err := render(ctx, http.StatusOK, components.ChatHistory(messages))
+        if err != nil {
+            ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+        }
+    }
+}
+
 func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
     return func(ctx *gin.Context) {
 		message := ctx.PostForm("message")
