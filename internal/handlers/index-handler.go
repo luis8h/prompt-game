@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"prompt-game/internal/stores"
 	"prompt-game/views"
 
 	"github.com/gin-contrib/sessions"
@@ -24,10 +25,11 @@ func (h *IndexHandler) IndexPage() gin.HandlerFunc {
         if !ok {
             currentLevel = 0
             session.Set("currentLevel", 0)
+            session.Save()
         }
 
 		// render page
-		err := render(ctx, http.StatusOK, views.Index(currentLevel))
+		err := render(ctx, http.StatusOK, views.Index(stores.Levels[currentLevel]))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

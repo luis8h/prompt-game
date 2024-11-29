@@ -1,31 +1,39 @@
 package views
 
-import "prompt-game/views/components"
+import (
+"prompt-game/internal/models"
+"prompt-game/views/components"
+)
 
-templ Index(currentLevel int) {
-	<!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
-			<script src="https://cdn.tailwindcss.com"></script>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<link rel="stylesheet" href="static/css/style.css"/>
-			<link rel="stylesheet" href="static/css/output.css"/>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-			<title>prompt-game</title>
-		</head>
-		<body class="bg-gray-100 h-screen overflow-hidden">
-            <div class="grid grid-cols-2 h-full">
-                <div class="h-full overflow-hidden">
-                    @components.ChatPane()
-                </div>
-                <div class="h-full overflow-hidden">
-                    @components.InstructionsPane(currentLevel)
-                </div>
-            </div>
-            <script>hljs.highlightAll();</script>
-		</body>
-	</html>
+templ Index(level models.Level) {
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://unpkg.com/htmx.org@1.9.10"
+        integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="static/css/output.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <title>prompt-game</title>
+</head>
+
+<body class="bg-gray-100 h-screen overflow-hidden">
+    <div class="grid grid-cols-2 h-full">
+        <div class="h-full overflow-hidden">
+            @components.ChatPane()
+        </div>
+        <div class="h-full overflow-hidden">
+            @components.InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
+        </div>
+    </div>
+    <script>hljs.highlightAll();</script>
+</body>
+
+</html>
 }

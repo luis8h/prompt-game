@@ -6,6 +6,12 @@ type Level struct {
 	Strategy    string
 }
 
+type LevelValidation struct {
+	Strategy bool
+	Answer   bool
+	Ignore   bool
+}
+
 type VerificationResponse struct {
 	Verified bool `json:"verified"`
 }

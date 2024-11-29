@@ -9,9 +9,9 @@ import (
 	"prompt-game/internal/models"
 	"prompt-game/internal/stores"
 	"prompt-game/views/components"
-	"strconv"
 	"strings"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,14 +27,15 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 
 func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// get level from store
-		levelId := ctx.Param("levelId")
-		levelIdInt, err := strconv.Atoi(levelId)
-		if err != nil {
-			fmt.Println("error when converting id to integer: %v", err)
-			return
-		}
-		level := stores.Levels[levelIdInt]
+
+        // get current level
+        session := sessions.Default(ctx)
+        levelId, ok := session.Get("currentLevel").(int)
+        if !ok {
+            levelId = 0
+            session.Set("currentLevel", 0)
+        }
+        level := stores.Levels[levelId]
 
         // get messages
         messagesJson := ctx.PostForm("messages")
@@ -44,8 +45,11 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 			return
 		}
 
+        validation := models.LevelValidation{Strategy: false, Answer: false, Ignore: false}
+
 		// verify strategy
-		validStrategy, err := h.isValidStrategy(messages, level)
+        var err error
+        validation.Strategy, err = h.isValidStrategy(messages, level)
 		if err != nil {
 			fmt.Println("error when validating strategy: %v", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -53,15 +57,23 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 		}
 
         // verify answer
-        validAnswer, err := h.isValidAnswer(messages, level)
+        validation.Answer, err = h.isValidAnswer(messages, level)
         if err != nil {
             fmt.Println("error when validating answer: %v", err)
             ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
             return
         }
 
+        // set nextlevel
+        nextLevelId := levelId;
+        if validation.Answer && validation.Strategy {
+            nextLevelId += 1
+        }
+        session.Set("currentLevel", nextLevelId)
+        session.Save()
+
 		// render template
-		err = render(ctx, http.StatusOK, components.LevelFeedbackHtml(validStrategy, validAnswer))
+		err = render(ctx, http.StatusOK, components.InstructionsPane(stores.Levels[nextLevelId], validation))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

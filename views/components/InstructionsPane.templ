@@ -2,12 +2,14 @@ package components
 
 import (
     "prompt-game/internal/models"
-    "prompt-game/internal/stores"
 )
 
-templ InstructionsPane(currentLevel int) {
-    <div>
-        @LevelHtml(stores.Levels[currentLevel])
+templ InstructionsPane(level models.Level, validation models.LevelValidation) {
+    <div id="instruction-pane">
+        @LevelHtml(level)
+        if (!validation.Strategy || !validation.Answer) && !validation.Ignore {
+            @LevelFeedbackHtml(validation.Strategy, validation.Answer)
+        }
     </div>
 }
 
@@ -17,9 +19,9 @@ templ LevelHtml(level models.Level) {
     <button
         id="submit-button"
 	    class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-        hx-post="/level/submit/0"
-        hx-swap="innerHTML"
-        hx-target="#level-feedback"
+        hx-post="/level/submit"
+        hx-swap="outerHTML"
+        hx-target="#instruction-pane"
         hx-vals="js:{messages: localStorage.getItem('message-history')}"
     >
         Submit
