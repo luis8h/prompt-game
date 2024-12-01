@@ -30,58 +30,59 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-        // get current level
-        session := sessions.Default(ctx)
-        levelId, ok := session.Get("currentLevel").(int)
-        if !ok {
-            levelId = 0
-            session.Set("currentLevel", 0)
-        }
-        level := stores.Levels[levelId]
+		// get current level
+		session := sessions.Default(ctx)
+		levelId, ok := session.Get("currentLevel").(int)
+		if !ok {
+			levelId = 0
+			session.Set("currentLevel", 0)
+		}
+		level := stores.Levels[levelId]
 
-        // get messages
-        messagesJson := ctx.PostForm("messages")
-        messages := []openai.Message{}
+		// get messages
+		messagesJson := ctx.PostForm("messages")
+		messages := []openai.Message{}
 		if err := json.Unmarshal([]byte(messagesJson), &messages); err != nil {
 			fmt.Println("Error unmarshalling messages:", err)
 			return
 		}
 
-        validation := models.LevelValidation{Strategy: false, Answer: false, Ignore: false}
+		validation := models.LevelValidation{Strategy: false, Answer: false, Ignore: false}
 
 		// verify strategy
-        var err error
-        validation.Strategy, err = h.isValidStrategy(messages, level)
+		var err error
+		validation.Strategy, err = h.isValidStrategy(messages, level)
 		if err != nil {
 			fmt.Printf("error when validating strategy: %v", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-        // verify answer
-        validation.Answer, err = h.isValidAnswer(messages, level)
-        if err != nil {
-            fmt.Printf("error when validating answer: %v", err)
-            ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-            return
-        }
+		// verify answer
+		validation.Answer, err = h.isValidAnswer(messages, level)
+		if err != nil {
+			fmt.Printf("error when validating answer: %v", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 
-        // set nextlevel
-        nextLevelId := levelId;
-        if validation.Answer && validation.Strategy {
-            nextLevelId += 1
-        }
-        session.Set("currentLevel", nextLevelId)
-        session.Save()
+		// set nextlevel
+		nextLevelId := levelId
+		if validation.Answer && validation.Strategy {
+            ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
+			nextLevelId += 1
+		}
+		session.Set("currentLevel", nextLevelId)
+		session.Save()
 
-        // load results page
-        if nextLevelId == len(stores.Levels) {
-            ctx.Writer.Header().Set("HX-Retarget", "#page-container")
-            err = render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
-            if err != nil {
-                ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-            }
-        }
+		// load results page
+		if nextLevelId == len(stores.Levels) {
+			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
+			err = render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+			}
+		}
 
 		// render template
 		err = render(ctx, http.StatusOK, index.InstructionsPane(stores.Levels[nextLevelId], validation))
@@ -92,7 +93,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 }
 
 func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
-    prompt := fmt.Sprintf(`
+	prompt := fmt.Sprintf(`
         In the following i will give you a chat between the user and an ai assistant. The user got a task which he should solve using the ai.
 
         Chat of the user and the ai assistant:
@@ -106,10 +107,10 @@ func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Lev
         This attribute should contain a true value if the user solved the task and a false value if he didn't.
     `, h.getChatHistory(messages), level.Description)
 
-    jsonResponse, err := h.getVerificationResponse(prompt)
-    if err != nil {
-        return false, err
-    }
+	jsonResponse, err := h.getVerificationResponse(prompt)
+	if err != nil {
+		return false, err
+	}
 
 	return jsonResponse.Verified, nil
 }
@@ -132,10 +133,10 @@ func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.L
         This attribute should contain a true value if the user used the right strategy and a false value if he didn't.
     `, h.getChatHistory(messages), level.Description, level.Strategy)
 
-    jsonResponse, err := h.getVerificationResponse(prompt)
-    if err != nil {
-        return false, err
-    }
+	jsonResponse, err := h.getVerificationResponse(prompt)
+	if err != nil {
+		return false, err
+	}
 
 	return jsonResponse.Verified, nil
 }
@@ -159,10 +160,10 @@ func (h *LevelHandler) getVerificationResponse(prompt string) (*models.Verificat
 		return nil, fmt.Errorf("failed to parse ai response '%s' to object: %v", trimmed, err)
 	}
 
-    return &jsonResponse, nil
+	return &jsonResponse, nil
 }
 
-func (h *LevelHandler) getChatHistory(messages []openai.Message) (string) {
+func (h *LevelHandler) getChatHistory(messages []openai.Message) string {
 	var chatHistory string
 
 	for _, message := range messages {
@@ -178,7 +179,7 @@ func (h *LevelHandler) getChatHistory(messages []openai.Message) (string) {
 		chatHistory = chatHistory + fmt.Sprintf("'%s'", message.Content)
 	}
 
-    return chatHistory
+	return chatHistory
 }
 
 func (h *LevelHandler) trimResponse(response string) (string, error) {
