@@ -26,6 +26,7 @@ func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
 
         // redirect
         ctx.Writer.Header().Set("HX-Redirect", "/")
+        ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
         ctx.Status(http.StatusOK)
 	}
 }
