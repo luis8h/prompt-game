@@ -32,7 +32,7 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
 
 document.querySelector("#prompt-input").addEventListener("keydown", function(event) {
     const button = document.querySelector("#send-button");
-    if (event.keyCode == 13) {
+    if (event.keyCode == 13 && !event.shiftKey) {
         button.click();
     }
 });
