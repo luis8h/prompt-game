@@ -32,15 +32,17 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
 
 document.querySelector("#prompt-input").addEventListener("keydown", function(event) {
     const button = document.querySelector("#send-button");
-    if (event.keyCode == 13 && !event.shiftKey) {
+    if (event.keyCode === 13 && !event.shiftKey) {
+        event.preventDefault();
         button.click();
+        return
     }
+    adjustHeight(event.target);
 });
 
-function resetHistory() {
-    localStorage.setItem("message-history", JSON.stringify([]));
-    htmx.trigger(document.body, "reset-trigger");
-}
+document.querySelector("#prompt-input").addEventListener("input", function(event) {
+    adjustHeight(event.target); // Adjust height on input as usual
+});
 
 function getMessageHistory() {
     const messageHistory = localStorage.getItem("message-history");
@@ -49,4 +51,18 @@ function getMessageHistory() {
         messages = JSON.parse(messageHistory);
     }
     return messages
+}
+
+function resetHistory() {
+    localStorage.setItem("message-history", JSON.stringify([]));
+}
+
+window.onResetClick = function () {
+    resetHistory()
+    htmx.trigger(document.body, "reset-trigger");
+};
+
+function adjustHeight(textarea) {
+    textarea.style.height = 'auto'; // Reset height to recalculate
+    textarea.style.height = textarea.scrollHeight + 'px'; // Set height to fit content
 }
