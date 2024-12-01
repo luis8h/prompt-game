@@ -19,15 +19,15 @@ func NewResultHandler() *PromptHandler {
 
 func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-        // reset levelid
-        session := sessions.Default(ctx)
-        session.Set("currentLevel", 0)
-        session.Save()
+		// reset levelid
+		session := sessions.Default(ctx)
+		session.Set("currentLevel", 0)
+		session.Save()
 
-        // redirect
-        ctx.Writer.Header().Set("HX-Redirect", "/")
-        ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
-        ctx.Status(http.StatusOK)
+		// redirect
+		ctx.Writer.Header().Set("HX-Redirect", "/")
+		ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
+		ctx.Status(http.StatusOK)
 	}
 }
 
