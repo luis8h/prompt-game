@@ -26,6 +26,14 @@ templ LevelHtml(level models.Level) {
     >
         Submit
     </button>
+    <button
+        id="reset-button"
+        type="button"
+        class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+        onclick="onResetClick()"
+    >
+        Reset
+    </button>
 }
 
 templ LevelFeedbackHtml(validStrategy bool, validAnswer bool) {
