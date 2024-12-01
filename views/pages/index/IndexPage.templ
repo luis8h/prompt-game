@@ -5,14 +5,13 @@ import (
 )
 
 templ Index(level models.Level) {
-    <div id="page-container" class="bg-gray-100 h-screen overflow-hidden">
+    <div class="bg-primary h-screen overflow-hidden">
         <div class="grid grid-cols-2 h-full">
             <div class="h-full overflow-hidden">
-                @ChatPane()
+                @InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
             </div>
             <div class="h-full overflow-hidden">
-                @InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore:
-                true})
+                @ChatPane()
             </div>
         </div>
         <script>hljs.highlightAll();</script>
