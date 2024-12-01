@@ -29,4 +29,5 @@ func (app *Config) Routes() {
     // result
     resultHandler := handlers.NewResultHandler()
     app.Router.GET("/result", resultHandler.GetResult())
+    app.Router.GET("/result/restart", resultHandler.GetResultRestart())
 }

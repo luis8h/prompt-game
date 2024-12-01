@@ -36,6 +36,7 @@ func (h *IndexHandler) IndexPage() gin.HandlerFunc {
             if err != nil {
 			    ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
             }
+            return
         }
 
 		// render page

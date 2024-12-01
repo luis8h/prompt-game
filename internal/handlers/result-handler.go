@@ -6,6 +6,7 @@ import (
 	"prompt-game/views"
 	"prompt-game/views/pages/result"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +15,19 @@ type ResultHandler struct {
 
 func NewResultHandler() *PromptHandler {
 	return &PromptHandler{}
+}
+
+func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+        // reset levelid
+        session := sessions.Default(ctx)
+        session.Set("currentLevel", 0)
+        session.Save()
+
+        // redirect
+        ctx.Writer.Header().Set("HX-Redirect", "/")
+        ctx.Status(http.StatusOK)
+	}
 }
 
 func (h *PromptHandler) GetResult() gin.HandlerFunc {
