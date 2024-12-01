@@ -1,0 +1,20 @@
+package index
+
+import (
+	"prompt-game/internal/models"
+)
+
+templ Index(level models.Level) {
+    <div id="page-container" class="bg-gray-100 h-screen overflow-hidden">
+        <div class="grid grid-cols-2 h-full">
+            <div class="h-full overflow-hidden">
+                @ChatPane()
+            </div>
+            <div class="h-full overflow-hidden">
+                @InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore:
+                true})
+            </div>
+        </div>
+        <script>hljs.highlightAll();</script>
+    </div>
+}

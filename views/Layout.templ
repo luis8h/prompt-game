@@ -1,11 +1,6 @@
 package views
 
-import (
-"prompt-game/internal/models"
-"prompt-game/views/components"
-)
-
-templ Index(level models.Level) {
+templ Layout(page templ.Component) {
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,16 +18,10 @@ templ Index(level models.Level) {
     <title>prompt-game</title>
 </head>
 
-<body class="bg-gray-100 h-screen overflow-hidden">
-    <div class="grid grid-cols-2 h-full">
-        <div class="h-full overflow-hidden">
-            @components.ChatPane()
-        </div>
-        <div class="h-full overflow-hidden">
-            @components.InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
-        </div>
+<body>
+    <div id="page-container">
+        @page
     </div>
-    <script>hljs.highlightAll();</script>
 </body>
 
 </html>

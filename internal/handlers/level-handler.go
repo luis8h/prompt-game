@@ -8,7 +8,9 @@ import (
 	"prompt-game/external/openai"
 	"prompt-game/internal/models"
 	"prompt-game/internal/stores"
-	"prompt-game/views/components"
+	"prompt-game/views"
+	"prompt-game/views/pages/index"
+	"prompt-game/views/pages/result"
 	"strings"
 
 	"github.com/gin-contrib/sessions"
@@ -51,7 +53,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
         var err error
         validation.Strategy, err = h.isValidStrategy(messages, level)
 		if err != nil {
-			fmt.Println("error when validating strategy: %v", err)
+			fmt.Printf("error when validating strategy: %v", err)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -59,7 +61,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
         // verify answer
         validation.Answer, err = h.isValidAnswer(messages, level)
         if err != nil {
-            fmt.Println("error when validating answer: %v", err)
+            fmt.Printf("error when validating answer: %v", err)
             ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
             return
         }
@@ -72,8 +74,17 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
         session.Set("currentLevel", nextLevelId)
         session.Save()
 
+        // load results page
+        if nextLevelId == len(stores.Levels) {
+            ctx.Writer.Header().Set("HX-Retarget", "#page-container")
+            err = render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+            if err != nil {
+                ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+            }
+        }
+
 		// render template
-		err = render(ctx, http.StatusOK, components.InstructionsPane(stores.Levels[nextLevelId], validation))
+		err = render(ctx, http.StatusOK, index.InstructionsPane(stores.Levels[nextLevelId], validation))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
