@@ -5,12 +5,12 @@ import (
 )
 
 templ Index(level models.Level) {
-    <div class="bg-primary h-screen overflow-hidden">
+    <div class="bg-primary h-screen">
         <div class="grid space-x-20 grid-cols-2 h-full">
-            <div class="h-full overflow-hidden">
+            <div class="h-full">
                 @InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
             </div>
-            <div class="h-full overflow-hidden">
+            <div class="h-full" data-simplebar>
                 @ChatPane()
             </div>
         </div>

@@ -11,10 +11,10 @@ type Message struct {
 }
 
 templ ChatPane() {
-	<div class="pt-4 pr-20 flex flex-col w-full h-full">
+	<div class="pt-4 pr-20 flex flex-col w-full h-full overflow-scroll">
         <div
             id="chat"
-            class="bg-primary flex-grow overflow-y-auto space-y-4"
+            class="bg-primary flex-grow space-y-4"
             hx-post="/history"
             hx-trigger="load, reset-trigger from:body"
             hx-swap="innerHTML"
@@ -53,7 +53,9 @@ templ ChatPane() {
 templ ChatHistory(messages []Message) {
 	<div
         id="chat-history"
-        class="flex-grow overflow-y-auto space-y-4"
+        class="flex-grow space-y-4 h-full"
+        style="overflow: scroll;"
+        data-simplebar
     >
 		for _, message := range messages {
 			@ChatMessage(message)
