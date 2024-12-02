@@ -16,6 +16,7 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
         const userMessage = promptInput.value
         messages.push({ role: "user", content: userMessage })
         promptInput.value = "";
+        adjustHeight(promptInput)
 
         fetch("/prompt", {
             method: "POST",

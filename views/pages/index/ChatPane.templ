@@ -11,23 +11,23 @@ type Message struct {
 }
 
 templ ChatPane() {
-	<div class="flex flex-col w-full h-full rounded-lg">
+	<div class="p-4 flex flex-col w-full h-full rounded-lg">
         <div
             id="chat"
-            class="bg-primary flex-grow overflow-y-auto px-12 space-y-4"
+            class="bg-primary flex-grow overflow-y-auto space-y-4"
             hx-post="/history"
             hx-trigger="load, reset-trigger from:body"
             hx-swap="innerHTML"
         >
         </div>
-		<div class="p-4 px-12">
+		<div class="p-4 pt-0">
 			<div class="flex items-end bg-secondary rounded-xl">
 				<textarea
 					id="prompt-input"
 					name="message"
 					placeholder="Type your message..."
                     style="max-height: 50rem; border: none !important;"
-					class="bg-secondary no-scroll flex-grow text-white rounded-xl px-4 py-2 resize-none outline-none rounded-r-none"
+					class="text-xl bg-secondary no-scroll flex-grow text-white rounded-xl px-4 py-2 resize-none outline-none rounded-r-none"
 					rows="1"
 				></textarea>
 				<button
@@ -39,8 +39,8 @@ templ ChatPane() {
 					hx-trigger="click, hx:afterRequest:send-prompt"
 					class="px-4 py-2 text-white focus:outline-none"
 				>
-                    <div class="rounded-xl bg-highlight p-1 text-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-5">
+                    <div class="rounded-xl bg-highlight p-1 text-primary hover:bg-primary hover:text-highlight duration-300 transition-all hover:transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
                         </svg>
                     </div>
@@ -53,7 +53,7 @@ templ ChatPane() {
 templ ChatHistory(messages []Message) {
 	<div
         id="chat-history"
-        class="flex-grow overflow-y-auto space-y-4"
+        class="p-4 flex-grow overflow-y-auto space-y-4"
     >
 		for _, message := range messages {
 			@ChatMessage(message)
@@ -79,8 +79,8 @@ func renderMarkdown(content string) (string, error) {
 
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
-		<div class={"p-3 rounded-lg text-textcolor", templ.KV("bg-secondary", IsUser(message.Role))} style="max-width: 80%">
-            <div class="text-sm">
+		<div class={"p-3 rounded-lg text-textcolor", templ.KV("bg-secondary", IsUser(message.Role))}>
+            <div class="text-lg">
                 @templ.Raw(renderMarkdown(message.Content))
             </div>
 		</div>
