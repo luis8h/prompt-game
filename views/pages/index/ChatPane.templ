@@ -11,7 +11,7 @@ type Message struct {
 }
 
 templ ChatPane() {
-	<div class="p-4 flex flex-col w-full h-full rounded-lg">
+	<div class="pt-4 pr-20 flex flex-col w-full h-full">
         <div
             id="chat"
             class="bg-primary flex-grow overflow-y-auto space-y-4"
@@ -21,7 +21,7 @@ templ ChatPane() {
         >
         </div>
 		<div class="p-4 pt-0">
-			<div class="flex items-end bg-secondary rounded-xl">
+			<div class="flex items-end bg-secondary rounded-lg">
 				<textarea
 					id="prompt-input"
 					name="message"
@@ -37,7 +37,7 @@ templ ChatPane() {
 					hx-swap="beforeend"
 					hx-include="#prompt-input"
 					hx-trigger="click, hx:afterRequest:send-prompt"
-					class="px-4 py-2 text-white focus:outline-none"
+					class="py-2 text-white focus:outline-none"
 				>
                     <div class="rounded-xl bg-highlight p-1 text-primary hover:bg-primary hover:text-highlight duration-300 transition-all hover:transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-6">
@@ -53,7 +53,7 @@ templ ChatPane() {
 templ ChatHistory(messages []Message) {
 	<div
         id="chat-history"
-        class="p-4 flex-grow overflow-y-auto space-y-4"
+        class="flex-grow overflow-y-auto space-y-4"
     >
 		for _, message := range messages {
 			@ChatMessage(message)
@@ -79,7 +79,7 @@ func renderMarkdown(content string) (string, error) {
 
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
-		<div class={"p-3 rounded-lg text-textcolor", templ.KV("bg-secondary", IsUser(message.Role))}>
+		<div class={"rounded-xl text-textcolor", templ.KV("p-3 bg-secondary", IsUser(message.Role))}>
             <div class="text-lg">
                 @templ.Raw(renderMarkdown(message.Content))
             </div>

@@ -3,7 +3,7 @@ package index
 import "prompt-game/internal/models"
 
 templ InstructionsPane(level models.Level, validation models.LevelValidation) {
-	<div id="instruction-pane" class="p-4 h-full">
+	<div id="instruction-pane" class="pl-20 h-full">
 		@LevelHtml(level)
 		if (!validation.Strategy || !validation.Answer) && !validation.Ignore {
 			@LevelFeedbackHtml(validation.Strategy, validation.Answer)

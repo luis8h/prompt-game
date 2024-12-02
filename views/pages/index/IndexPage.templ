@@ -6,7 +6,7 @@ import (
 
 templ Index(level models.Level) {
     <div class="bg-primary h-screen overflow-hidden">
-        <div class="grid grid-cols-2 h-full">
+        <div class="grid space-x-20 grid-cols-2 h-full">
             <div class="h-full overflow-hidden">
                 @InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
             </div>
