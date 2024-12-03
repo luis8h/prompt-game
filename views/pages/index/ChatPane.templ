@@ -18,6 +18,7 @@ templ ChatPane() {
 			hx-post="/history"
 			hx-trigger="load, reset-trigger from:body"
 			hx-swap="innerHTML"
+            hx-on="htmx:afterSwap:scrollChatToTop()"
 			data-simplebar
 			data-simplebar-auto-hide="false"
 		></div>
