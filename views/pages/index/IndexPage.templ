@@ -1,8 +1,16 @@
 package index
 
+import "prompt-game/views/components"
 
 templ IndexPage() {
-	<div class="bg-primary h-screen">
-        Willkommen
-	</div>
+<div class="bg-primary h-screen flex flex-col space-y-8 items-center justify-center">
+    <h2 class="text-7xl text-textcolor">Welcome to the game!</h2>
+    <div>
+        @components.Button1() {
+        <div class="p-4">
+            <p class="font-bold text-xl">Start Game</p>
+        </div>
+        }
+    </div>
+</div>
 }

@@ -3,6 +3,7 @@ package game
 import (
 	"bytes"
 	"github.com/yuin/goldmark"
+    "prompt-game/views/components"
 )
 
 type Message struct {
@@ -32,7 +33,7 @@ templ ChatPane() {
 					class="text-xl bg-secondary no-scroll flex-grow text-white rounded-xl px-2 py-2 resize-none outline-none rounded-r-none"
 					rows="1"
 				></textarea>
-				<button
+				<div
 					id="send-button"
 					hx-post="/message/user"
 					hx-target="#chat-history"
@@ -41,21 +42,19 @@ templ ChatPane() {
 					hx-trigger="click, hx:afterRequest:send-prompt"
 					class="py-2 px-2 text-white focus:outline-none"
 				>
-					<div
-						class="rounded-xl bg-highlight p-1 text-primary hover:bg-primary hover:text-highlight duration-300 transition-all hover:transition-all"
-					>
+					@components.Button1() {
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke-width="3"
 							stroke="currentColor"
-							class="size-6"
+							class="size-5"
 						>
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"></path>
 						</svg>
-					</div>
-				</button>
+                    }
+				</div>
 			</div>
 		</div>
 	</div>
