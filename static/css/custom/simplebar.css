@@ -1,0 +1,15 @@
+.simplebar-scrollbar::before {
+    background-color: #002233 !important;
+}
+
+/* hide default scrollbar on simplebar elements */
+[data-simplebar]::-webkit-scrollbar {
+    display: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+/* fix too large simplebar placeholdewr */
+.simplebar-placeholder {
+    display: none;
+}
+

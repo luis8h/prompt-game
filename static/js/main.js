@@ -67,3 +67,21 @@ function adjustHeight(textarea) {
     textarea.style.height = 'auto'; // Reset height to recalculate
     textarea.style.height = textarea.scrollHeight + 'px'; // Set height to fit content
 }
+
+
+// fix simple bar not working with htmx because the content is swapped out and not reinitialized
+document.addEventListener("htmx:afterSwap", function (event) {
+    const swappedContent = event.detail.target;
+    if (swappedContent.hasAttribute("data-simplebar")) {
+        reinitializeSimplebar(swappedContent);
+    }
+    swappedContent.querySelectorAll("[data-simplebar]").forEach((element) => {
+        reinitializeSimplebar(element);
+    });
+});
+function reinitializeSimplebar(element) {
+    if (SimpleBar.instances.has(element)) {
+        SimpleBar.instances.get(element).unMount();
+    }
+    new SimpleBar(element, { autoHide: false });
+}

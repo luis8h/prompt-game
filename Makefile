@@ -1,6 +1,6 @@
 .PHONY: tailwind-watch
 tailwind-watch:
-	npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
+	npx tailwindcss -i ./static/css/tailwind/input.css -o ./static/css/tailwind/output.css --watch
 
 # .PHONY: tailwind-build
 # tailwind-build:
