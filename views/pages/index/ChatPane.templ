@@ -14,7 +14,7 @@ templ ChatPane() {
 	<div class="pt-4 pr-20 h-full flex flex-col w-full overflow-hidden">
 		<div
 			id="chat"
-			class="bg-primary flex-grow space-y-4 overflow-y-auto text-white p-6"
+			class="bg-primary flex-grow space-y-4 overflow-y-auto text-white"
 			hx-post="/history"
 			hx-trigger="load, reset-trigger from:body"
 			hx-swap="innerHTML"
@@ -61,7 +61,7 @@ templ ChatPane() {
 }
 
 templ ChatHistory(messages []Message) {
-	<div id="chat-history" class="flex flex-col overflow-hidden space-y-8">
+	<div id="chat-history" class="flex flex-col overflow-hidden space-y-8 p-6">
 		for _, message := range messages {
 			@ChatMessage(message)
 		}
@@ -86,7 +86,7 @@ func renderMarkdown(content string) (string, error) {
 
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
-		<div class={ "rounded-xl text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
+		<div class={ "rounded-xl max-w-full text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
 			<div class="text-lg">
 				@templ.Raw(renderMarkdown(message.Content))
 			</div>
