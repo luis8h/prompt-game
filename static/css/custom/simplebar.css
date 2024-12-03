@@ -1,5 +1,5 @@
 .simplebar-scrollbar::before {
-    background: #75b8c7 !important;
+    background-color: #002233 !important;
 }
 
 /* hide default scrollbar on simplebar elements */
