@@ -15,6 +15,10 @@ func (app *Config) Routes() {
     indexHandler := handlers.NewIndexHandler()
     app.Router.GET("/", indexHandler.IndexPage())
 
+    // game
+    gameHandler := handlers.NewGameHandler()
+    app.Router.GET("/game", gameHandler.GetGamePage())
+
     // prompt
     promptHandler := handlers.NewPromptHandler(app.ApiKey)
     app.Router.POST("/message/assistant", promptHandler.PostMessageAssistant())

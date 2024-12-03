@@ -1,17 +1,8 @@
 package index
 
-import "prompt-game/internal/models"
 
-templ Index(level models.Level) {
+templ IndexPage() {
 	<div class="bg-primary h-screen">
-		<div class="grid grid-cols-2 space-x-20 h-full">
-			<div class="min-h-0 h-full">
-				@InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
-			</div>
-			<div class="min-h-0 h-full">
-				@ChatPane()
-			</div>
-		</div>
-		<script>hljs.highlightAll();</script>
+        Willkommen
 	</div>
 }

@@ -9,7 +9,7 @@ import (
 	"prompt-game/internal/models"
 	"prompt-game/internal/stores"
 	"prompt-game/views"
-	"prompt-game/views/pages/index"
+	"prompt-game/views/pages/game"
 	"prompt-game/views/pages/result"
 	"strings"
 
@@ -85,7 +85,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 		}
 
 		// render template
-		err = render(ctx, http.StatusOK, index.InstructionsPane(stores.Levels[nextLevelId], validation))
+		err = render(ctx, http.StatusOK, game.InstructionsPane(stores.Levels[nextLevelId], validation))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
