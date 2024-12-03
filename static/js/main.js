@@ -58,7 +58,15 @@ function resetHistory() {
     localStorage.setItem("message-history", JSON.stringify([]));
 }
 
-window.onResetClick = function () {
+window.scrollChatToTop = function() {
+    const simpleBar = SimpleBar.instances.get(document.getElementById("chat"));
+    if (simpleBar) {
+        const scrollElement = simpleBar.getScrollElement();
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+    }
+};
+
+window.onResetClick = function() {
     resetHistory()
     htmx.trigger(document.body, "reset-trigger");
 };
@@ -70,7 +78,7 @@ function adjustHeight(textarea) {
 
 
 // fix simple bar not working with htmx because the content is swapped out and not reinitialized
-document.addEventListener("htmx:afterSwap", function (event) {
+document.addEventListener("htmx:afterSwap", function(event) {
     const swappedContent = event.detail.target;
     if (swappedContent.hasAttribute("data-simplebar")) {
         reinitializeSimplebar(swappedContent);
