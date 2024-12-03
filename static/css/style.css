@@ -1,6 +1,0 @@
-.simplebar-scrollbar::before {
-    background-color: red !important;
-}
-.simplebar-track.simplebar-vertical .simplebar-scrollbar:before {
-       background-image: linear-gradient( yellow , red) !important;
-}
