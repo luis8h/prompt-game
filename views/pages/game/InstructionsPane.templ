@@ -17,6 +17,9 @@ templ LevelHtml(level models.Level, validation models.LevelValidation) {
 			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
 			<div class="rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
 				<p class="text-textcolor text-lg">{ level.Description }</p>
+				<div id="validation-indicator" class="htmx-indicator">
+					@components.DotLoading(6)
+				</div>
 				<div class="flex flex-row justify-between">
 					<div class="">
 						@LevelFeedbackHtml(validation)
@@ -32,6 +35,7 @@ templ LevelHtml(level models.Level, validation models.LevelValidation) {
 							hx-post="/level/submit"
 							hx-swap="outerHTML"
 							hx-target="#instruction-pane"
+							hx-indicator="#validation-indicator"
 							hx-vals="js:{messages: localStorage.getItem('message-history')}"
 						>
 							@components.Button1() {
