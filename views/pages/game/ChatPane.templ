@@ -25,13 +25,13 @@ templ ChatPane() {
 			data-simplebar-auto-hide="false"
 		></div>
 		<div class="flex-none p-4 pt-0">
-			<div class="flex items-end bg-secondary rounded-lg">
+			<div class="flex items-center justify-center bg-secondary rounded-lg">
 				<textarea
 					id="prompt-input"
 					name="message"
 					placeholder="Type your message..."
 					style="max-height: 50rem; border: none !important;"
-					class="text-xl bg-secondary no-scroll flex-grow text-white rounded-xl px-2 py-2 resize-none outline-none rounded-r-none"
+					class="placeholder:text-secondary text-xl bg-secondary no-scroll flex-grow text-white rounded-xl px-2 py-2 resize-none outline-none rounded-r-none"
 					rows="1"
 				></textarea>
 				<div
@@ -44,16 +44,7 @@ templ ChatPane() {
 					class="py-2 px-2 text-white focus:outline-none"
 				>
 					@components.Button1() {
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="3"
-							stroke="currentColor"
-							class="size-5"
-						>
-							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"></path>
-						</svg>
+                        @components.SendIcond(5)
 					}
 				</div>
 			</div>
