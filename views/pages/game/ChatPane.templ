@@ -1,8 +1,9 @@
-package index
+package game
 
 import (
 	"bytes"
 	"github.com/yuin/goldmark"
+    "prompt-game/views/components"
 )
 
 type Message struct {
@@ -14,7 +15,7 @@ templ ChatPane() {
 	<div class="pt-4 pr-20 h-full flex flex-col w-full overflow-hidden">
 		<div
 			id="chat"
-			class="bg-primary flex-grow space-y-4 overflow-y-auto text-white p-6"
+			class="bg-primary flex-grow space-y-4 overflow-y-auto text-white"
 			hx-post="/history"
 			hx-trigger="load, reset-trigger from:body"
 			hx-swap="innerHTML"
@@ -32,7 +33,7 @@ templ ChatPane() {
 					class="text-xl bg-secondary no-scroll flex-grow text-white rounded-xl px-2 py-2 resize-none outline-none rounded-r-none"
 					rows="1"
 				></textarea>
-				<button
+				<div
 					id="send-button"
 					hx-post="/message/user"
 					hx-target="#chat-history"
@@ -41,28 +42,26 @@ templ ChatPane() {
 					hx-trigger="click, hx:afterRequest:send-prompt"
 					class="py-2 px-2 text-white focus:outline-none"
 				>
-					<div
-						class="rounded-xl bg-highlight p-1 text-primary hover:bg-primary hover:text-highlight duration-300 transition-all hover:transition-all"
-					>
+					@components.Button1() {
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke-width="3"
 							stroke="currentColor"
-							class="size-6"
+							class="size-5"
 						>
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"></path>
 						</svg>
-					</div>
-				</button>
+                    }
+				</div>
 			</div>
 		</div>
 	</div>
 }
 
 templ ChatHistory(messages []Message) {
-	<div id="chat-history" class="flex flex-col overflow-hidden space-y-8">
+	<div id="chat-history" class="flex flex-col overflow-hidden space-y-8 p-6">
 		for _, message := range messages {
 			@ChatMessage(message)
 		}
@@ -87,7 +86,7 @@ func renderMarkdown(content string) (string, error) {
 
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
-		<div class={ "rounded-xl text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
+		<div class={ "rounded-xl max-w-full text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
 			<div class="text-lg">
 				@templ.Raw(renderMarkdown(message.Content))
 			</div>

@@ -1,17 +1,16 @@
 package index
 
-import "prompt-game/internal/models"
+import "prompt-game/views/components"
 
-templ Index(level models.Level) {
-	<div class="bg-primary h-screen">
-		<div class="grid grid-cols-2 space-x-20 h-full">
-			<div class="min-h-0 h-full">
-				@InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true})
-			</div>
-			<div class="min-h-0 h-full">
-				@ChatPane()
-			</div>
-		</div>
-		<script>hljs.highlightAll();</script>
-	</div>
+templ IndexPage() {
+<div class="bg-primary h-screen flex flex-col space-y-16 items-center justify-center">
+    <h2 class="text-7xl text-textcolor">Welcome to the game!</h2>
+    <a href="/game">
+        @components.Button1() {
+        <div class="p-3">
+            <p class="font-bold text-2xl">Start Game</p>
+        </div>
+        }
+    </a>
+</div>
 }

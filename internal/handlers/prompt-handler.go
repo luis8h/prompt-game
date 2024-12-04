@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
-	"prompt-game/views/pages/index"
+	"prompt-game/views/pages/game"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,13 +24,13 @@ func (h *PromptHandler) PostHistory() gin.HandlerFunc {
     return func(ctx *gin.Context) {
         messagesJson := ctx.PostForm("messages")
 
-        messages := []index.Message{}
+        messages := []game.Message{}
 		if err := json.Unmarshal([]byte(messagesJson), &messages); err != nil {
 			fmt.Println("Error unmarshalling messages:", err)
 			return
 		}
 
-        err := render(ctx, http.StatusOK, index.ChatHistory(messages))
+        err := render(ctx, http.StatusOK, game.ChatHistory(messages))
         if err != nil {
             ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
         }
@@ -46,9 +46,9 @@ func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
 			return
 		}
 
-		viewMessage := index.Message{Role: "user", Content: message}
+		viewMessage := game.Message{Role: "user", Content: message}
 
-		err := render(ctx, http.StatusOK, index.ChatMessage(viewMessage))
+		err := render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
@@ -64,9 +64,9 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 			return
 		}
 
-		viewMessage := index.Message{Role: "assistant", Content: message}
+		viewMessage := game.Message{Role: "assistant", Content: message}
 
-		err := render(ctx, http.StatusOK, index.ChatMessage(viewMessage))
+		err := render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
