@@ -1,4 +1,3 @@
-document.body.addEventListener("resetChatHistory", resetHistory);
 
 document.body.addEventListener("htmx:configRequest", function(evt) {
     if (evt.detail.target.id === "chat") {
@@ -64,6 +63,7 @@ function getMessageHistory() {
 
 function resetHistory() {
     localStorage.setItem("message-history", JSON.stringify([]));
+    htmx.trigger(document.body, "reset-trigger");
 }
 
 window.scrollChatToTop = function() {
@@ -77,10 +77,9 @@ window.scrollChatToTop = function() {
     }
 };
 
-window.onResetClick = function() {
-    resetHistory()
-    htmx.trigger(document.body, "reset-trigger");
-};
+window.onResetClick = resetHistory()
+
+document.body.addEventListener("resetChatHistory", resetHistory);
 
 function adjustHeight(textarea) {
     textarea.style.height = 'auto'; // Reset height to recalculate
