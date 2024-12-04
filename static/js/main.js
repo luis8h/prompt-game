@@ -9,6 +9,9 @@ document.body.addEventListener("htmx:configRequest", function(evt) {
 
 document.body.addEventListener("htmx:afterRequest", function(evt) {
     if (evt.detail.pathInfo.requestPath === "/message/user") {
+        document.querySelector("#chat-loading").style.display = "block";
+        document.querySelector("#send-button button").disabled = true
+        scrollChatToTop();
         const promptInput = document.querySelector("#prompt-input");
 
         let messages = getMessageHistory();
@@ -24,6 +27,8 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
         })
             .then(response => response.json())
             .then(data => {
+                document.querySelector("#chat-loading").style.display = "none";
+                document.querySelector("#send-button button").disabled = false
                 htmx.ajax("POST", "/message/assistant", { values: { message: data.answer }, swap: "beforeend", target: "#chat-history" })
                 messages.push({ role: "assistant", content: data.answer })
                 localStorage.setItem("message-history", JSON.stringify(messages))

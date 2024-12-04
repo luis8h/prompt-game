@@ -3,7 +3,7 @@ package game
 import (
 	"bytes"
 	"github.com/yuin/goldmark"
-    "prompt-game/views/components"
+	"prompt-game/views/components"
 )
 
 type Message struct {
@@ -19,7 +19,7 @@ templ ChatPane() {
 			hx-post="/history"
 			hx-trigger="load, reset-trigger from:body"
 			hx-swap="innerHTML"
-            hx-on="htmx:afterSwap:scrollChatToTop()"
+			hx-on="htmx:afterSwap:scrollChatToTop()"
 			data-simplebar
 			data-simplebar-auto-hide="false"
 		></div>
@@ -53,7 +53,7 @@ templ ChatPane() {
 						>
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"></path>
 						</svg>
-                    }
+					}
 				</div>
 			</div>
 		</div>
@@ -65,6 +65,9 @@ templ ChatHistory(messages []Message) {
 		for _, message := range messages {
 			@ChatMessage(message)
 		}
+	</div>
+	<div id="chat-loading" class="hidden pb-8">
+		@components.DotLoading()
 	</div>
 }
 
