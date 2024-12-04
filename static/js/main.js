@@ -30,6 +30,9 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
                 document.querySelector("#chat-loading").style.display = "none";
                 document.querySelector("#send-button button").disabled = false
                 htmx.ajax("POST", "/message/assistant", { values: { message: data.answer }, swap: "beforeend", target: "#chat-history" })
+                    .then(() => {
+                        scrollChatToTop();
+                    });
                 messages.push({ role: "assistant", content: data.answer })
                 localStorage.setItem("message-history", JSON.stringify(messages))
             })
