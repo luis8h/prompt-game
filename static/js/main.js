@@ -70,7 +70,10 @@ window.scrollChatToTop = function() {
     const simpleBar = SimpleBar.instances.get(document.getElementById("chat"));
     if (simpleBar) {
         const scrollElement = simpleBar.getScrollElement();
-        scrollElement.scrollTop = scrollElement.scrollHeight;
+        scrollElement.scrollTo({
+            top: scrollElement.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 };
 
