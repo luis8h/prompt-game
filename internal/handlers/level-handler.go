@@ -71,6 +71,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 		if validation.Answer && validation.Strategy {
             ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
 			nextLevelId += 1
+            validation.Ignore = true
 		}
 		session.Set("currentLevel", nextLevelId)
 		session.Save()
