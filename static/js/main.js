@@ -77,7 +77,7 @@ window.scrollChatToTop = function() {
     }
 };
 
-window.onResetClick = resetHistory()
+window.onResetClick = resetHistory
 
 document.body.addEventListener("resetChatHistory", resetHistory);
 

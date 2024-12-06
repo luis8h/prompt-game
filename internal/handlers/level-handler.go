@@ -83,6 +83,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 			}
+            return
 		}
 
 		// render template
