@@ -82,7 +82,7 @@ func renderMarkdown(content string) (string, error) {
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
 		<div class={ "rounded-xl max-w-full text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
-			<div class="text-lg">
+			<div class="text-lg chat-answer">
 				@templ.Raw(renderMarkdown(message.Content))
 			</div>
 		</div>

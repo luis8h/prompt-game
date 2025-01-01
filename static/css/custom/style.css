@@ -1,2 +1,9 @@
 @import "./simplebar.css";
 @import "./highlightjs.css";
+
+.chat-answer h3 {
+    font-size: 23px;
+    font-weight: bold;
+    padding-bottom: 2rem;
+    padding-top: 2rem;
+}
