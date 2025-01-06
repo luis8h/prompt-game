@@ -1,9 +1,8 @@
 package game
 
 import (
-	"bytes"
-	"github.com/yuin/goldmark"
 	"prompt-game/views/components"
+    "prompt-game/utils"
 )
 
 type Message struct {
@@ -70,20 +69,11 @@ func IsUser(role string) bool {
 	return false
 }
 
-func renderMarkdown(content string) (string, error) {
-	var buf bytes.Buffer
-	md := goldmark.New()
-	if err := md.Convert([]byte(content), &buf); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
-}
-
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
 		<div class={ "rounded-xl max-w-full text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
 			<div class="text-lg chat-answer">
-				@templ.Raw(renderMarkdown(message.Content))
+				@templ.Raw(utils.RenderMarkdown(message.Content))
 			</div>
 		</div>
 		<script>hljs.highlightAll();</script>

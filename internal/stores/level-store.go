@@ -7,11 +7,13 @@ import (
 var Levels = []models.Level{
 	{
 		Title: "Introduce yourself",
-		Description: `
-			The king wants to have an introduction to a person before he meets somebody. This should be a text which should be written in formal medieval language.
-			He only trusts persons who can show that they are aware of good language.
-			Give the oracle some details about yourself and let it write this introduction letter. (you do not have to use your real identity, just make up something)
-		`,
+		// Description:
+		// 	"**test** dkdjfkaka<br>hallo\n\n" +
+		// 	"hallo\n",
+		Description:
+			"**The king wants to have** an introduction to a person before he meets somebody. This should be a text which should be written in formal medieval language.\n\n" +
+			"He only trusts persons who can show that they are aware of good language.\n\n" +
+			"Give the oracle some details about yourself and let it write this introduction letter. (you do not have to use your real identity, just make up something)\n\n",
 		Strategy: "RTF framework (role - task - format)",
 	},
 	// the king could accept the invitation, but to proof, that the oracle really could help the king, he asks to solve the riddle of the caesar cipher ->

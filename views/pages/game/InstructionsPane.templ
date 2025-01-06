@@ -3,6 +3,7 @@ package game
 import (
 	"prompt-game/internal/models"
 	"prompt-game/views/components"
+	"prompt-game/utils"
 )
 
 templ InstructionsPane(level models.Level, validation models.LevelValidation) {
@@ -16,7 +17,9 @@ templ LevelHtml(level models.Level, validation models.LevelValidation) {
 		<div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
 			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
 			<div class="rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
-				<p class="text-textcolor text-lg">{ level.Description }</p>
+                <div>
+                    <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Description))</p>
+                </div>
 				<div id="validation-indicator" class="htmx-indicator">
 					@components.DotLoading(6)
 				</div>
