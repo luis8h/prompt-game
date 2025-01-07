@@ -7,9 +7,6 @@ import (
 var Levels = []models.Level{
 	{
 		Title: "Introduce yourself",
-		// Description:
-		// 	"**test** dkdjfkaka<br>hallo\n\n" +
-		// 	"hallo\n",
 		Description:
 			"**The king wants to have** an introduction to a person before he meets somebody. This should be a text which should be written in formal medieval language.\n\n" +
 			"He only trusts persons who can show that they are aware of good language.\n\n" +

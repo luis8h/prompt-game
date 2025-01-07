@@ -4,6 +4,7 @@ import (
 	"prompt-game/internal/models"
 	"prompt-game/views/components"
 	"prompt-game/utils"
+    "github.com/invopop/ctxi18n/i18n"
 )
 
 templ InstructionsPane(level models.Level, validation models.LevelValidation) {
@@ -13,11 +14,14 @@ templ InstructionsPane(level models.Level, validation models.LevelValidation) {
 }
 
 templ LevelHtml(level models.Level, validation models.LevelValidation) {
+    test
+    {i18n.T(ctx, "hello")}
 	<div class="h-full flex flex-col justify-center">
+        <a href="/en">switch</a>
 		<div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
 			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
 			<div class="rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
-                <div>
+                <div class="text-textcolor">
                     <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Description))</p>
                 </div>
 				<div id="validation-indicator" class="htmx-indicator">
