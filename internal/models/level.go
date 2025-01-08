@@ -5,6 +5,7 @@ type TranslatedLevels []map[string]Level
 type Level struct {
 	Title       string
 	Description string
+    StrategyExplanation string
 	Strategy    string
 }
 

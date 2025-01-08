@@ -17,14 +17,28 @@ func GetLevel(levelID int, langCode string) models.Level {
 }
 
 var levels models.TranslatedLevels = models.TranslatedLevels{
+    // (https://medium.com/@balajibal/prompt-architectures-an-overview-of-structured-prompting-strategies-05b69a494956)
 	{
 		"en": {
-			Title: "Introduce yourself",
-			Description: "**The king wants to have** an introduction to a person before he meets somebody. This should be a text which should be written in formal medieval language.\n\n" +
-				"He only trusts persons who can show that they are aware of good language.\n\n" +
-				"Give the oracle some details about yourself and let it write this introduction letter. (you do not have to use your real identity, just make up something)\n\n",
-			Strategy: "RTF framework (role - task - format)",
+			Title: "The kings audience",
+			Description: "The king was told of you and your mystirical oracle. He is interested in this new technology and wants to meet you.\n\n" +
+                "But no one is allowed to meet the king personally before writing an brief introduction about oneself.\n\n" +
+                "This introduction gets checked by his employees and only if it is trustfull and written in **formal medieval english**.\n\n" +
+				"Use the oracle to write this letter. (Don't use your real identity. You can make sth. up or just let the oracle to generate the information))\n\n",
+            StrategyExplanation: "To get better results, you should give the oracle the context and details of the task, use **clear** instructions, give the oracle a **suiting role**.\n\n" +
+                "Also tell the oracle to **ask you questions** to get more information about the task if anything is unclear",
+			Strategy: "- the user should tell the llm to ask questions about the task if something is unclear. The user\n\n" +
+                "- the user should give the llm a role, and use clear instructions",
 		},
+        "de": {
+            Title: "Die königliche Audienz",
+            Description: "Der König hat von Ihnen und Ihrem mystischen Orakel gehört. Er ist an dieser neuen Technologie interessiert und möchte Sie treffen.\n\n" +
+                "Aber niemand darf den König persönlich treffen, bevor er eine kurze Einführung über sich selbst schreibt.\n\n" +
+                "Diese Vorstellung wird von den Angestellten des Königs geprüft und nur wenn sie vertrauenswürdig und in **förmlichem mittelalterlichem Deutch** verfasst ist.\n\n" +
+                "Benutze das Orakel, um diesen Brief zu schreiben. (Verwenden Sie nicht Ihre echte Identität. Du kannst dir etwas ausdenken oder die Informationen einfach vom Orakel generieren lassen))\n\n",
+            StrategyExplanation: "",
+            Strategy: "",
+        },
 	},
 	// the king could accept the invitation, but to proof, that the oracle really could help the king, he asks to solve the riddle of the caesar cipher ->
 	{
