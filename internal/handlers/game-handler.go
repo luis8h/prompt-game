@@ -21,6 +21,7 @@ func NewGameHandler() *GameHandler {
 func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
+        locale := getLocale(ctx)
 
 		// get current level
 		currentLevel, ok := session.Get("currentLevel").(int)
@@ -31,7 +32,7 @@ func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 		}
 
         // check for results
-        if currentLevel >= len(stores.Levels) {
+        if currentLevel >= stores.GetLevelCount() {
             err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
             if err != nil {
 			    ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
@@ -40,7 +41,7 @@ func (h *GameHandler) GetGamePage() gin.HandlerFunc {
         }
 
 		// render page
-		err := render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.Levels[currentLevel])))
+		err := render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale))))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

@@ -29,6 +29,7 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 
 func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+        locale := getLocale(ctx)
 
 		// get current level
 		session := sessions.Default(ctx)
@@ -37,7 +38,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 			levelId = 0
 			session.Set("currentLevel", 0)
 		}
-		level := stores.Levels[levelId]
+		level := stores.GetLevel(levelId, locale)
 
 		// get messages
 		messagesJson := ctx.PostForm("messages")
@@ -77,7 +78,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 		session.Save()
 
 		// load results page
-		if nextLevelId == len(stores.Levels) {
+		if nextLevelId == stores.GetLevelCount() {
 			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
 			err = render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
 			if err != nil {
@@ -87,7 +88,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 		}
 
 		// render template
-		err = render(ctx, http.StatusOK, game.InstructionsPane(stores.Levels[nextLevelId], validation))
+		err = render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), validation))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

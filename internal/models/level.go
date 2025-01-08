@@ -1,5 +1,7 @@
 package models
 
+type TranslatedLevels []map[string]Level
+
 type Level struct {
 	Title       string
 	Description string
