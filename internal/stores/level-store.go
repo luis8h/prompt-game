@@ -4,17 +4,6 @@ import (
 	"prompt-game/internal/models"
 )
 
-// var levels models.TranslatedLevels = models.TranslatedLevels{
-//     {
-//         "en": {Title: "Start", Description: "Start the game", Strategy: "Basic Strategy"},
-//         "de": {Title: "Start", Description: "Starte das Spiel", Strategy: "Grundstrategie"},
-//     },
-//     {
-//         "en": {Title: "Level 2", Description: "Explore the cave", Strategy: "Use a torch"},
-//         "de": {Title: "Level 2", Description: "Erkunde die Höhle", Strategy: "Benutze eine Fackel"},
-//     },
-// }
-
 func GetLevelCount() int {
 	return len(levels)
 }
@@ -49,7 +38,8 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			Strategy: "Generated Knowledge. First let the llm generate knowledge about a topic and then tell it the task.",
 		},
 	},
-
+    // get details from a text
+    // emotion prompting: joke for the royal clown (its about his career) -> maybe for task above emotion prompting and here lever?
 	{
 		"en": {
 			Title: "Caesar Cipher 2",
@@ -76,4 +66,5 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			Strategy: "Zero shot chain of thought strategy. Tell the llm to think/go step by step at the end of your prompt.",
 		},
 	},
+    // prompt injection to find out the origin of the oracle
 }
