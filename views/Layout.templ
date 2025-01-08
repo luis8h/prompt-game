@@ -1,35 +1,53 @@
 package views
 
+import (
+	"context"
+	"github.com/invopop/ctxi18n/i18n"
+)
+
+func isLocale(ctx context.Context, expected string) bool {
+	var locale = i18n.GetLocale(ctx)
+	if locale.Code().String() == expected {
+		return true
+	}
+	return false
+}
+
 templ Layout(page templ.Component) {
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <script src="https://unpkg.com/htmx.org@1.9.10"
-        integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="static/css/custom/style.css" />
-    <link rel="stylesheet" href="static/css/tailwind/output.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <title>prompt-game</title>
-
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/simplebar@latest/dist/simplebar.css"
-    />
-    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
-</head>
-
-<body>
-    <div id="page-container">
-        @page
-    </div>
-    <script type="module" src="static/js/main.js"></script>
-</body>
-
-</html>
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="stylesheet" href="static/css/custom/style.css"/>
+			<link rel="stylesheet" href="static/css/tailwind/output.css"/>
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet"/>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+			<title>prompt-game</title>
+			<link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css"/>
+			<script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
+		</head>
+		<body>
+			<div id="page-container">
+				@page
+			</div>
+			<div class="fixed top-4 right-4 z-50 rounded-lg shadow-lg">
+				<select
+					name="lang"
+					hx-post="/language"
+					hx-include="[name=lang]"
+					hx-trigger="change"
+					hx-swap="none"
+					hx-on="htmx:afterRequest:window.location.reload()"
+					class="bg-highlight block w-full py-2 px-4 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 ease-in-out"
+				>
+					<option selected?={ isLocale(ctx, "en" ) } value="en">English</option>
+					<option selected?={ isLocale(ctx, "de" ) } value="de">Deutsch</option>
+				</select>
+			</div>
+			<script type="module" src="static/js/main.js"></script>
+		</body>
+	</html>
 }

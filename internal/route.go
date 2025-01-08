@@ -15,6 +15,10 @@ func (app *Config) Routes() {
     indexHandler := handlers.NewIndexHandler()
     app.Router.GET("/", indexHandler.IndexPage())
 
+    // translation
+    translationHandler := handlers.NewTranslationHandler()
+    app.Router.POST("/language", translationHandler.PostLanguage())
+
     // game
     gameHandler := handlers.NewGameHandler()
     app.Router.GET("/game", gameHandler.GetGamePage())

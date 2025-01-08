@@ -1,16 +1,32 @@
 package index
 
-import "prompt-game/views/components"
+import (
+	"context"
+	"github.com/invopop/ctxi18n/i18n"
+	"prompt-game/views/components"
+)
+
+func isLocale(ctx context.Context, expected string) bool {
+	var locale = i18n.GetLocale(ctx)
+	if locale.Code().String() == expected {
+		return true
+	}
+	return false
+}
 
 templ IndexPage() {
-<div class="bg-primary h-screen flex flex-col space-y-16 items-center justify-center">
-    <h2 class="text-7xl text-textcolor">Welcome to the game!</h2>
-    <a href="/game">
-        @components.Button1() {
-        <div class="p-3">
-            <p class="font-bold text-2xl">Start Game</p>
-        </div>
-        }
-    </a>
-</div>
+	<div class="bg-primary h-screen flex flex-col space-y-16 items-center justify-center">
+		<h2 class="text-7xl text-textcolor">
+			{ i18n.T(ctx, "welcome") }
+		</h2>
+		<a href="/game">
+			@components.Button1() {
+				<div class="p-3">
+					<p class="font-bold text-2xl">
+						{ i18n.T(ctx, "start_game") }
+					</p>
+				</div>
+			}
+		</a>
+	</div>
 }
