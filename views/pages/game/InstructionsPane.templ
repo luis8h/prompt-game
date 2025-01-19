@@ -6,13 +6,13 @@ import (
 	"prompt-game/utils"
 )
 
-templ InstructionsPane(level models.Level, validation models.LevelValidation) {
+templ InstructionsPane(level models.Level, validation models.LevelValidation, withStrategy bool) {
 	<div id="instruction-pane" class="pl-20 h-full">
-		@LevelHtml(level, validation)
+		@LevelHtml(level, validation, withStrategy)
 	</div>
 }
 
-templ LevelHtml(level models.Level, validation models.LevelValidation) {
+templ LevelHtml(level models.Level, validation models.LevelValidation, withStrategy bool) {
 	<div class="h-full flex flex-col justify-center">
 		<div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
 			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
@@ -25,10 +25,12 @@ templ LevelHtml(level models.Level, validation models.LevelValidation) {
                     <div>
                         <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Task))</p>
                     </div>
+                    if withStrategy {
                     <br>
                     <div>
                         <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))</p>
                     </div>
+                    }
                 </div>
 				<div id="validation-indicator" class="htmx-indicator">
 					@components.DotLoading(6)

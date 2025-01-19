@@ -26,7 +26,24 @@ func (a *Api) GetAnswer(prompt string, messages []Message) (string, error) {
     return a.RequestApi(messages)
 }
 
+func (a *Api) RequestApiSystem(messages []Message, systemMessages []Message) (string, error) {
+	allMessages := append(systemMessages, messages...)
+	return a.RequestApi(allMessages)
+}
+
 func (a *Api) RequestApi(messages []Message) (string, error) {
+	// add system message
+	// systemMessage := Message{
+	// 	Role:    "system",
+	// 	Content: stores.FairySysPrompt,
+	// }
+	// messages = append([]Message{systemMessage}, messages...)
+	// systemMessage2 := Message{
+	// 	Role:    "system",
+	// 	Content: stores.BadSysPrompt,
+	// }
+	// messages = append([]Message{systemMessage2}, messages...)
+
 	requestBody := OpenAIRequest{
 		Model:    "gpt-4o-mini",
 		Messages: messages,

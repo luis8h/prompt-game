@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"prompt-game/external/openai"
+	"prompt-game/internal/stores"
 	"prompt-game/views/pages/game"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,24 +23,24 @@ func NewPromptHandler(apiKey string) *PromptHandler {
 }
 
 func (h *PromptHandler) PostHistory() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
-        messagesJson := ctx.PostForm("messages")
+	return func(ctx *gin.Context) {
+		messagesJson := ctx.PostForm("messages")
 
-        messages := []game.Message{}
+		messages := []game.Message{}
 		if err := json.Unmarshal([]byte(messagesJson), &messages); err != nil {
 			fmt.Println("Error unmarshalling messages:", err)
 			return
 		}
 
-        err := render(ctx, http.StatusOK, game.ChatHistory(messages))
-        if err != nil {
-            ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-        }
-    }
+		err := render(ctx, http.StatusOK, game.ChatHistory(messages))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
+	}
 }
 
 func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
 		message := ctx.PostForm("message")
 
 		if message == "" {
@@ -52,11 +54,11 @@ func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
-    }
+	}
 }
 
 func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
 		message := ctx.PostForm("message")
 
 		if message == "" {
@@ -70,27 +72,48 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
-    }
+	}
 }
 
 func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
-        var payload struct {
-            Messages []openai.Message `json:"messages"`
-        }
+	return func(ctx *gin.Context) {
+		var payload struct {
+			Messages []openai.Message `json:"messages"`
+		}
 
-        // Parse the JSON payload from the request
-        if err := ctx.ShouldBindJSON(&payload); err != nil {
-            fmt.Println("Error binding JSON:", err)
-            ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON payload"})
-            return
-        }
+		session := sessions.Default(ctx)
+		withStrategy, ok := session.Get("withStrategy").(bool)
+		if !ok {
+			withStrategy = true
+		}
 
-        // Validate that messages are present
-        if len(payload.Messages) == 0 {
-            ctx.JSON(http.StatusBadRequest, gin.H{"error": "messages field is empty"})
-            return
-        }
+		// set system messages
+		systemMessages := []openai.Message{
+			{
+				Role:    "system",
+				Content: stores.FeySysPrompt,
+			},
+		}
+
+		if !withStrategy {
+			systemMessages = append(systemMessages, openai.Message{
+				Role:    "system",
+				Content: stores.BadSysPrompt,
+			})
+		}
+
+		// Parse the JSON payload from the request
+		if err := ctx.ShouldBindJSON(&payload); err != nil {
+			fmt.Println("Error binding JSON:", err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON payload"})
+			return
+		}
+
+		// Validate that messages are present
+		if len(payload.Messages) == 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "messages field is empty"})
+			return
+		}
 
 		// openai api call
 		resp, err := h.api.RequestApi(payload.Messages)
@@ -99,6 +122,6 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 			return
 		}
 
-        ctx.JSON(http.StatusOK, gin.H{"answer": resp})
-    }
+		ctx.JSON(http.StatusOK, gin.H{"answer": resp})
+	}
 }
