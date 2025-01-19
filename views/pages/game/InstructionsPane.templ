@@ -18,7 +18,17 @@ templ LevelHtml(level models.Level, validation models.LevelValidation) {
 			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
 			<div class="text-textcolor rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
                 <div>
-                    <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Description))</p>
+                    <div>
+                        <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Description))</p>
+                    </div>
+                    <br>
+                    <div>
+                        <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Task))</p>
+                    </div>
+                    <br>
+                    <div>
+                        <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))</p>
+                    </div>
                 </div>
 				<div id="validation-indicator" class="htmx-indicator">
 					@components.DotLoading(6)

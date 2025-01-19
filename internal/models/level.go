@@ -3,10 +3,11 @@ package models
 type TranslatedLevels []map[string]Level
 
 type Level struct {
-	Title       string
-	Description string
-    StrategyExplanation string
-	Strategy    string
+	Title               string
+	Description         string
+	Task			 	string
+	StrategyExplanation string
+	StrategyValidation  string
 }
 
 type LevelValidation struct {

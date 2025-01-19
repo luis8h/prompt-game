@@ -134,7 +134,7 @@ func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.L
 
         Your reply should be a json string and **nothing else** which has an attribute called "verified".
         This attribute should contain a true value if the user used the right strategy and a false value if he didn't.
-    `, h.getChatHistory(messages), level.Description, level.Strategy)
+    `, h.getChatHistory(messages), level.Description, level.StrategyValidation)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
