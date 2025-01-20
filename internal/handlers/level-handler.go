@@ -27,12 +27,39 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 	}
 }
 
+func (h *LevelHandler) PostLevelNext() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		session := sessions.Default(ctx)
+        locale := getLocale(ctx)
+
+		session.Set("withStrategy", true)
+
+		levelId, ok := session.Get("currentLevel").(int)
+		if !ok {
+			levelId = 0
+			session.Set("currentLevel", 0)
+		}
+		level := stores.GetLevel(levelId, locale)
+
+		// render template
+		err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+		}
+	}
+}
+
 func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
         locale := getLocale(ctx)
+		session := sessions.Default(ctx)
+
+		withStrategy, ok := session.Get("withStrategy").(bool)
+		if !ok {
+			withStrategy = false
+		}
 
 		// get current level
-		session := sessions.Default(ctx)
 		levelId, ok := session.Get("currentLevel").(int)
 		if !ok {
 			levelId = 0
@@ -88,7 +115,7 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 		}
 
 		// render template
-		err = render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), validation))
+		err = render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), validation, withStrategy))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

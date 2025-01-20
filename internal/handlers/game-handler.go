@@ -21,26 +21,35 @@ func NewGameHandler() *GameHandler {
 func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-        locale := getLocale(ctx)
+		locale := getLocale(ctx)
 
 		// get current level
 		currentLevel, ok := session.Get("currentLevel").(int)
-		withStrategy := session.Get("withStrategy").(bool)
 		if !ok {
 			currentLevel = 0
 			session.Set("currentLevel", 0)
-			session.Set("withStrategy", false)
 			session.Save()
 		}
 
-        // check for results
-        if currentLevel >= stores.GetLevelCount() {
-            err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
-            if err != nil {
-			    ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-            }
-            return
-        }
+		withStrategyVal := session.Get("withStrategy")
+		var withStrategy bool
+		if withStrategyVal == nil {
+			withStrategy = false
+			session.Set("withStrategy", false)
+			session.Save()
+		} else {
+			withStrategy = withStrategyVal.(bool)
+		}
+
+
+		// check for results
+		if currentLevel >= stores.GetLevelCount() {
+			err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+			}
+			return
+		}
 
 		// render page
 		err := render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy)))

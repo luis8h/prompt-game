@@ -6,13 +6,13 @@ import (
 	"prompt-game/utils"
 )
 
-templ InstructionsPane(level models.Level, validation models.LevelValidation, withStrategy bool) {
+templ InstructionsPane(level models.Level, withStrategy bool) {
 	<div id="instruction-pane" class="pl-20 h-full">
-		@LevelHtml(level, validation, withStrategy)
+		@LevelHtml(level, withStrategy)
 	</div>
 }
 
-templ LevelHtml(level models.Level, validation models.LevelValidation, withStrategy bool) {
+templ LevelHtml(level models.Level, withStrategy bool) {
 	<div class="h-full flex flex-col justify-center">
 		<div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
 			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
@@ -37,7 +37,6 @@ templ LevelHtml(level models.Level, validation models.LevelValidation, withStrat
 				</div>
 				<div class="flex flex-row justify-between">
 					<div class="">
-						@LevelFeedbackHtml(validation)
 					</div>
 					<div class="flex flex-row space-x-4 justify-end">
 						<div id="reset-button" type="button" class="" onclick="onResetClick()">
@@ -47,14 +46,14 @@ templ LevelHtml(level models.Level, validation models.LevelValidation, withStrat
 						</div>
 						<div
 							id="submit-button"
-							hx-post="/level/submit"
+							hx-post="/level/next"
 							hx-swap="outerHTML"
 							hx-target="#instruction-pane"
 							hx-indicator="#validation-indicator"
 							hx-vals="js:{messages: localStorage.getItem('message-history')}"
 						>
 							@components.Button1() {
-								@components.CheckmarkIcon(6)
+                                <div>next</div>
 							}
 						</div>
 					</div>
