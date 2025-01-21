@@ -7,3 +7,8 @@
     padding-bottom: 2rem;
     padding-top: 2rem;
 }
+
+hr {
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+}

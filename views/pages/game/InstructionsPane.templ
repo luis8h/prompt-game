@@ -1,86 +1,104 @@
 package game
 
 import (
-	"prompt-game/internal/models"
-	"prompt-game/views/components"
-	"prompt-game/utils"
+"prompt-game/internal/models"
+"prompt-game/utils"
+"prompt-game/views/components"
+	"strconv"
+	"prompt-game/internal/stores"
 )
 
-templ InstructionsPane(level models.Level, withStrategy bool) {
-	<div id="instruction-pane" class="pl-20 h-full">
-		@LevelHtml(level, withStrategy)
-	</div>
+templ InstructionsPane(level models.Level, withStrategy bool, validation bool, levelId int) {
+<div id="instruction-pane" class="pl-20 h-full">
+    @LevelHtml(level, withStrategy, validation, levelId)
+</div>
 }
 
-templ LevelHtml(level models.Level, withStrategy bool) {
-	<div class="h-full flex flex-col justify-center">
-		<div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
-			<h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title }</h2>
-			<div class="text-textcolor rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
+templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId int) {
+<div class="h-full flex flex-col justify-center">
+    <div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
+        <h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title } { strconv.Itoa(levelId) }/{ strconv.Itoa(stores.GetLevelCount()) }</h2>
+        <div class="text-textcolor rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
+            <div>
+                <div class="text-textcolor text-xl font-bold">Story:</div>
                 <div>
-                    <div>
-                        <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Description))</p>
+                    <p class="text-textcolor text-lg">
+                        @templ.Raw(utils.RenderMarkdown(level.Description))
+                    </p>
+                </div>
+                <br />
+                <div class="text-textcolor text-xl font-bold">Task:</div>
+                <div>
+                    <p class="text-textcolor text-lg">
+                        @templ.Raw(utils.RenderMarkdown(level.Task))
+                    </p>
+                </div>
+                if withStrategy {
+                <br />
+                <div class="text-textcolor text-xl font-bold">Strategy:</div>
+                <div>
+                    <p class="text-textcolor text-lg">
+                        @templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))
+                    </p>
+                </div>
+                }
+            </div>
+            if !validation {
+            <div class="text-red-500">answer invalid</div>
+            }
+            <div id="validation-indicator" class="htmx-indicator">
+                @components.DotLoading(6)
+            </div>
+            <div class="flex flex-row justify-between">
+                <div class=""></div>
+                <div class="flex flex-row space-x-4 justify-end">
+                    <div id="reset-button" type="button" class="" onclick="onResetClick()">
+                        @components.Button1() {
+                        @components.ResetIcon(6)
+                        }
                     </div>
-                    <br>
-                    <div>
-                        <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.Task))</p>
+                    if !withStrategy && level.HasStrategy {
+                    <div id="submit-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
+                        hx-indicator="#validation-indicator"
+                        hx-vals="js:{messages: localStorage.getItem('message-history')}">
+                        @components.Button1() {
+                        <div>Try with Strategy</div>
+                        }
                     </div>
-                    if withStrategy {
-                    <br>
-                    <div>
-                        <p class="text-textcolor text-lg">@templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))</p>
+                    } else {
+                    <div id="submit-button" hx-post="/level/nextb" hx-swap="outerHTML" hx-target="#instruction-pane"
+                        hx-indicator="#validation-indicator"
+                        hx-vals="js:{messages: localStorage.getItem('message-history')}">
+                        @components.Button1() {
+                        <div>Submit</div>
+                        }
                     </div>
                     }
                 </div>
-				<div id="validation-indicator" class="htmx-indicator">
-					@components.DotLoading(6)
-				</div>
-				<div class="flex flex-row justify-between">
-					<div class="">
-					</div>
-					<div class="flex flex-row space-x-4 justify-end">
-						<div id="reset-button" type="button" class="" onclick="onResetClick()">
-							@components.Button1() {
-								@components.ResetIcon(6)
-							}
-						</div>
-						<div
-							id="submit-button"
-							hx-post="/level/next"
-							hx-swap="outerHTML"
-							hx-target="#instruction-pane"
-							hx-indicator="#validation-indicator"
-							hx-vals="js:{messages: localStorage.getItem('message-history')}"
-						>
-							@components.Button1() {
-                                <div>next</div>
-							}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
+</div>
 }
 
 templ LevelFeedbackHtml(validation models.LevelValidation) {
-	<div class="flex flex-row space-x-4">
-		if !validation.Ignore {
-			@ValidationCardHtml("Task", validation.Answer)
-			@ValidationCardHtml("Strategy", validation.Strategy)
-		}
-	</div>
+<div class="flex flex-row space-x-4">
+    if !validation.Ignore {
+    @ValidationCardHtml("Task", validation.Answer)
+    @ValidationCardHtml("Strategy", validation.Strategy)
+    }
+</div>
 }
 
 templ ValidationCardHtml(name string, valid bool) {
-	<div class="flex flex-row bg-primary p-2 space-x-2 rounded-xl w-fit">
-		<p class="text-textcolor font-bold">{ name }</p>
-		<div class="text-highlight">
-			if valid {
-				@components.CheckmarkIcon(6)
-			} else {
-				@components.XmarkIcon(6)
-			}
-		</div>
-	</div>
+<div class="flex flex-row bg-primary p-2 space-x-2 rounded-xl w-fit">
+    <p class="text-textcolor font-bold">{ name }</p>
+    <div class="text-highlight">
+        if valid {
+        @components.CheckmarkIcon(6)
+        } else {
+        @components.XmarkIcon(6)
+        }
+    </div>
+</div>
 }

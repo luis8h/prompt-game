@@ -27,37 +27,33 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 	}
 }
 
-func (h *LevelHandler) PostLevelNext() gin.HandlerFunc {
+func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-        locale := getLocale(ctx)
+		locale := getLocale(ctx)
 
 		session.Set("withStrategy", true)
+		session.Save()
 
 		levelId, ok := session.Get("currentLevel").(int)
 		if !ok {
 			levelId = 0
 			session.Set("currentLevel", 0)
+			session.Save()
 		}
-		level := stores.GetLevel(levelId, locale)
 
 		// render template
-		err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true))
+		err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, true, levelId))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
 	}
 }
 
-func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
+func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-        locale := getLocale(ctx)
 		session := sessions.Default(ctx)
-
-		withStrategy, ok := session.Get("withStrategy").(bool)
-		if !ok {
-			withStrategy = false
-		}
+		locale := getLocale(ctx)
 
 		// get current level
 		levelId, ok := session.Get("currentLevel").(int)
@@ -65,7 +61,6 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 			levelId = 0
 			session.Set("currentLevel", 0)
 		}
-		level := stores.GetLevel(levelId, locale)
 
 		// get messages
 		messagesJson := ctx.PostForm("messages")
@@ -75,98 +70,100 @@ func (h *LevelHandler) PostLevelSubmit() gin.HandlerFunc {
 			return
 		}
 
-		validation := models.LevelValidation{Strategy: false, Answer: false, Ignore: false}
-
-		// verify strategy
-		var err error
-		validation.Strategy, err = h.isValidStrategy(messages, level)
-		if err != nil {
-			fmt.Printf("error when validating strategy: %v", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
 		// verify answer
-		validation.Answer, err = h.isValidAnswer(messages, level)
-		if err != nil {
-			fmt.Printf("error when validating answer: %v", err)
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		valid := h.validateLevel(messages, stores.GetLevel(levelId, locale))
+
+		// render invalid template
+		if !valid {
+			// render template
+			err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId))
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
+			}
 			return
 		}
 
 		// set nextlevel
-		nextLevelId := levelId
-		if validation.Answer && validation.Strategy {
-            ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
-			nextLevelId += 1
-            validation.Ignore = true
-		}
+		nextLevelId := levelId + 1
 		session.Set("currentLevel", nextLevelId)
+		session.Set("withStrategy", false)
 		session.Save()
+
+		if (stores.GetLevel(nextLevelId, locale).ClearChatHistoryOnSubmit) {
+			ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
+		}
 
 		// load results page
 		if nextLevelId == stores.GetLevelCount() {
 			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
-			err = render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+			err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 			}
-            return
+			return
 		}
 
-		// render template
-		err = render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), validation, withStrategy))
+		// render next level
+		err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(nextLevelId, locale), false, true, nextLevelId))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}
 	}
 }
 
+func (h *LevelHandler) validateLevel(messages []openai.Message, level models.Level) (bool) {
+	if len(messages) == 0 {
+		return false
+	}
+
+	// verify answer
+	isAnswerValid, err := h.isValidAnswer(messages, level)
+	if err != nil {
+		fmt.Printf("error when validating answer: %v", err)
+		return false
+	}
+
+	if !level.HasStrategy {
+		return isAnswerValid;
+	}
+
+	// verify strategy
+	isStrategyValid, err := h.isValidStrategy(messages, level)
+	if err != nil {
+		fmt.Printf("error when validating strategy: %v", err)
+		return false
+	}
+
+	if isStrategyValid && isAnswerValid {
+		return true
+	}
+	return false
+}
+
 func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(`
-        In the following i will give you a chat between the user and an ai assistant. The user got a task which he should solve using the ai.
-
-        Chat of the user and the ai assistant:
-        %s
-
-        Task which should be solved by the user:
-        %s
-
-        Your task is to decide wether the user solved the task or he didn't.
-        Your reply should be a json string and **nothing else** which has an attribute called "verified".
-        This attribute should contain a true value if the user solved the task and a false value if he didn't.
-    `, h.getChatHistory(messages), level.Description)
+	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.FeyName, h.getChatHistory(messages), level.Task)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
 		return false, err
 	}
+
+	fmt.Printf("Answer prompt: %s\n", prompt)
+	fmt.Printf("Answer: %b\n", jsonResponse.Verified)
 
 	return jsonResponse.Verified, nil
 }
 
 func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(`
-        Background: I created a game, where the users can learn prompt engineering by solving different tasks using various prompting techniques.
-        Your task is to decide wether in the following chat between the user and the ai, a specific prompt engineering strategy was used by the user.
-
-        Chat of the user and the ai assistant:
-        %s
-
-        Task which should be solved by the user:
-        %s
-
-        Further information about the prompting strategy:
-        %s
-
-        Your reply should be a json string and **nothing else** which has an attribute called "verified".
-        This attribute should contain a true value if the user used the right strategy and a false value if he didn't.
-    `, h.getChatHistory(messages), level.Description, level.StrategyValidation)
+	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.FeyName, h.getChatHistory(messages), level.Task, level.StrategyValidation)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
 		return false, err
 	}
+
+	fmt.Printf("Strategy prompt: %s\n", prompt)
+	fmt.Printf("Strategy: %b\n", jsonResponse.Verified)
 
 	return jsonResponse.Verified, nil
 }

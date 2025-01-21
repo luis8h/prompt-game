@@ -2,11 +2,11 @@ package game
 
 import "prompt-game/internal/models"
 
-templ GamePage(level models.Level, withStrategy bool) {
+templ GamePage(level models.Level, withStrategy bool, levelId int) {
 	<div class="bg-primary h-screen">
 		<div class="grid grid-cols-2 space-x-20 h-full">
 			<div class="min-h-0 h-full">
-				@InstructionsPane(level, models.LevelValidation{Strategy: false, Answer: false, Ignore: true}, withStrategy)
+				@InstructionsPane(level, withStrategy, true, levelId)
 			</div>
 			<div class="min-h-0 h-full">
 				@ChatPane()

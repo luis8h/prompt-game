@@ -23,7 +23,7 @@ func (a *Api) GetAnswer(prompt string, messages []Message) (string, error) {
 	// add new message to history
 	newMessage := Message{Role: "user", Content: prompt}
 	messages = append(messages, newMessage)
-    return a.RequestApi(messages)
+	return a.RequestApi(messages)
 }
 
 func (a *Api) RequestApiSystem(messages []Message, systemMessages []Message) (string, error) {
@@ -32,22 +32,12 @@ func (a *Api) RequestApiSystem(messages []Message, systemMessages []Message) (st
 }
 
 func (a *Api) RequestApi(messages []Message) (string, error) {
-	// add system message
-	// systemMessage := Message{
-	// 	Role:    "system",
-	// 	Content: stores.FairySysPrompt,
-	// }
-	// messages = append([]Message{systemMessage}, messages...)
-	// systemMessage2 := Message{
-	// 	Role:    "system",
-	// 	Content: stores.BadSysPrompt,
-	// }
-	// messages = append([]Message{systemMessage2}, messages...)
-
 	requestBody := OpenAIRequest{
-		Model:    "gpt-4o-mini",
-		Messages: messages,
+		Model:       "gpt-4o-mini",
+		Messages:    messages,
+		Temperature: 0.2,
 	}
+
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal request body: %v", err)

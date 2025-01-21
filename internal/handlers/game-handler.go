@@ -52,7 +52,7 @@ func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 		}
 
 		// render page
-		err := render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy)))
+		err := render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy, currentLevel)))
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
 		}

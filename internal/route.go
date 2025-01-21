@@ -32,8 +32,8 @@ func (app *Config) Routes() {
 
     // level
     levelHandler := handlers.NewLevelHandler(app.ApiKey)
-    app.Router.POST("/level/submit", levelHandler.PostLevelSubmit())
-    app.Router.POST("/level/next", levelHandler.PostLevelNext())
+    app.Router.POST("/level/nexta", levelHandler.PostLevelNextA())
+    app.Router.POST("/level/nextb", levelHandler.PostLevelNextB())
 
     // result
     resultHandler := handlers.NewResultHandler()

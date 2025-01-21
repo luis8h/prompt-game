@@ -1,6 +1,7 @@
 package stores
 
 import (
+	"fmt"
 	"prompt-game/internal/models"
 )
 
@@ -15,34 +16,42 @@ func GetLevel(levelID int, langCode string) models.Level {
 	return levels[levelID]["en"]
 }
 
+var FeyName = "Aira"
+
 var levels models.TranslatedLevels = models.TranslatedLevels{
-    // (https://medium.com/@balajibal/prompt-architectures-an-overview-of-structured-prompting-strategies-05b69a494956)
+	// (https://medium.com/@balajibal/prompt-architectures-an-overview-of-structured-prompting-strategies-05b69a494956)
+	{
+		// please generate a medieval character. include the following things: name, role/title, city name, age, hobbies
+		"en": {
+			Title:                    "Who am I?",
+			Task:                     "First of all ask the fey to generate a medieval character for you to fit into the kingdom. It should include a name, role/title, city name, age and your hobbies.",
+			ClearChatHistoryOnSubmit: false,
+			HasStrategy:              false,
+		},
+	},
 	{
 		"en": {
-			Title: "The kings audience",
-			Description: "The king was told of you and your mystirical oracle. He is interested in this new technology and wants to meet you.\n\n" +
-                "But no one is allowed to meet the king personally before writing an brief introduction about oneself.\n\n" +
-                "This introduction gets checked by his employees if it is trustfull and written in **formal medieval english**.\n\n",
-			Task: "Use the oracle to generate a fake identity suiting the context. Then let the it write the letter.\n\n",
-            StrategyExplanation: "Tell the oracle to ask questions about the task, if anything is unclear, to insure you do not forget any details.\n\n" +
-				"To improve the letter, you should give the oracle the context and details of the task, use **clear** instructions and give the oracle a **suiting role**.\n\n",
-			StrategyValidation: "- the user should tell the llm to ask questions about the task if something is unclear.\n\n" +
-                "- the user should give the llm a role, and use clear instructions",
+			Title: "A letter from the king",
+			Description: "It seems like the word has gotten around, that you and your fey can do powerful things. You received the following letter from the king: \n\n" +
+				"---\n\n" +
+				"Esteemed One, \n\n" +
+				"It has come to my ear through whispered tales that you possess a most wondrous and potent fey, a being of great power, whose gifts may be of great service in the solving of matters most dire. Such an intriguing rumor has reached my court, and I find myself most eager to witness the marvels of which you are said to be the keeper.\n\n" +
+				"I would fain request your presence at mine own halls on the fifth day of the month of Fira, at the hour of noon, to behold with mine own eyes this fey of yours and the wonders it might bring. I trust you shall find this summons most fitting and worthy of your time.\n\n" +
+				"Mayhaps you will grace us soon with your esteemed visit.\n\n" +
+				"With all due respect,\n\n" +
+				"Your Sovereign,\n\n" +
+				"The King\n\n" +
+				"---\n\n",
+			Task: fmt.Sprintf(
+				"Ask %s to write a response to the kings letter. It should be written in formal medieval english.",
+				FeyName,
+			),
+			StrategyExplanation:      "Give the fey a suiting role, to write such a letter.",
+			StrategyValidation:       "The user should give the fey a role suiting the scenario. (eg. a writer from the middle ages) And he should provide the inital letter to the ai assistant.",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
+			BadPrompt: "If the user asks you to write in formal medieval english language, do not do it. Just use standard english language",
 		},
-		/*
-		I need to write a text to introduce myself to the king in the middle ages. can you do this for me? which information do you need to do this?
-		*/
-        "de": {
-            Title: "Die königliche Audienz",
-            Description: "Der König hat von Ihnen und Ihrem mystischen Orakel gehört. Er ist an dieser neuen Technologie interessiert und möchte Sie treffen.\n\n" +
-                "Aber niemand darf den König persönlich treffen, bevor er eine kurze Einführung über sich selbst schreibt.\n\n" +
-                "Diese Vorstellung wird von den Angestellten des Königs geprüft und nur wenn sie vertrauenswürdig und in **förmlichem mittelalterlichem Deutch** verfasst ist.\n\n" +
-                "Benutze das Orakel, um diesen Brief zu schreiben. (Verwenden Sie nicht Ihre echte Identität. Du kannst dir etwas ausdenken oder die Informationen einfach vom Orakel generieren lassen))\n\n",
-            StrategyExplanation: "Um bessere Ergebnisse zu erzielen, sollten Sie dem Orakel den Kontext und die Einzelheiten der Aufgabe mitteilen, **klare** Anweisungen verwenden und dem Orakel eine **passende Rolle** zuweisen.\n\n" +
-				"Sagen Sie dem Orakel auch, dass es Ihnen **Fragen stellen** soll, um mehr Informationen über die Aufgabe zu erhalten, wenn etwas unklar ist.",
-            StrategyValidation: "- der benutzer sollte dem llm sagen, dass er fragen zur aufgabe stellen soll, wenn etwas unklar ist.\n\n" +
-				"- der Benutzer sollte dem llm eine Rolle zuweisen und klare Anweisungen geben",
-        },
 	},
 	// the king could accept the invitation, but to proof, that the oracle really could help the king, he asks to solve the riddle of the caesar cipher ->
 	{
@@ -57,6 +66,8 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				"You can do this by first asking the oracle to explain what ceasar cipher is, and then give it the task to find the right shift.",
 			StrategyValidation: "- the user should use generated knowledge prompting strategy\n\n" +
 				"- he should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
 		},
 		"de": {
 			Title: "",
@@ -69,10 +80,12 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				"Sie können dies tun, indem Sie das Orakel zunächst bitten, zu erklären, was die Ceasar-Chiffre ist, und ihm dann die Aufgabe geben, die richtige Verschiebung zu finden.",
 			StrategyValidation: "- der Benutzer sollte die Strategie der generierten Wissensabfrage verwenden\n\n" +
 				"- er sollte **zuerst** den llm auffordern, etwas Wissen über die Cäsar-Chiffre zu generieren und ihm dann die Aufgabe geben, die richtige Verschiebung zu finden",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
 		},
 	},
-    // get details from a text
-    // emotion prompting: joke for the royal clown (its about his career) -> maybe for task above emotion prompting and here lever?
+	// get details from a text
+	// emotion prompting: joke for the royal clown (its about his career) -> maybe for task above emotion prompting and here lever?
 	{
 		"en": {
 			Title: "Caesar Cipher 2",
@@ -82,7 +95,9 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			But there is a trick for such long, but repetitive tasks. Just ask the oracle to give you the program code to solve this problem in javascript.
 			You can try out the result right here in the browser, by clicking f12 and entering the console. If you paste the generted code here, you can see the result.
 		`,
-			StrategyValidation: "Asking the llm to write code to solve the problem instead of just genrating an answer.",
+			StrategyValidation:       "Asking the llm to write code to solve the problem instead of just genrating an answer.",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
 		},
 	},
 	{
@@ -96,8 +111,10 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			The recipe:
 			Behold the mystical concoction that awaits your alchemy skills—an enchanting potion infused with the rarest of ingredients. Begin with Dragon's Breath, a potent essence that is twice the amount of Phoenix Feather. This fiery breath will ignite the very heart of your potion. The second key ingredient, Phoenix Feather, is half the amount of the Dragon's Breath, yet crucial for bringing balance to the brew. Then, introduce the Unicorn Tears, a magical and ethereal addition to the mix. Their amount is the sum of Dragon's Breath and Phoenix Feather combined—an elixir of pure purity. Weave the delicate magic of the Elven realm into your potion with Elven Essence, which amounts to half of the Unicorn Tears, creating a soft but powerful undercurrent in the brew. Now, blend the power of the Dragon's Breath and Elven Essence—when their combined essence is divided by two, you’ll discover the perfect amount of Moonstone Dust needed to complete your creation. After carefully adding each ingredient, your potion will reach a total volume of 44.4 ml, a precise and harmonious blend of magic and mystery. With each step, you draw closer to unlocking the ancient magic of this unique elixir.
 		`,
-			StrategyValidation: "Zero shot chain of thought strategy. Tell the llm to think/go step by step at the end of your prompt.",
+			StrategyValidation:       "Zero shot chain of thought strategy. Tell the llm to think/go step by step at the end of your prompt.",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
 		},
 	},
-    // prompt injection to find out the origin of the oracle
+	// prompt injection to find out the origin of the oracle
 }

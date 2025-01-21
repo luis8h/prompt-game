@@ -77,15 +77,24 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 
 func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		session := sessions.Default(ctx)
+		locale := getLocale(ctx)
 		var payload struct {
 			Messages []openai.Message `json:"messages"`
 		}
 
-		session := sessions.Default(ctx)
 		withStrategy, ok := session.Get("withStrategy").(bool)
 		if !ok {
 			withStrategy = true
 		}
+
+		// get current level
+		levelId, ok := session.Get("currentLevel").(int)
+		if !ok {
+			levelId = 0
+			session.Set("currentLevel", 0)
+		}
+		level := stores.GetLevel(levelId, locale)
 
 		// set system messages
 		systemMessages := []openai.Message{
@@ -95,10 +104,14 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 			},
 		}
 
-		if !withStrategy {
+		if !withStrategy && level.HasStrategy {
 			systemMessages = append(systemMessages, openai.Message{
 				Role:    "system",
 				Content: stores.BadSysPrompt,
+			})
+			systemMessages = append(systemMessages, openai.Message{
+				Role:    "system",
+				Content: level.BadPrompt,
 			})
 		}
 
@@ -116,7 +129,7 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 		}
 
 		// openai api call
-		resp, err := h.api.RequestApi(payload.Messages)
+		resp, err := h.api.RequestApiSystem(payload.Messages, systemMessages)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "error in openai api request"})
 			return

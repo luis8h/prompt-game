@@ -4,6 +4,7 @@ package openai
 type OpenAIRequest struct {
 	Model    string   `json:"model"`
 	Messages []Message `json:"messages"`
+	Temperature float64   `json:"temperature"`
 }
 
 // Message represents a single message in the conversation
