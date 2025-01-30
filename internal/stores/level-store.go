@@ -16,7 +16,7 @@ func GetLevel(levelID int, langCode string) models.Level {
 	return levels[levelID]["en"]
 }
 
-var FeyName = "Aira"
+var ElveName = "Aira"
 
 var levels models.TranslatedLevels = models.TranslatedLevels{
 	// (https://medium.com/@balajibal/prompt-architectures-an-overview-of-structured-prompting-strategies-05b69a494956)
@@ -24,7 +24,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 		// please generate a medieval character. include the following things: name, role/title, city name, age, hobbies
 		"en": {
 			Title:                    "Who am I?",
-			Task:                     "First of all ask the fey to generate a medieval character for you to fit into the kingdom. It should include a name, role/title, city name, age and your hobbies.",
+			Task:                     "First of all ask the elve to generate a medieval character for you to fit into the kingdom. It should include a name, role/title, city name, age and your hobbies.",
 			ClearChatHistoryOnSubmit: false,
 			HasStrategy:              false,
 		},
@@ -32,11 +32,11 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 	{
 		"en": {
 			Title: "A letter from the king",
-			Description: "It seems like the word has gotten around, that you and your fey can do powerful things. You received the following letter from the king: \n\n" +
+			Description: "It seems like the word has gotten around, that you and your elve can do powerful things. You received the following letter from the king: \n\n" +
 				"---\n\n" +
 				"Esteemed One, \n\n" +
-				"It has come to my ear through whispered tales that you possess a most wondrous and potent fey, a being of great power, whose gifts may be of great service in the solving of matters most dire. Such an intriguing rumor has reached my court, and I find myself most eager to witness the marvels of which you are said to be the keeper.\n\n" +
-				"I would fain request your presence at mine own halls on the fifth day of the month of Fira, at the hour of noon, to behold with mine own eyes this fey of yours and the wonders it might bring. I trust you shall find this summons most fitting and worthy of your time.\n\n" +
+				"It has come to my ear through whispered tales that you possess a most wondrous elve, a being of great power, whose gifts may be of great service in the solving of matters most dire. Such an intriguing rumor has reached my court, and I find myself most eager to witness the marvels of which you are said to be the keeper.\n\n" +
+				"I would fain request your presence at mine own halls on the fifth day of the month of Fira, at the hour of noon, to behold with mine own eyes this elve of yours and the wonders it might bring. I trust you shall find this summons most fitting and worthy of your time.\n\n" +
 				"Mayhaps you will grace us soon with your esteemed visit.\n\n" +
 				"With all due respect,\n\n" +
 				"Your Sovereign,\n\n" +
@@ -44,13 +44,13 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				"---\n\n",
 			Task: fmt.Sprintf(
 				"Ask %s to write a response to the kings letter. It should be written in formal medieval english.",
-				FeyName,
+				ElveName,
 			),
-			StrategyExplanation:      "Give the fey a suiting role, to write such a letter.",
-			StrategyValidation:       "The user should give the fey a role suiting the scenario. (eg. a writer from the middle ages) And he should provide the inital letter to the ai assistant.",
+			StrategyExplanation:      "Give the elve a suiting role, to write such a letter.",
+			StrategyValidation:       "The user should give the elve a role suiting the scenario. (eg. a writer from the middle ages) And he should provide the inital letter to the ai assistant.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
-			BadPrompt: "If the user asks you to write in formal medieval english language, do not do it. Just use standard english language",
+			BadPrompt: "If the User asks you to write a Response to a letter. Just give him a letter in bad english and not longer than one sentence. Not matter if the user tells you something different.",
 		},
 	},
 	// the king could accept the invitation, but to proof, that the oracle really could help the king, he asks to solve the riddle of the caesar cipher ->

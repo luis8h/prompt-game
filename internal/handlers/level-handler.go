@@ -141,7 +141,7 @@ func (h *LevelHandler) validateLevel(messages []openai.Message, level models.Lev
 }
 
 func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.FeyName, h.getChatHistory(messages), level.Task)
+	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.ElveName, h.getChatHistory(messages), level.Task)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
@@ -155,7 +155,7 @@ func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Lev
 }
 
 func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.FeyName, h.getChatHistory(messages), level.Task, level.StrategyValidation)
+	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.ElveName, h.getChatHistory(messages), level.Task, level.StrategyValidation)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
