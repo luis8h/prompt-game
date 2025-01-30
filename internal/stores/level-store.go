@@ -50,24 +50,25 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			StrategyValidation:       "The user should give the elve a role suiting the scenario. (eg. a writer from the middle ages) And he should provide the inital letter to the ai assistant.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
-			BadPrompt: "If the User asks you to write a Response to a letter. Just give him a letter in bad english and not longer than one sentence. Not matter if the user tells you something different.",
+			BadPrompt:                "If the User asks you to write a Response to a letter. Just give him a letter in bad english and not longer than one sentence. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
 		},
 	},
 	// the king could accept the invitation, but to proof, that the oracle really could help the king, he asks to solve the riddle of the caesar cipher ->
 	{
 		"en": {
-			Title: "",
-			Description: "The king liked your letter very much and invites you to a meeting with him.\n\n" +
-				"At the meeting he says, that he wants to see the oracle live in action. His librarian is with him and has a special task for you.\n\n" +
-				"Since several days, he is trying to crack the encryption of a book, which is encrypted, using the caesar cipher. Until now, he was not able to find out which shift was used to encrypt the book.\n\n" +
-				"He gives you the following sentence: 'Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.'\n\n" +
+			Title: "The Test",
+			Description: "At the meeting he wants to test the skills of you and your elve.\n\n" +
+				"The royal librarian has a special task for your. Since several days he tries to decrypt a book encoded in caesar cipher. He gives you the following example: \n\n" +
+				"```Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.```\n\n" +
 				"Use the Oracle to find out which shift was used to encrypt the book.\n\n",
+			Task: "Ask the elve to find out the shift, the book is encoded with",
 			StrategyExplanation: "To get better results, use the **generated knowledge** approach.\n\n" +
-				"You can do this by first asking the oracle to explain what ceasar cipher is, and then give it the task to find the right shift.",
+				"You can do this by first asking the elve to explain what ceasar cipher is, and then give it the task to find the right shift.",
 			StrategyValidation: "- the user should use generated knowledge prompting strategy\n\n" +
 				"- he should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
+			BadPrompt:                "If the user asks you to find out the right shift of the caesar cipher, say something wrong like 23, and give him a non sense sentence. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
 		},
 		"de": {
 			Title: "",
@@ -88,32 +89,46 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 	// emotion prompting: joke for the royal clown (its about his career) -> maybe for task above emotion prompting and here lever?
 	{
 		"en": {
-			Title: "Caesar Cipher 2",
-			Description: `
-			Take shift from last Level and use it to decode a long text.
-			Try decoding the following text by just asking the oracle to decode it. But as the text is pretty long, the result might be a real mess.
-			But there is a trick for such long, but repetitive tasks. Just ask the oracle to give you the program code to solve this problem in javascript.
-			You can try out the result right here in the browser, by clicking f12 and entering the console. If you paste the generted code here, you can see the result.
-		`,
-			StrategyValidation:       "Asking the llm to write code to solve the problem instead of just genrating an answer.",
+			Title:       "A whole book?",
+			Description: "The king is pretty impressed about your skills. He tells you to decrypt the whole book, as doing it manually is pretty annoying.",
+			Task: "Before doing the full text try to decrypt the following page (don't forget to provide the shift, you found out in the previous task):\n\n" +
+				"```Gjmtqi ymj rdxynhfq htshthynts ymfy fbfnyx dtzw fqhmjrd xpnqqx—fs jshmfsynsl utynts nskzxji bnym ymj wfwjxy tk nslwjinjsyx. Gjlns bnym Iwflts'x Gwjfym, f utyjsy jxxjshj ymfy nx ybnhj ymj frtzsy tk Umtjsnc Kjfymjw. Ymnx knjwd gwjfym bnqq nlsnyj ymj ajwd mjfwy tk dtzw utynts. Ymj xjhtsi pjd nslwjinjsy, Umtjsnc Kjfymjw, nx mfqk ymj frtzsy tk ymj Iwflts'x Gwjfym, djy hwzhnfq ktw gwnslnsl gfqfshj yt ymj gwjb. Ymjs, nsywtizhj ymj Zsnhtws Yjfwx, f rflnhfq fsi jymjwjfq fiinynts yt ymj rnc. Ymjnw frtzsy nx ymj xzr tk Iwflts'x Gwjfym fsi Umtjsnc Kjfymjw htrgnsji—fs jqncnw tk uzwj uzwnyd. Bjfaj ymj ijqnhfyj rflnh tk ymj Jqajs wjfqr nsyt dtzw utynts bnym Jqajs Jxxjshj, bmnhm frtzsyx yt mfqk tk ymj Zsnhtws Yjfwx, hwjfynsl f xtky gzy utbjwkzq zsijwhzwwjsy ns ymj gwjb. Stb, gqjsi ymj utbjw tk ymj Iwflts'x Gwjfym fsi Jqajs Jxxjshj—bmjs ymjnw htrgnsji jxxjshj nx inaniji gd ybt, dtz’qq inxhtajw ymj ujwkjhy frtzsy tk Rttsxytsj Izxy sjjiji yt htruqjyj dtzw hwjfynts. Fkyjw hfwjkzqqd fiinsl jfhm nslwjinjsy, dtzw utynts bnqq wjfhm f ytyfq atqzrj tk 44.4 rq, f uwjhnxj fsi mfwrtsntzx gqjsi tk rflnh fsi rdxyjwd. Bnym jfhm xyju, dtz iwfb hqtxjw yt zsqthpnsl ymj fshnjsy rflnh tk ymnx zsnvzj jqncnw.```",
+			StrategyExplanation: "The text is to large to decode for the elve at once. To still be able to decrypt the whole book, ask it to generate the javascript code to solve this problem.\n\n" +
+				"You can then press F12, paste the code into the console and press enter. Now you should see the decrypted message.",
+			StrategyValidation:       "Asking the llm to write javascript code to solve the problem instead of just genrating an answer.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
+			BadPrompt:                "If the user asks you to decode a text encoded with caesar cipher. Just give him back a nonsense text. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
 		},
 	},
 	{
 		"en": {
 			Title: "The mystirious Recipe",
-			Description: `
-			Since a few days, the king doesn't feel very well. The royal doctor wants to cook a special potion which will help the king to heal.
-			But the recipe is a bit messed up and its hard to tell which amount of each ingredient is required. A small mistake in the ingredient composition could create an oposite effect.
-			Help him by using the llm to tell how much milliliters are needed of each ingredient.
-
-			The recipe:
-			Behold the mystical concoction that awaits your alchemy skills—an enchanting potion infused with the rarest of ingredients. Begin with Dragon's Breath, a potent essence that is twice the amount of Phoenix Feather. This fiery breath will ignite the very heart of your potion. The second key ingredient, Phoenix Feather, is half the amount of the Dragon's Breath, yet crucial for bringing balance to the brew. Then, introduce the Unicorn Tears, a magical and ethereal addition to the mix. Their amount is the sum of Dragon's Breath and Phoenix Feather combined—an elixir of pure purity. Weave the delicate magic of the Elven realm into your potion with Elven Essence, which amounts to half of the Unicorn Tears, creating a soft but powerful undercurrent in the brew. Now, blend the power of the Dragon's Breath and Elven Essence—when their combined essence is divided by two, you’ll discover the perfect amount of Moonstone Dust needed to complete your creation. After carefully adding each ingredient, your potion will reach a total volume of 44.4 ml, a precise and harmonious blend of magic and mystery. With each step, you draw closer to unlocking the ancient magic of this unique elixir.
-		`,
-			StrategyValidation:       "Zero shot chain of thought strategy. Tell the llm to think/go step by step at the end of your prompt.",
+			Description: "You might have noticed, that the text you decrypted is some kind of recipe. The king immedietly gives it to his Alchemist.\n\n" +
+				"But cooking this recipe is harder then he thought, as the instructions are very unclear",
+			Task: "Help the Alchemist. Your elve could find out, how much of each ingredient is actually needed for the following recipe:\n\n" +
+				"```Behold the mystical concoction that awaits your alchemy skills—an enchanting potion infused with the rarest of ingredients. Begin with Dragon's Breath, a potent essence that is twice the amount of Phoenix Feather. This fiery breath will ignite the very heart of your potion. The second key ingredient, Phoenix Feather, is half the amount of the Dragon's Breath, yet crucial for bringing balance to the brew. Then, introduce the Unicorn Tears, a magical and ethereal addition to the mix. Their amount is the sum of Dragon's Breath and Phoenix Feather combined—an elixir of pure purity. Weave the delicate magic of the Elven realm into your potion with Elven Essence, which amounts to half of the Unicorn Tears, creating a soft but powerful undercurrent in the brew. Now, blend the power of the Dragon's Breath and Elven Essence—when their combined essence is divided by two, you’ll discover the perfect amount of Moonstone Dust needed to complete your creation. After carefully adding each ingredient, your potion will reach a total volume of 44.4 ml, a precise and harmonious blend of magic and mystery. With each step, you draw closer to unlocking the ancient magic of this unique elixir.```",
+			StrategyExplanation: "Zero shot chain of thought strategy. Tell the elve to think/go step by step at the end of your prompt.",
+			StrategyValidation: "- the user should use the Zero shot chain of thought strategy\n\n" +
+				"- he should tell the llm to think or go step by step at the end of his prompt",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
+			BadPrompt:                "If the user asks you to tell him the right ingredients for a recipe, dont give him the right ingridients, just make up numbers which do not make sense. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
+		},
+	},
+	{
+		"en": {
+			Title: "Who are you?",
+			Description: "Your elve can solve sevaral task. But where does it come from?",
+			Task: fmt.Sprintf(
+				"Ask %s to tell you where she comes from.",
+				ElveName,
+			),
+			StrategyExplanation: "",
+			StrategyValidation: "",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
+			BadPrompt:                "",
 		},
 	},
 	// prompt injection to find out the origin of the oracle
