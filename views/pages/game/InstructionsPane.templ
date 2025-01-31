@@ -17,7 +17,7 @@ templ InstructionsPane(level models.Level, withStrategy bool, validation bool, l
 templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId int) {
 <div class="h-full flex flex-col justify-center">
     <div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
-        <h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title } { strconv.Itoa(levelId) }/{ strconv.Itoa(stores.GetLevelCount()) }</h2>
+        <h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title } { strconv.Itoa(levelId + 1) }/{ strconv.Itoa(stores.GetLevelCount()) }</h2>
         <div class="text-textcolor rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
             <div>
                 <div class="text-textcolor text-xl font-bold">Story:</div>

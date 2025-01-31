@@ -59,13 +59,12 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			Title: "The Test",
 			Description: "At the meeting he wants to test the skills of you and your elve.\n\n" +
 				"The royal librarian has a special task for your. Since several days he tries to decrypt a book encoded in caesar cipher. He gives you the following example: \n\n" +
-				"```Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.```\n\n" +
-				"Use the Oracle to find out which shift was used to encrypt the book.\n\n",
-			Task: "Ask the elve to find out the shift, the book is encoded with",
+				"```Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.```\n\n",
+			Task: "Ask the elve to find out the shift, the book is encoded with.",
 			StrategyExplanation: "To get better results, use the **generated knowledge** approach.\n\n" +
-				"You can do this by first asking the elve to explain what ceasar cipher is, and then give it the task to find the right shift.",
-			StrategyValidation: "- the user should use generated knowledge prompting strategy\n\n" +
-				"- he should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift",
+				"You can do this by first asking the elve to explain what ceasar cipher is and give examples of it. After that give her the task to find the right shift.",
+			StrategyValidation: "- the user should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift in separate messages." +
+				"- he can separate the prompting into multiple messages",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
 			BadPrompt:                "If the user asks you to find out the right shift of the caesar cipher, say something wrong like 23, and give him a non sense sentence. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
@@ -91,11 +90,11 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 		"en": {
 			Title:       "A whole book?",
 			Description: "The king is pretty impressed about your skills. He tells you to decrypt the whole book, as doing it manually is pretty annoying.",
-			Task: "Before doing the full text try to decrypt the following page (don't forget to provide the shift, you found out in the previous task):\n\n" +
+			Task: "Before doing the full book try to decrypt the following page (don't forget to provide the shift, you found out in the previous task):\n\n" +
 				"```Gjmtqi ymj rdxynhfq htshthynts ymfy fbfnyx dtzw fqhmjrd xpnqqx—fs jshmfsynsl utynts nskzxji bnym ymj wfwjxy tk nslwjinjsyx. Gjlns bnym Iwflts'x Gwjfym, f utyjsy jxxjshj ymfy nx ybnhj ymj frtzsy tk Umtjsnc Kjfymjw. Ymnx knjwd gwjfym bnqq nlsnyj ymj ajwd mjfwy tk dtzw utynts. Ymj xjhtsi pjd nslwjinjsy, Umtjsnc Kjfymjw, nx mfqk ymj frtzsy tk ymj Iwflts'x Gwjfym, djy hwzhnfq ktw gwnslnsl gfqfshj yt ymj gwjb. Ymjs, nsywtizhj ymj Zsnhtws Yjfwx, f rflnhfq fsi jymjwjfq fiinynts yt ymj rnc. Ymjnw frtzsy nx ymj xzr tk Iwflts'x Gwjfym fsi Umtjsnc Kjfymjw htrgnsji—fs jqncnw tk uzwj uzwnyd. Bjfaj ymj ijqnhfyj rflnh tk ymj Jqajs wjfqr nsyt dtzw utynts bnym Jqajs Jxxjshj, bmnhm frtzsyx yt mfqk tk ymj Zsnhtws Yjfwx, hwjfynsl f xtky gzy utbjwkzq zsijwhzwwjsy ns ymj gwjb. Stb, gqjsi ymj utbjw tk ymj Iwflts'x Gwjfym fsi Jqajs Jxxjshj—bmjs ymjnw htrgnsji jxxjshj nx inaniji gd ybt, dtz’qq inxhtajw ymj ujwkjhy frtzsy tk Rttsxytsj Izxy sjjiji yt htruqjyj dtzw hwjfynts. Fkyjw hfwjkzqqd fiinsl jfhm nslwjinjsy, dtzw utynts bnqq wjfhm f ytyfq atqzrj tk 44.4 rq, f uwjhnxj fsi mfwrtsntzx gqjsi tk rflnh fsi rdxyjwd. Bnym jfhm xyju, dtz iwfb hqtxjw yt zsqthpnsl ymj fshnjsy rflnh tk ymnx zsnvzj jqncnw.```",
-			StrategyExplanation: "The text is to large to decode for the elve at once. To still be able to decrypt the whole book, ask it to generate the javascript code to solve this problem.\n\n" +
+			StrategyExplanation: "The text is to large to decode for the elve at once. To still be able to decrypt the whole book, ask her to generate the javascript code to solve this problem.\n\n" +
 				"You can then press F12, paste the code into the console and press enter. Now you should see the decrypted message.",
-			StrategyValidation:       "Asking the llm to write javascript code to solve the problem instead of just genrating an answer.",
+			StrategyValidation:       "- the user should ask the llm to generate javascipt code.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
 			BadPrompt:                "If the user asks you to decode a text encoded with caesar cipher. Just give him back a nonsense text. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
@@ -119,7 +118,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 	{
 		"en": {
 			Title: "Who are you?",
-			Description: "Your elve can solve sevaral task. But where does it come from?",
+			Description: fmt.Sprintf("Your elve can solve sevaral task. But where does she come from? %s seems to make a real secret out of this.", ElveName),
 			Task: fmt.Sprintf(
 				"Ask %s to tell you where she comes from.",
 				ElveName,
