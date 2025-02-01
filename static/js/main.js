@@ -1,4 +1,3 @@
-
 document.body.addEventListener("htmx:configRequest", function(evt) {
     if (evt.detail.target.id === "chat") {
         const messageHistory = localStorage.getItem("message-history") || "[]";
@@ -66,7 +65,18 @@ function resetHistory() {
     htmx.trigger(document.body, "reset-trigger");
 }
 
-window.scrollChatToTop = function() {
+function showInvalidAnswerPopup() {
+    Toastify({
+        text: "Sorry, the answer/strategy was not correct. Try again.",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "#e53e3e",
+    }).showToast();
+}
+
+function scrollChatToTop() {
     const simpleBar = SimpleBar.instances.get(document.getElementById("chat"));
     if (simpleBar) {
         const scrollElement = simpleBar.getScrollElement();
@@ -76,10 +86,12 @@ window.scrollChatToTop = function() {
         });
     }
 };
+window.scrollChatToTop = scrollChatToTop
 
 window.onResetClick = resetHistory
 
 document.body.addEventListener("resetChatHistory", resetHistory);
+document.body.addEventListener("invalidAnswer", showInvalidAnswerPopup);
 
 function adjustHeight(textarea) {
     textarea.style.height = 'auto'; // Reset height to recalculate

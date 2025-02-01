@@ -100,7 +100,7 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 		systemMessages := []openai.Message{
 			{
 				Role:    "system",
-				Content: stores.ElveSysPrompt,
+				Content: stores.ElfSysPrompt,
 			},
 		}
 

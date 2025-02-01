@@ -2,10 +2,10 @@ package game
 
 import (
 "prompt-game/internal/models"
+"prompt-game/internal/stores"
 "prompt-game/utils"
 "prompt-game/views/components"
-	"strconv"
-	"prompt-game/internal/stores"
+"strconv"
 )
 
 templ InstructionsPane(level models.Level, withStrategy bool, validation bool, levelId int) {
@@ -14,68 +14,80 @@ templ InstructionsPane(level models.Level, withStrategy bool, validation bool, l
 </div>
 }
 
+var currentStory int = 0
+
 templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId int) {
 <div class="h-full flex flex-col justify-center">
-    <div class="h-full" style="padding-top: 5%; padding-bottom: 15%;">
-        <h2 class="font-bold text-textcolor text-3xl text-center pb-4">{ level.Title } { strconv.Itoa(levelId + 1) }/{ strconv.Itoa(stores.GetLevelCount()) }</h2>
-        <div class="text-textcolor rounded-xl p-4 bg-secondary flex flex-col justify-between h-full">
-            <div>
-                <div class="text-textcolor text-xl font-bold">Story:</div>
-                <div>
-                    <p class="text-textcolor text-lg">
-                        @templ.Raw(utils.RenderMarkdown(level.Description))
-                    </p>
+    <div class="h-full" style="padding-top: 5%; padding-bottom: 5%;">
+        <div class="flex flex-col justify-between h-full">
+            <div class="flex flex-col gap-8">
+                <div class="flex flex-row justify-between">
+                    <h2 class="font-bold text-textcolor text-3xl flex flex-row items-center">
+                        Level { strconv.Itoa(levelId + 1) }/{
+                        strconv.Itoa(stores.GetLevelCount()) } - { level.Title }
+                    </h2>
+                    @ButtonBar(level, withStrategy)
                 </div>
-                <br />
-                <div class="text-textcolor text-xl font-bold">Task:</div>
-                <div>
-                    <p class="text-textcolor text-lg">
-                        @templ.Raw(utils.RenderMarkdown(level.Task))
-                    </p>
-                </div>
-                if withStrategy {
-                <br />
-                <div class="text-textcolor text-xl font-bold">Strategy:</div>
-                <div>
-                    <p class="text-textcolor text-lg">
-                        @templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))
-                    </p>
-                </div>
-                }
-            </div>
-            if !validation {
-            <div class="text-red-500">answer invalid</div>
-            }
-            <div id="validation-indicator" class="htmx-indicator">
-                @components.DotLoading(6)
-            </div>
-            <div class="flex flex-row justify-between">
-                <div class=""></div>
-                <div class="flex flex-row space-x-4 justify-end">
-                    <div id="reset-button" type="button" class="" onclick="onResetClick()">
-                        @components.Button1() {
-                        @components.ResetIcon(6)
-                        }
+                <div class="flex flex-col gap-4">
+                    <div class="text-textcolor rounded-xl p-4 bg-secondary">
+                        <div>
+                            <p class="text-textcolor text-lg">
+                                @templ.Raw(utils.RenderMarkdown(level.Task))
+                            </p>
+                        </div>
                     </div>
-                    if !withStrategy && level.HasStrategy {
-                    <div id="submit-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
-                        hx-indicator="#validation-indicator"
-                        hx-vals="js:{messages: localStorage.getItem('message-history')}">
-                        @components.Button1() {
-                        <div>Try with Strategy</div>
+                    if level.HasStrategy {
+                    <div class={ "text-textcolor rounded-xl p-4 bg-secondary relative" }>
+                        if !withStrategy {
+                        <div class="z-10 absolute cursor-pointer text-center w-full left-0 top-0 h-full flex justify-center items-center hover:brightness-150"
+                            id="submit-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
+                            hx-indicator="#validation-indicator"
+                            hx-vals="js:{messages: localStorage.getItem('message-history')}"
+                        >
+                            <div class="text-highlight font-bold text-xl">Reveal Strategy</div>
+                        </div>
                         }
-                    </div>
-                    } else {
-                    <div id="submit-button" hx-post="/level/nextb" hx-swap="outerHTML" hx-target="#instruction-pane"
-                        hx-indicator="#validation-indicator"
-                        hx-vals="js:{messages: localStorage.getItem('message-history')}">
-                        @components.Button1() {
-                        <div>Submit</div>
-                        }
+                        <div class={ "z-5" , templ.KV("filter blur-md brightness-50", !withStrategy) }>
+                            <p class="text-textcolor text-lg font-bold">
+                                if withStrategy {
+                                @templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))
+                                } else {
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                                invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                                }
+                            </p>
+                        </div>
                     </div>
                     }
                 </div>
             </div>
+            @StoryHtml(level.Story[currentStory])
+        </div>
+    </div>
+    <script>hljs.highlightAll();</script>
+</div>
+}
+
+templ ButtonBar(level models.Level, withStrategy bool) {
+<div class="flex flex-row justify-between">
+    <div class="flex flex-row space-x-4 justify-end">
+        <div id="reset-button" class="flex flex-row justify-center items-center" type="button" class=""
+            onclick="onResetClick()">
+            @components.Button1(false) {
+            Reset History
+            }
+        </div>
+        <div id="submit-button" class="flex flex-row justify-center items-center" hx-post="/level/nextb"
+            hx-swap="outerHTML" hx-target="#instruction-pane"
+            hx-vals="js:{messages: localStorage.getItem('message-history')}">
+            @components.Button1(!withStrategy) {
+            <div class="h-full flex items-center justify-center min-w-16">
+                <div class="button-text">Submit</div>
+                <div id="validation-indicator" class="htmx-indicator text-primary">
+                    @components.DotLoading(2, "primary")
+                </div>
+            </div>
+            }
         </div>
     </div>
 </div>
@@ -99,6 +111,18 @@ templ ValidationCardHtml(name string, valid bool) {
         } else {
         @components.XmarkIcon(6)
         }
+    </div>
+</div>
+}
+
+templ StoryHtml(story models.Speechbubble) {
+<div>
+    <div class="flex flex-row">
+        <img src={ story.Character.Imgs[0] } class="object-cover h-60" />
+        <div class="bg-highlight rounded-3xl text-primary p-4 self-start relative">
+            { story.Text }
+            <div class="text-secondary absolute bottom-1 right-3 font-bold">Next</div>
+        </div>
     </div>
 </div>
 }

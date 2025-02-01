@@ -20,6 +20,7 @@ module.exports = {
                 primary: "#00111a",
                 secondary: "#002233",
                 highlight: "#75b8c7",
+                highlightDisabled: "#3c5459",
                 textcolor: "#f2ddcc",
             }
         },

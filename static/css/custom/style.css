@@ -8,6 +8,20 @@
     padding-top: 2rem;
 }
 
+#submit-button.htmx-request .button-text {
+  display: none;
+}
+
+.htmx-indicator{
+    display: none;
+}
+.htmx-request .htmx-indicator{
+    display: inline;
+}
+.htmx-request.htmx-indicator{
+    display: inline;
+}
+
 hr {
     margin-top: 15px !important;
     margin-bottom: 15px !important;

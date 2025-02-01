@@ -1,9 +1,23 @@
 package components
 
-templ Button1() {
-	<button
-		class="font-bold text-primary bg-highlight rounded-xl p-2 hover:bg-primary hover:text-highlight duration-300 transition-all hover:transition-all disabled:bg-primary disabled:text-secondary"
-	>
-		{ children... }
-	</button>
+templ Button1(disabled bool) {
+<button disabled?={ disabled }
+    class="
+        h-full
+        flex flex-row items-center justify-center
+        font-bold
+        text-primary
+        bg-highlight
+        rounded-xl
+        p-4
+        hover:brightness-150
+        duration-300
+        transition-all
+        hover:transition-all
+        disabled:bg-secondary
+        disabled:hover:brightness-100
+        disabled:text-highlightDisabled
+    ">
+    { children... }
+</button>
 }

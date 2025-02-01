@@ -4,13 +4,24 @@ type TranslatedLevels []map[string]Level
 
 type Level struct {
 	Title                    string
-	Description              string
+	Story                    []Speechbubble
 	Task                     string
 	StrategyExplanation      string
 	StrategyValidation       string
 	ClearChatHistoryOnSubmit bool
 	HasStrategy              bool
 	BadPrompt                string
+}
+
+type Speechbubble struct {
+	Character Character
+	Text      string
+}
+
+type Character struct {
+	Name       string
+	Profession string
+	Imgs       []string
 }
 
 type LevelValidation struct {

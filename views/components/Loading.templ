@@ -2,17 +2,14 @@ package components
 
 import "fmt"
 
-templ DotLoading(size int) {
+templ DotLoading(size int, color string) {
 	<div class="flex space-x-2 justify-center items-center bg-none text-highlight">
-		<span class="sr-only">Loading...</span>
 		<div
-			class={ fmt.Sprintf("size-%d",
-        size), "bg-textcolor rounded-full animate-bounce [animation-duration:0.5s] [animation-delay:-0.3s]" }
+			class={ fmt.Sprintf("size-%d", size), fmt.Sprintf("bg-%s", color), "rounded-full animate-bounce [animation-duration:0.5s] [animation-delay:-0.3s]" }
 		></div>
 		<div
-			class={ fmt.Sprintf("size-%d",
-        size), "bg-textcolor rounded-full animate-bounce [animation-duration:0.5s] [animation-delay:-0.15s]" }
+			class={ fmt.Sprintf("size-%d", size), fmt.Sprintf("bg-%s", color), "rounded-full animate-bounce [animation-duration:0.5s] [animation-delay:-0.15s]" }
 		></div>
-		<div class={ fmt.Sprintf("size-%d", size), "bg-textcolor rounded-full animate-bounce [animation-duration:0.5s]" }></div>
+		<div class={ fmt.Sprintf("size-%d", size), fmt.Sprintf("bg-%s", color), "rounded-full animate-bounce [animation-duration:0.5s]" }></div>
 	</div>
 }

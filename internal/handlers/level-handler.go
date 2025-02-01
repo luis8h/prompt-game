@@ -76,6 +76,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		// render invalid template
 		if !valid {
 			// render template
+			ctx.Writer.Header().Set("HX-Trigger", "invalidAnswer")
 			err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId))
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
@@ -143,18 +144,21 @@ func (h *LevelHandler) validateLevel(messages []openai.Message, level models.Lev
 }
 
 func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.ElveName, h.getChatHistory(messages), level.Task)
+	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.ElfName, h.getChatHistory(messages), level.Task)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
 		return false, err
 	}
 
+	fmt.Printf("Answer prompt: %s\n", prompt)
+	fmt.Printf("Answer: %b\n", jsonResponse.Verified)
+
 	return jsonResponse.Verified, nil
 }
 
 func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.ElveName, level.StrategyValidation, h.getChatHistory(messages))
+	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.ElfName, level.StrategyValidation, h.getChatHistory(messages))
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
