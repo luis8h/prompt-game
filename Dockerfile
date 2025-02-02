@@ -16,7 +16,6 @@ RUN go mod download
 # Copy the remaining source code
 COPY . .
 
-# Build the application (which runs tailwind build and templ generation as defined in your Makefile)
 RUN make build
 
 ##############################
@@ -25,11 +24,10 @@ RUN make build
 FROM alpine:latest
 WORKDIR /app
 
-# Copy the built binary from the builder stage.
-# Adjust the binary name and location if needed.
 COPY --from=builder /app/bin/main /app/main
+COPY --from=builder /app/static /app/static
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["/app/main"]
 

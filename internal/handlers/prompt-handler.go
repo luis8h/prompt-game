@@ -45,7 +45,7 @@ func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
 			return
 		}
 
-		utils.GameLogger.PrintS(ctx, "postet message :"+message)
+		utils.GameLogger.PrintS(ctx, "postet message: " + message)
 
 		viewMessage := game.Message{Role: "user", Content: message}
 

@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  game:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prompt-game
+    volumes:
+      - ./log:/app/log
+    ports:
+      - "80:8080"
+    env_file:
+      - .env
