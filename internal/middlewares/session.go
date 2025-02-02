@@ -16,7 +16,7 @@ func SessionIdMiddleware() gin.HandlerFunc {
 			newId := uuid.New().String()
 			session.Set("sessionId", newId)
 			session.Save()
-			utils.GameLogger.PrintS(newId, fmt.Sprintf("initialized session %s", newId))
+			utils.GameLogger.PrintS(ctx, fmt.Sprintf("initialized session %s", newId))
 		}
 		ctx.Next()
 	}

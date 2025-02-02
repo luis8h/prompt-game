@@ -28,7 +28,7 @@ func GetSessionId(ctx *gin.Context) string {
 	session := sessions.Default(ctx)
 	sessionId, ok := session.Get("sessionId").(string)
 	if !ok {
-		sessionId = "n/a"
+		sessionId = "undefined session"
 	}
 	return sessionId
 }

@@ -8,6 +8,7 @@ import (
 	"prompt-game/external/openai"
 	"prompt-game/internal/models"
 	"prompt-game/internal/stores"
+	"prompt-game/internal/utils"
 	"prompt-game/views"
 	"prompt-game/views/pages/game"
 	"prompt-game/views/pages/result"
@@ -44,6 +45,8 @@ func (h *LevelHandler) GetLevelStoryPrev() gin.HandlerFunc {
 
 		story := level.Story[newStoryId]
 
+		utils.GameLogger.PrintS(ctx, fmt.Sprintf("switched to new story id with back %d", newStoryId))
+
 		render(ctx, http.StatusOK, game.StoryHtml(story, newStoryId, len(level.Story)))
 	}
 }
@@ -70,6 +73,8 @@ func (h *LevelHandler) GetLevelStoryNext() gin.HandlerFunc {
 
 		SetStoryId(ctx, newStoryId)
 		story := level.Story[newStoryId]
+
+		utils.GameLogger.PrintS(ctx, fmt.Sprintf("switched to new story id with next %d", newStoryId))
 
 		render(ctx, http.StatusOK, game.StoryHtml(story, newStoryId, len(level.Story)))
 	}
@@ -99,7 +104,8 @@ func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 		levelId := GetCurrentLevel(ctx)
 		storyId := GetStoryId(ctx)
 
-		// render template
+		utils.GameLogger.PrintS(ctx, fmt.Sprintf("revealed strategy"))
+
 		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, withStrategy, levelId, storyId, showTask))
 	}
 }
@@ -119,16 +125,21 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 			return
 		}
 
+		utils.GameLogger.PrintS(ctx, fmt.Sprintf("submitted"))
+
 		// verify answer
-		valid := h.validateLevel(messages, stores.GetLevel(levelId, locale))
+		valid := h.validateLevel(ctx, messages, stores.GetLevel(levelId, locale))
 
 		// render invalid template
 		if !valid {
+			utils.GameLogger.PrintS(ctx, fmt.Sprintf("solution NOT valid"))
 			// render template
 			ctx.Writer.Header().Set("HX-Trigger", "invalidAnswer")
 			render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId, storyId, showTask))
 			return
 		}
+
+		utils.GameLogger.PrintS(ctx, fmt.Sprintf("solution valid"))
 
 		// set nextlevel
 		nextLevelId := levelId + 1
@@ -143,6 +154,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 
 		// load results page
 		if nextLevelId == stores.GetLevelCount() {
+			utils.GameLogger.PrintS(ctx, fmt.Sprintf("finished - rendering result page"))
 			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
 			render(ctx, http.StatusOK, views.Layout(result.ResultPage(), GetSessionId(ctx)))
 			return
@@ -153,13 +165,13 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 	}
 }
 
-func (h *LevelHandler) validateLevel(messages []openai.Message, level models.Level) (bool) {
+func (h *LevelHandler) validateLevel(ctx *gin.Context, messages []openai.Message, level models.Level) (bool) {
 	if len(messages) == 0 {
 		return false
 	}
 
 	// verify answer
-	isAnswerValid, err := h.isValidAnswer(messages, level)
+	isAnswerValid, err := h.isValidAnswer(ctx, messages, level)
 	if err != nil {
 		fmt.Printf("error when validating answer: %v", err)
 		return false
@@ -170,13 +182,11 @@ func (h *LevelHandler) validateLevel(messages []openai.Message, level models.Lev
 	}
 
 	// verify strategy
-	isStrategyValid, err := h.isValidStrategy(messages, level)
+	isStrategyValid, err := h.isValidStrategy(ctx, messages, level)
 	if err != nil {
 		fmt.Printf("error when validating strategy: %v", err)
 		return false
 	}
-
-	fmt.Printf("Strategy: %s, Answer: %s", isStrategyValid, isAnswerValid)
 
 	if isStrategyValid && isAnswerValid {
 		return true
@@ -184,7 +194,7 @@ func (h *LevelHandler) validateLevel(messages []openai.Message, level models.Lev
 	return false
 }
 
-func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Level) (bool, error) {
+func (h *LevelHandler) isValidAnswer(ctx *gin.Context, messages []openai.Message, level models.Level) (bool, error) {
 	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.ElfName, h.getChatHistory(messages), level.Task)
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
@@ -192,13 +202,12 @@ func (h *LevelHandler) isValidAnswer(messages []openai.Message, level models.Lev
 		return false, err
 	}
 
-	fmt.Printf("Answer prompt: %s\n", prompt)
-	fmt.Printf("Answer: %b\n", jsonResponse.Verified)
+	utils.GameLogger.PrintS(ctx, fmt.Sprintf("validating answer was %t with following prompt:\n", jsonResponse.Verified, prompt))
 
 	return jsonResponse.Verified, nil
 }
 
-func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.Level) (bool, error) {
+func (h *LevelHandler) isValidStrategy(ctx *gin.Context, messages []openai.Message, level models.Level) (bool, error) {
 	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.ElfName, level.StrategyValidation, h.getChatHistory(messages))
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
@@ -206,8 +215,7 @@ func (h *LevelHandler) isValidStrategy(messages []openai.Message, level models.L
 		return false, err
 	}
 
-	fmt.Printf("Strategy prompt: %s\n", prompt)
-	fmt.Printf("Strategy: %b\n", jsonResponse.Verified)
+	utils.GameLogger.PrintS(ctx, fmt.Sprintf("validating strategy was %t with following prompt:\n", jsonResponse.Verified, prompt))
 
 	return jsonResponse.Verified, nil
 }

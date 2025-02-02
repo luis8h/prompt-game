@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"prompt-game/external/openai"
 	"prompt-game/internal/stores"
+	"prompt-game/internal/utils"
 	"prompt-game/views/pages/game"
 
 	"github.com/gin-contrib/sessions"
@@ -45,6 +46,8 @@ func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
 			return
 		}
 
+		utils.GameLogger.PrintS(ctx, "postet message :"+message)
+
 		viewMessage := game.Message{Role: "user", Content: message}
 
 		render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
@@ -60,6 +63,8 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 			return
 		}
 
+		utils.GameLogger.PrintS(ctx, "assistant replied: "+message)
+
 		viewMessage := game.Message{Role: "assistant", Content: message}
 
 		render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
@@ -68,23 +73,13 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 
 func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		locale := getLocale(ctx)
 		var payload struct {
 			Messages []openai.Message `json:"messages"`
 		}
 
-		withStrategy, ok := session.Get("withStrategy").(bool)
-		if !ok {
-			withStrategy = true
-		}
-
-		// get current level
-		levelId, ok := session.Get("currentLevel").(int)
-		if !ok {
-			levelId = 0
-			session.Set("currentLevel", 0)
-		}
+		locale := getLocale(ctx)
+		withStrategy := GetWithStrategy(ctx)
+		levelId := GetCurrentLevel(ctx)
 		level := stores.GetLevel(levelId, locale)
 
 		// set system messages
@@ -104,6 +99,14 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 				Role:    "system",
 				Content: level.BadPrompt,
 			})
+		}
+
+		// Convert systemMessages to a pretty-printed JSON string
+		systemMessagesJSON, err := json.MarshalIndent(systemMessages, "", "  ")
+		if err != nil {
+			utils.GameLogger.PrintS(ctx, "Error marshalling systemMessages: "+err.Error())
+		} else {
+			utils.GameLogger.PrintS(ctx, "Prompting OpenAI with systemMessages:\n"+string(systemMessagesJSON))
 		}
 
 		// Parse the JSON payload from the request

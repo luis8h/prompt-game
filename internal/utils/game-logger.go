@@ -6,8 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
+
+var sep = "==================================================================================================================="
+var sep2 = "-------------------------------------------------------------------------------------------------------------------"
 
 type GameLoggerType struct {
     *log.Logger
@@ -60,7 +65,19 @@ func init() {
     }
 }
 
-func (gl *GameLoggerType) PrintS(sessionId string, message string) {
+func (gl *GameLoggerType) PrintS(ctx *gin.Context, message string) {
+	session := sessions.Default(ctx)
+
+	sessionId := session.Get("sessionId")
+	levelId := session.Get("currentLevel")
+	showTask := session.Get("showTask")
+	withStrat := session.Get("withStrategy")
+
+	locale := "en"
+	if cookie, err := ctx.Cookie("lang"); err == nil {
+		locale = cookie
+	}
+
 	fileName := fmt.Sprintf("%s.log", sessionId)
 	logFilePath := filepath.Join(gl.logDir, fileName)
 
@@ -72,5 +89,5 @@ func (gl *GameLoggerType) PrintS(sessionId string, message string) {
 	defer file.Close()
 
     tmpLogger := log.New(file, "Session Logger:\t", log.Ldate|log.Ltime)
-    tmpLogger.Printf("%s", message)
+	tmpLogger.Printf("\nlevel-%d, lang-%s, withStrart-%t, showTask-%t\n%s \n\n%s\n\n%s", levelId, locale, withStrat, showTask, sep2, message, sep)
 }

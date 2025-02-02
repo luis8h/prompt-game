@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
+	"prompt-game/internal/utils"
 	"prompt-game/views"
 	"prompt-game/views/pages/result"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,12 +20,12 @@ func NewResultHandler() *PromptHandler {
 
 func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// reset levelid
-		session := sessions.Default(ctx)
-		session.Set("currentLevel", 0)
-		session.Set("storyId", 0)
-		session.Set("showTask", 0)
-		session.Save()
+		SetCurrentLevel(ctx, 0)
+		SetStoryId(ctx, 0)
+		SetShowTask(ctx, false)
+		SetWithStrategy(ctx, false)
+
+		utils.GameLogger.PrintS(ctx, fmt.Sprintf("restarting game"))
 
 		// redirect
 		ctx.Writer.Header().Set("HX-Redirect", "/")

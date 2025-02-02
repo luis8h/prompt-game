@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"prompt-game/internal/stores"
+	"prompt-game/internal/utils"
 	"prompt-game/views"
 	"prompt-game/views/pages/game"
 	"prompt-game/views/pages/result"
@@ -24,6 +25,8 @@ func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 		storyId := GetStoryId(ctx)
 		showTask := GetShowTask(ctx)
 		withStrategy := GetWithStrategy(ctx)
+
+		utils.GameLogger.PrintS(ctx, "entered game")
 
 		// check for results
 		if currentLevel >= stores.GetLevelCount() {
