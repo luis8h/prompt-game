@@ -2,9 +2,9 @@
 tailwind-watch:
 	npx tailwindcss -i ./static/css/tailwind/input.css -o ./static/css/tailwind/output.css --watch
 
-# .PHONY: tailwind-build
-# tailwind-build:
-# 	./tailwindcss -i ./static/css/input.css -o ./static/css/style.min.css --minify
+.PHONY: tailwind-build
+tailwind-build:
+	npx tailwindcss -i ./static/css/tailwind/input.css -o ./static/css/tailwind/output.min.css --minify
 
 .PHONY: templ-generate
 templ-generate:

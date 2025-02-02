@@ -5,6 +5,7 @@ node_modules
 views/**/*_templ.go
 views/**/*_templ.txt
 static/css/tailwind/output.css
+static/css/tailwind/output.min.css
 .vscode
 log
 cmd/__debug**
