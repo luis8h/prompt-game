@@ -6,3 +6,5 @@ views/**/*_templ.go
 views/**/*_templ.txt
 static/css/tailwind/output.css
 .vscode
+log
+cmd/__debug**

@@ -1,6 +1,9 @@
 package middlewares
 
 import (
+	"fmt"
+	"prompt-game/internal/utils"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -13,6 +16,7 @@ func SessionIdMiddleware() gin.HandlerFunc {
 			newId := uuid.New().String()
 			session.Set("sessionId", newId)
 			session.Save()
+			utils.GameLogger.PrintS(newId, fmt.Sprintf("initialized session %s", newId))
 		}
 		ctx.Next()
 	}
