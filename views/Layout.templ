@@ -1,8 +1,10 @@
 package views
 
 import (
+"os"
 "context"
 "github.com/invopop/ctxi18n/i18n"
+	"fmt"
 )
 
 func isLocale(ctx context.Context, expected string) bool {
@@ -11,6 +13,11 @@ if locale.Code().String() == expected {
 return true
 }
 return false
+}
+
+func getEvaluationLink(sessionId string) string {
+    fullLink := fmt.Sprintf("%s%s", os.Getenv("EVALUATION_LINK"), sessionId)
+    return fullLink
 }
 
 templ Layout(page templ.Component, sessionId string) {
@@ -38,9 +45,12 @@ templ Layout(page templ.Component, sessionId string) {
     <div id="page-container">
         @page
     </div>
-    <div class="fixed bottom-0 text-textcolor">
-        SessionId: { sessionId }
-    </div>
+    <a
+        target="_blank" rel="noopener noreferer" href={templ.SafeURL(getEvaluationLink(sessionId))}
+        class="fixed top-2 left-2 text-red-500 hover:underline font-bold"
+    >
+        Evaluate
+    </a>
     <div class="fixed top-4 right-4 z-50 rounded-lg shadow-lg">
         <select name="lang" hx-post="/language" hx-include="[name=lang]" hx-trigger="change" hx-swap="none"
             hx-on="htmx:afterRequest:window.location.reload()"

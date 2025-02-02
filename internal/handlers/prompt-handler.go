@@ -9,7 +9,6 @@ import (
 	"prompt-game/internal/utils"
 	"prompt-game/views/pages/game"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
