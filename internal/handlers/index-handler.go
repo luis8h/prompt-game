@@ -17,9 +17,6 @@ func NewIndexHandler() *IndexHandler {
 
 func (h *IndexHandler) IndexPage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		err := render(ctx, http.StatusOK, views.Layout(index.IndexPage()))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, views.Layout(index.IndexPage()))
 	}
 }

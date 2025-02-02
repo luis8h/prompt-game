@@ -13,7 +13,6 @@ import (
 	"prompt-game/views/pages/result"
 	"strings"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,40 +26,88 @@ func NewLevelHandler(apiKey string) *LevelHandler {
 	}
 }
 
-func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
+func (h *LevelHandler) GetLevelStoryPrev() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
 		locale := getLocale(ctx)
 
-		session.Set("withStrategy", true)
-		session.Save()
+		levelId := GetCurrentLevel(ctx)
+		level := stores.GetLevel(levelId, locale)
 
-		levelId, ok := session.Get("currentLevel").(int)
-		if !ok {
-			levelId = 0
-			session.Set("currentLevel", 0)
-			session.Save()
+		storyId := GetStoryId(ctx)
+
+		newStoryId := storyId - 1
+		if (len(level.Story) <= newStoryId || newStoryId < 0) {
+			newStoryId = 0
 		}
+
+		SetStoryId(ctx, newStoryId)
+
+		story := level.Story[newStoryId]
+
+		render(ctx, http.StatusOK, game.StoryHtml(story, newStoryId, len(level.Story)))
+	}
+}
+
+func (h *LevelHandler) GetLevelStoryNext() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		locale := getLocale(ctx)
+
+		levelId := GetCurrentLevel(ctx)
+		level := stores.GetLevel(levelId, locale)
+
+		storyId := GetStoryId(ctx)
+
+		newStoryId := storyId + 1
+
+		if (len(level.Story) == newStoryId) {
+			SetShowTask(ctx, true)
+		}
+
+		if (len(level.Story) <= newStoryId || newStoryId < 0) {
+			newStoryId = 0
+		}
+
+		SetStoryId(ctx, newStoryId)
+		story := level.Story[newStoryId]
+
+		render(ctx, http.StatusOK, game.StoryHtml(story, newStoryId, len(level.Story)))
+	}
+}
+
+func (h *LevelHandler) GetLevel() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		locale := getLocale(ctx)
+		levelId := GetCurrentLevel(ctx)
+		storyId := GetStoryId(ctx)
+		withStrategy := GetWithStrategy(ctx)
+		showTask := GetShowTask(ctx)
+
+		level := stores.GetLevel(levelId, locale)
+
+		render(ctx, http.StatusOK, game.LevelHtml(level, withStrategy, false, levelId, storyId, showTask))
+	}
+}
+
+func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		locale := getLocale(ctx)
+
+		SetWithStrategy(ctx, true)
+		SetShowTask(ctx, true)
+
+		levelId := GetCurrentLevel(ctx)
+		storyId := GetStoryId(ctx)
 
 		// render template
-		err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, true, levelId))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, true, levelId, storyId, true))
 	}
 }
 
 func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
 		locale := getLocale(ctx)
-
-		// get current level
-		levelId, ok := session.Get("currentLevel").(int)
-		if !ok {
-			levelId = 0
-			session.Set("currentLevel", 0)
-		}
+		levelId := GetCurrentLevel(ctx)
+		storyId := GetStoryId(ctx)
 
 		// get messages
 		messagesJson := ctx.PostForm("messages")
@@ -77,18 +124,16 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		if !valid {
 			// render template
 			ctx.Writer.Header().Set("HX-Trigger", "invalidAnswer")
-			err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId))
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-			}
+			render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId, storyId, false))
 			return
 		}
 
 		// set nextlevel
 		nextLevelId := levelId + 1
-		session.Set("currentLevel", nextLevelId)
-		session.Set("withStrategy", false)
-		session.Save()
+		SetCurrentLevel(ctx, nextLevelId)
+		withStrategy := SetWithStrategy(ctx, false)
+		newStoryId := SetStoryId(ctx, 0)
+		showTask := SetShowTask(ctx, false)
 
 		if (stores.GetLevel(nextLevelId, locale).ClearChatHistoryOnSubmit) {
 			ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
@@ -97,18 +142,12 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		// load results page
 		if nextLevelId == stores.GetLevelCount() {
 			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
-			err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-			}
+			render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
 			return
 		}
 
 		// render next level
-		err := render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(nextLevelId, locale), false, true, nextLevelId))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(nextLevelId, locale), withStrategy, true, nextLevelId, newStoryId, showTask))
 	}
 }
 

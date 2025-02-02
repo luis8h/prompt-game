@@ -77,7 +77,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 				{
 					Character: King,
-					Text:      fmt.Sprintf("I want to propose another day to him, but i am not a good writer at all. I do not want to embaras me for my bad english."),
+					Text:      fmt.Sprintf("I want to propose another day to him, but i am not a good writer at all. I do not want to embarrass myself for my bad english."),
 				},
 			},
 			Task: fmt.Sprintf(

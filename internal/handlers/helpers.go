@@ -1,13 +1,19 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/a-h/templ"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-func render(ctx *gin.Context, status int, template templ.Component) error {
+func render(ctx *gin.Context, status int, template templ.Component) {
 	ctx.Status(status)
-	return template.Render(ctx.Request.Context(), ctx.Writer)
+	err := template.Render(ctx.Request.Context(), ctx.Writer)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render template"})
+	}
 }
 
 func getLocale(ctx *gin.Context) string {
@@ -16,4 +22,80 @@ func getLocale(ctx *gin.Context) string {
         locale = cookie
     }
     return locale
+}
+
+func SetStoryId(ctx *gin.Context, storyId int) int {
+	session := sessions.Default(ctx)
+	session.Set("storyId", storyId)
+	session.Save()
+	return storyId
+}
+
+func GetStoryId(ctx *gin.Context) int {
+	session := sessions.Default(ctx)
+
+	storyId, ok := session.Get("storyId").(int)
+	if !ok {
+		storyId = 0
+		SetStoryId(ctx, storyId)
+	}
+
+	return storyId
+}
+
+func SetCurrentLevel(ctx *gin.Context, levelId int) int {
+	session := sessions.Default(ctx)
+	session.Set("currentLevel", levelId)
+	session.Save()
+	return levelId
+}
+
+func GetCurrentLevel(ctx *gin.Context) int {
+	session := sessions.Default(ctx)
+
+	levelId, ok := session.Get("currentLevel").(int)
+	if !ok {
+		levelId = 0
+		SetCurrentLevel(ctx, levelId)
+	}
+
+	return levelId
+}
+
+func SetWithStrategy(ctx *gin.Context, withStrategy bool) bool {
+	session := sessions.Default(ctx)
+	session.Set("withStrategy", withStrategy)
+	session.Save()
+	return withStrategy
+}
+
+func GetWithStrategy(ctx *gin.Context) bool {
+	session := sessions.Default(ctx)
+
+	withStrategy, ok := session.Get("withStrategy").(bool)
+	if !ok {
+		withStrategy = false
+		SetWithStrategy(ctx, withStrategy)
+	}
+
+	return withStrategy
+}
+
+func SetShowTask(ctx *gin.Context, showTask bool) bool {
+	session := sessions.Default(ctx)
+	session.Set("showTask", showTask)
+	session.Save()
+	return showTask
+}
+
+func GetShowTask(ctx *gin.Context) bool {
+	session := sessions.Default(ctx)
+
+	showTask, ok := session.Get("showTask").(bool)
+	if !ok {
+		showTask = false
+		SetWithStrategy(ctx, showTask)
+	}
+
+	return showTask
 }

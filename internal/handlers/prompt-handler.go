@@ -32,10 +32,7 @@ func (h *PromptHandler) PostHistory() gin.HandlerFunc {
 			return
 		}
 
-		err := render(ctx, http.StatusOK, game.ChatHistory(messages))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, game.ChatHistory(messages))
 	}
 }
 
@@ -50,10 +47,7 @@ func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
 
 		viewMessage := game.Message{Role: "user", Content: message}
 
-		err := render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
 	}
 }
 
@@ -68,10 +62,7 @@ func (h *PromptHandler) PostMessageAssistant() gin.HandlerFunc {
 
 		viewMessage := game.Message{Role: "assistant", Content: message}
 
-		err := render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, game.ChatMessage(viewMessage))
 	}
 }
 

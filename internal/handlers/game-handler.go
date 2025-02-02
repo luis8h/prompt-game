@@ -7,7 +7,6 @@ import (
 	"prompt-game/views/pages/game"
 	"prompt-game/views/pages/result"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,41 +19,19 @@ func NewGameHandler() *GameHandler {
 
 func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
 		locale := getLocale(ctx)
-
-		// get current level
-		currentLevel, ok := session.Get("currentLevel").(int)
-		if !ok {
-			currentLevel = 0
-			session.Set("currentLevel", 0)
-			session.Save()
-		}
-
-		withStrategyVal := session.Get("withStrategy")
-		var withStrategy bool
-		if withStrategyVal == nil {
-			withStrategy = false
-			session.Set("withStrategy", false)
-			session.Save()
-		} else {
-			withStrategy = withStrategyVal.(bool)
-		}
-
+		currentLevel := GetCurrentLevel(ctx)
+		storyId := GetStoryId(ctx)
+		showTask := GetShowTask(ctx)
+		withStrategy := GetWithStrategy(ctx)
 
 		// check for results
 		if currentLevel >= stores.GetLevelCount() {
-			err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-			}
+			render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
 			return
 		}
 
 		// render page
-		err := render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy, currentLevel)))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy, currentLevel, storyId, showTask)))
 	}
 }

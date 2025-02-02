@@ -8,16 +8,15 @@ import (
 "strconv"
 )
 
-templ InstructionsPane(level models.Level, withStrategy bool, validation bool, levelId int) {
+// TODO: put all the different variables into a struct
+templ InstructionsPane(level models.Level, withStrategy bool, validation bool, levelId int, storyId int, showTask bool) {
 <div id="instruction-pane" class="pl-20 h-full">
-    @LevelHtml(level, withStrategy, validation, levelId)
+    @LevelHtml(level, withStrategy, validation, levelId, storyId, showTask)
 </div>
 }
 
-var currentStory int = 0
-
-templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId int) {
-<div class="h-full flex flex-col justify-center">
+templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId int, storyId int, showTask bool) {
+<div id="level-html" class="h-full flex flex-col justify-center">
     <div class="h-full" style="padding-top: 5%; padding-bottom: 5%;">
         <div class="flex flex-col justify-between h-full">
             <div class="flex flex-col gap-8">
@@ -28,7 +27,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                     </h2>
                     @ButtonBar(level, withStrategy)
                 </div>
-                <div class="flex flex-col gap-4">
+                <div class={"flex flex-col gap-4", templ.KV("invisible", !showTask)}>
                     <div class="text-textcolor rounded-xl p-4 bg-secondary">
                         <div>
                             <p class="text-textcolor text-lg">
@@ -42,8 +41,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                         <div class="z-10 absolute cursor-pointer text-center w-full left-0 top-0 h-full flex justify-center items-center hover:brightness-150"
                             id="submit-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
                             hx-indicator="#validation-indicator"
-                            hx-vals="js:{messages: localStorage.getItem('message-history')}"
-                        >
+                            hx-vals="js:{messages: localStorage.getItem('message-history')}">
                             <div class="text-highlight font-bold text-xl">Reveal Strategy</div>
                         </div>
                         }
@@ -61,7 +59,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                     }
                 </div>
             </div>
-            @StoryHtml(level.Story[currentStory])
+            @StoryHtml(level.Story[storyId], storyId, len(level.Story))
         </div>
     </div>
     <script>hljs.highlightAll();</script>
@@ -74,7 +72,7 @@ templ ButtonBar(level models.Level, withStrategy bool) {
         <div id="reset-button" class="flex flex-row justify-center items-center" type="button" class=""
             onclick="onResetClick()">
             @components.Button1(false) {
-            Reset History
+            Reset Chat
             }
         </div>
         <div id="submit-button" class="flex flex-row justify-center items-center" hx-post="/level/nextb"
@@ -93,15 +91,6 @@ templ ButtonBar(level models.Level, withStrategy bool) {
 </div>
 }
 
-templ LevelFeedbackHtml(validation models.LevelValidation) {
-<div class="flex flex-row space-x-4">
-    if !validation.Ignore {
-    @ValidationCardHtml("Task", validation.Answer)
-    @ValidationCardHtml("Strategy", validation.Strategy)
-    }
-</div>
-}
-
 templ ValidationCardHtml(name string, valid bool) {
 <div class="flex flex-row bg-primary p-2 space-x-2 rounded-xl w-fit">
     <p class="text-textcolor font-bold">{ name }</p>
@@ -115,13 +104,20 @@ templ ValidationCardHtml(name string, valid bool) {
 </div>
 }
 
-templ StoryHtml(story models.Speechbubble) {
-<div>
-    <div class="flex flex-row">
-        <img src={ story.Character.Imgs[0] } class="object-cover h-60" />
-        <div class="bg-highlight rounded-3xl text-primary p-4 self-start relative">
-            { story.Text }
-            <div class="text-secondary absolute bottom-1 right-3 font-bold">Next</div>
+templ StoryHtml(story models.Speechbubble, storyId int, storyLength int) {
+<div id="story" class="flex flex-row w-full">
+    <img src={ story.Character.Imgs[0] } class="object-cover h-60" />
+    <div class="bg-highlight rounded-3xl text-primary p-4 self-start text-justify flex flex-col justify-between min-h-36 w-full">
+        <div>{ story.Text }</div>
+        <div class="flex flex-row w-full justify-between">
+            <div hx-get="/level/story/prev" hx-target="#story" hx-swap="outerHTML"
+                class={"font-bold hover:underline hover:cursor-pointer", templ.KV("invisible", storyId == 0)}>
+                Back
+            </div>
+            <div hx-get="/level/story/next" hx-target="#story" hx-swap="outerHTML"
+                class={"font-bold hover:underline hover:cursor-pointer", templ.KV("invisible", storyId==storyLength-1)}>
+                Next
+            </div>
         </div>
     </div>
 </div>

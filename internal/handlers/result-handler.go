@@ -22,6 +22,8 @@ func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
 		// reset levelid
 		session := sessions.Default(ctx)
 		session.Set("currentLevel", 0)
+		session.Set("storyId", 0)
+		session.Set("showTask", 0)
 		session.Save()
 
 		// redirect
@@ -33,9 +35,6 @@ func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
 
 func (h *PromptHandler) GetResult() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		err := render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render page"})
-		}
+		render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
 	}
 }
