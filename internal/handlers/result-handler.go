@@ -35,6 +35,6 @@ func (h *PromptHandler) GetResultRestart() gin.HandlerFunc {
 
 func (h *PromptHandler) GetResult() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+		render(ctx, http.StatusOK, views.Layout(result.ResultPage(), GetSessionId(ctx)))
 	}
 }

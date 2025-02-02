@@ -17,6 +17,7 @@ func NewIndexHandler() *IndexHandler {
 
 func (h *IndexHandler) IndexPage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		render(ctx, http.StatusOK, views.Layout(index.IndexPage()))
+
+		render(ctx, http.StatusOK, views.Layout(index.IndexPage(), GetSessionId(ctx)))
 	}
 }

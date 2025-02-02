@@ -36,6 +36,7 @@ func main() {
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
 
+	router.Use(middlewares.SessionIdMiddleware())
     router.Use(middlewares.I18nMiddleware())
 
 	app := internal.Config{Router: router, ApiKey: os.Getenv("OPENAI_API_KEY")}

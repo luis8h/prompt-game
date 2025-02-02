@@ -27,11 +27,11 @@ func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 
 		// check for results
 		if currentLevel >= stores.GetLevelCount() {
-			render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+			render(ctx, http.StatusOK, views.Layout(result.ResultPage(), GetSessionId(ctx)))
 			return
 		}
 
 		// render page
-		render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy, currentLevel, storyId, showTask)))
+		render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy, currentLevel, storyId, showTask), GetSessionId(ctx)))
 	}
 }

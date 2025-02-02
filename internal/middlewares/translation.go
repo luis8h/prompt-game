@@ -1,10 +1,11 @@
 package middlewares
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/invopop/ctxi18n"
-    "log"
-    "net/http"
 )
 
 func I18nMiddleware() gin.HandlerFunc {

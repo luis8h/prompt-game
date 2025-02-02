@@ -17,11 +17,20 @@ func render(ctx *gin.Context, status int, template templ.Component) {
 }
 
 func getLocale(ctx *gin.Context) string {
-    locale := "en"
-    if cookie, err := ctx.Cookie("lang"); err == nil {
-        locale = cookie
-    }
-    return locale
+	locale := "en"
+	if cookie, err := ctx.Cookie("lang"); err == nil {
+		locale = cookie
+	}
+	return locale
+}
+
+func GetSessionId(ctx *gin.Context) string {
+	session := sessions.Default(ctx)
+	sessionId, ok := session.Get("sessionId").(string)
+	if !ok {
+		sessionId = "n/a"
+	}
+	return sessionId
 }
 
 func SetStoryId(ctx *gin.Context, storyId int) int {
@@ -33,13 +42,10 @@ func SetStoryId(ctx *gin.Context, storyId int) int {
 
 func GetStoryId(ctx *gin.Context) int {
 	session := sessions.Default(ctx)
-
 	storyId, ok := session.Get("storyId").(int)
 	if !ok {
-		storyId = 0
-		SetStoryId(ctx, storyId)
+		storyId = SetStoryId(ctx, 0)
 	}
-
 	return storyId
 }
 
@@ -52,13 +58,10 @@ func SetCurrentLevel(ctx *gin.Context, levelId int) int {
 
 func GetCurrentLevel(ctx *gin.Context) int {
 	session := sessions.Default(ctx)
-
 	levelId, ok := session.Get("currentLevel").(int)
 	if !ok {
-		levelId = 0
-		SetCurrentLevel(ctx, levelId)
+		levelId = SetCurrentLevel(ctx, 0)
 	}
-
 	return levelId
 }
 
@@ -71,13 +74,10 @@ func SetWithStrategy(ctx *gin.Context, withStrategy bool) bool {
 
 func GetWithStrategy(ctx *gin.Context) bool {
 	session := sessions.Default(ctx)
-
 	withStrategy, ok := session.Get("withStrategy").(bool)
 	if !ok {
-		withStrategy = false
-		SetWithStrategy(ctx, withStrategy)
+		withStrategy = SetWithStrategy(ctx, false)
 	}
-
 	return withStrategy
 }
 
@@ -90,12 +90,9 @@ func SetShowTask(ctx *gin.Context, showTask bool) bool {
 
 func GetShowTask(ctx *gin.Context) bool {
 	session := sessions.Default(ctx)
-
 	showTask, ok := session.Get("showTask").(bool)
 	if !ok {
-		showTask = false
-		SetWithStrategy(ctx, showTask)
+		showTask = SetWithStrategy(ctx, false)
 	}
-
 	return showTask
 }

@@ -144,7 +144,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		// load results page
 		if nextLevelId == stores.GetLevelCount() {
 			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
-			render(ctx, http.StatusOK, views.Layout(result.ResultPage()))
+			render(ctx, http.StatusOK, views.Layout(result.ResultPage(), GetSessionId(ctx)))
 			return
 		}
 
