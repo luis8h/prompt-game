@@ -65,6 +65,12 @@ function resetHistory() {
     htmx.trigger(document.body, "reset-trigger");
 }
 
+function refreshLevel() {
+    console.log("refreshing level")
+    htmx.trigger(document.body, "refresh-level");
+}
+document.body.addEventListener("refreshLevel", refreshLevel);
+
 function showInvalidAnswerPopup() {
     Toastify({
         text: "Sorry, the answer/strategy was not correct. Try again.",

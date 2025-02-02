@@ -57,7 +57,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					Text:      fmt.Sprintf("Try it out!"),
 				},
 			},
-			Task:                     fmt.Sprintf("Try to talk to %s. For example, ask her to tell you some ideas for good medieval names.", Elf.Name),
+			Task:                     fmt.Sprintf("Try to talk to %s. Ask her to tell you some ideas for good medieval names.", Elf.Name),
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              false,
 			BadPrompt:                fmt.Sprintf(""),

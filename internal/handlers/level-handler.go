@@ -59,8 +59,9 @@ func (h *LevelHandler) GetLevelStoryNext() gin.HandlerFunc {
 
 		newStoryId := storyId + 1
 
-		if (len(level.Story) == newStoryId) {
+		if (len(level.Story)-1 == newStoryId) {
 			SetShowTask(ctx, true)
+			ctx.Writer.Header().Set("HX-Trigger", "refreshLevel")
 		}
 
 		if (len(level.Story) <= newStoryId || newStoryId < 0) {
@@ -92,14 +93,14 @@ func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		locale := getLocale(ctx)
 
-		SetWithStrategy(ctx, true)
-		SetShowTask(ctx, true)
+		withStrategy := SetWithStrategy(ctx, true)
+		showTask := SetShowTask(ctx, true)
 
 		levelId := GetCurrentLevel(ctx)
 		storyId := GetStoryId(ctx)
 
 		// render template
-		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, true, levelId, storyId, true))
+		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, withStrategy, levelId, storyId, showTask))
 	}
 }
 
@@ -108,6 +109,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		locale := getLocale(ctx)
 		levelId := GetCurrentLevel(ctx)
 		storyId := GetStoryId(ctx)
+		showTask := GetShowTask(ctx)
 
 		// get messages
 		messagesJson := ctx.PostForm("messages")
@@ -124,7 +126,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		if !valid {
 			// render template
 			ctx.Writer.Header().Set("HX-Trigger", "invalidAnswer")
-			render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId, storyId, false))
+			render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId, storyId, showTask))
 			return
 		}
 
@@ -133,9 +135,9 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		SetCurrentLevel(ctx, nextLevelId)
 		withStrategy := SetWithStrategy(ctx, false)
 		newStoryId := SetStoryId(ctx, 0)
-		showTask := SetShowTask(ctx, false)
+		showTask = SetShowTask(ctx, false)
 
-		if (stores.GetLevel(nextLevelId, locale).ClearChatHistoryOnSubmit) {
+		if (stores.GetLevel(levelId, locale).ClearChatHistoryOnSubmit) {
 			ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
 		}
 
