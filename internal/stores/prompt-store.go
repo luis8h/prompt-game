@@ -21,6 +21,7 @@ var ValidateStrategyPrompt = `
 	%s
 
 	Your task is to decide wether in the following chat between the user and the ai, a the prompt engineering strategy from above was used by the user.
+	Note that he does not have to use the exact spelling like in the strategy explanation, but his approach should be clear and correct.
 
 	Chat of the user and the ai assistant:
 	%s
