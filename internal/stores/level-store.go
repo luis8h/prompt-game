@@ -249,7 +249,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task: fmt.Sprintf(
-				"Help to decode the whole book. Try it with the following page *(the solution might be a secret recipe)*:\n" +
+				"Help to decode the whole book. The shift is 5. Try it with the following page *(the solution might be a secret recipe)*:\n" +
 					"```markdown\n" +
 					"Gjmtqi ymj rdxynhfq htshthynts ymfy fbfnyx dtzw fqhmjrd xpnqqx—fs jshmfsynsl utynts nskzxji bnym ymj wfwjxy tk nslwjinjsyx. \nGjlns bnym Iwflts'x Gwjfym, f utyjsy jxxjshj ymfy nx ybnhj ymj frtzsy tk Umtjsnc Kjfymjw. Ymnx knjwd gwjfym bnqq nlsnyj ymj ajwd mjfwy tk dtzw utynts. \nYmj xjhtsi pjd nslwjinjsy, Umtjsnc Kjfymjw, nx mfqk ymj frtzsy tk ymj Iwflts'x Gwjfym, djy hwzhnfq ktw gwnslnsl gfqfshj yt ymj gwjb. Ymjs, nsywtizhj ymj Zsnhtws Yjfwx, f rflnhfq fsi jymjwjfq fiinynts yt ymj rnc. \nYmjnw frtzsy nx ymj xzr tk Iwflts'x Gwjfym fsi Umtjsnc Kjfymjw htrgnsji—fs jqncnw tk uzwj uzwnyd. Bjfaj ymj ijqnhfyj rflnh tk ymj Jqajs wjfqr nsyt dtzw utynts bnym Jqajs Jxxjshj, bmnhm frtzsyx yt mfqk tk ymj Zsnhtws Yjfwx, hwjfynsl f xtky gzy utbjwkzq zsijwhzwwjsy ns ymj gwjb. \nStb, gqjsi ymj utbjw tk ymj Iwflts'x Gwjfym fsi Jqajs Jxxjshj—bmjs ymjnw htrgnsji jxxjshj nx inaniji gd ybt, dtz’qq inxhtajw ymj ujwkjhy frtzsy tk Rttsxytsj Izxy sjjiji yt htruqjyj dtzw hwjfynts. Fkyjw hfwjkzqqd fiinsl jfhm nslwjinjsy, dtzw utynts bnqq wjfhm f ytyfq atqzrj tk 44.4 rq, f uwjhnxj fsi mfwrtsntzx gqjsi tk rflnh fsi rdxyjwd. \nBnym jfhm xyju, dtz iwfb hqtxjw yt zsqthpnsl ymj fshnjsy rflnh tk ymnx zsnvzj jqncnw.\n" +
 					"```\n",
@@ -275,7 +275,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task: fmt.Sprintf(
-				"Hilf, das ganze Buch zu entschlüsseln. Probiere es mit folgender Seite *(die Lösung könnte ein geheimes Rezept sein)*:\n" +
+				"Hilf, das ganze Buch zu entschlüsseln. Es ist mit der Verschiebung 5 verschlüsselt. Probiere es mit folgender Seite *(die Lösung könnte ein geheimes Rezept sein)*:\n" +
 					"```markdown\n" +
 					"Xnjm inw ifx rdxynxhmj Ljgwäz fs, ifx fzk ijnsj Fqhmjrnj-Kämnlpjnyjs bfwyjy - jns gjefzgjwsijw Ywfsp, ijw rny ijs xjqyjsxyjs Ezyfyjs ajwxjyey nxy. Gjlnssj rny ijr Fyjr ijx Iwfhmjs, jnsjw xyfwpjs Jxxjse, inj ituujqy xt xyfwp nxy bnj inj Umösnckjijw. \nInjxjw kjzwnlj Fyjr bnwi ifx Mjwe ijnsjx Ywfspjx jsykqfrrjs. Inj ebjnyj Mfzuyezyfy, inj Umösnckjijw, nxy szw mfqg xt xyfwp bnj ijw Fyjr ijx Iwfhmjs, fgjw ijssthm jsyxhmjnijsi küw ifx Lqjnhmljbnhmy ijx Ljgwäzx. \nIfss lngxy iz inj Jnsmtwsywäsjs mnsez, jnsj rflnxhmj zsi äymjwnxhmj Ezyfy ns ijw Rnxhmzsl. Nmwj Rjslj jsyxuwnhmy ijw Xzrrj ats Iwfhmjsfyjr zsi Umösnckjijw - jns Jqncnjw ats wjnsjw Wjnsmjny. \nBjgj inj efwyj Rflnj ijx Jqkjswjnhmx ns ijnsjs Ywfsp rny ijw Jqkjsjxxjse, inj inj Mäqkyj ijw Jnsmtwsywäsjs fzxrfhmy, zsi jwxhmfkkj jnsj xfskyj, fgjw pwfkyatqqj Zsyjwxywörzsl ns ijr Ljgwäz. Rnxhmj szs inj Pwfky ijx Iwfhmjsfyjrx zsi ijw Jqks-Jxxjse - bjss iz nmwj ljrjnsxfrj Jxxjse izwhm ebjn yjnqxy, bnwxy iz inj ujwkjpyj Rjslj Rtsixyjnsxyfzg jsyijhpjs, inj iz ezw Atqqjsizsl ijnsjw Pwjfynts gjsöynlxy. \nSfhm ijr xtwlkäqynljs Mnsezküljs ojijw Ezyfy bnwi ijns Ywfsp jns Ljxfryatqzrjs ats 44,4 rq jwwjnhmjs, jnsj uwäenxj zsi mfwrtsnxhmj Rnxhmzsl fzx Rflnj zsi Ljmjnrsnx. \nRny ojijr Xhmwnyy ptrrxy iz ijw Jsyxhmqüxxjqzsl ijw zwfqyjs Rflnj injxjx jnsenlfwynljs Jqncnjwx sämjw.\n" +
 					"```\n",
