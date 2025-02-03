@@ -24,7 +24,7 @@ var King models.Character = models.Character{
 	Name:       "Henry",
 	Profession: "king",
 	Imgs: []string{
-		"static/assets/characters/elf/elf_talking_1.png",
+		"static/assets/characters/king/king_talking_1.png",
 	},
 }
 var Elf models.Character = models.Character{
@@ -38,14 +38,14 @@ var Librarian models.Character = models.Character{
 	Name:       "Laurentius",
 	Profession: "librarian",
 	Imgs: []string{
-		"static/assets/characters/elf/elf_talking_1.png",
+		"static/assets/characters/king/king_talking_1.png",
 	},
 }
 var Alchemist models.Character = models.Character{
 	Name:       "Aurelius",
 	Profession: "alchemist",
 	Imgs: []string{
-		"static/assets/characters/elf/elf_talking_1.png",
+		"static/assets/characters/king/king_talking_1.png",
 	},
 }
 
