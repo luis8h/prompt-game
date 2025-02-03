@@ -6,6 +6,7 @@ import (
 "prompt-game/utils"
 "prompt-game/views/components"
 "strconv"
+"github.com/invopop/ctxi18n/i18n"
 )
 
 // TODO: put all the different variables into a struct
@@ -42,7 +43,9 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                             id="submit-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
                             hx-indicator="#validation-indicator"
                             hx-vals="js:{messages: localStorage.getItem('message-history')}">
-                            <div class="text-highlight font-bold text-xl">Reveal Strategy</div>
+                            <div class="text-highlight font-bold text-xl">
+			                    { i18n.T(ctx, "reveal_strategy") }
+                            </div>
                         </div>
                         }
                         <div class={ "z-5" , templ.KV("filter blur-md brightness-50", !withStrategy) }>
@@ -72,7 +75,7 @@ templ ButtonBar(level models.Level, withStrategy bool) {
         <div id="reset-button" class="flex flex-row justify-center items-center" type="button" class=""
             onclick="onResetClick()">
             @components.Button1(false) {
-            Reset Chat
+                { i18n.T(ctx, "reset_chat") }
             }
         </div>
         <div id="submit-button" class="flex flex-row justify-center items-center" hx-post="/level/nextb"
@@ -80,7 +83,9 @@ templ ButtonBar(level models.Level, withStrategy bool) {
             hx-vals="js:{messages: localStorage.getItem('message-history')}">
             @components.Button1(!withStrategy && level.HasStrategy) {
             <div class="h-full flex items-center justify-center min-w-16">
-                <div class="button-text">Submit</div>
+                <div class="button-text">
+                    { i18n.T(ctx, "submit") }
+                </div>
                 <div id="validation-indicator" class="htmx-indicator text-primary">
                     @components.DotLoading(2, "primary")
                 </div>
@@ -112,11 +117,11 @@ templ StoryHtml(story models.Speechbubble, storyId int, storyLength int) {
         <div class="flex flex-row w-full justify-between">
             <div hx-get="/level/story/prev" hx-target="#story" hx-swap="outerHTML"
                 class={"font-bold hover:underline hover:cursor-pointer", templ.KV("invisible", storyId == 0)}>
-                Back
+			    { i18n.T(ctx, "back") }
             </div>
             <div hx-get="/level/story/next" hx-target="#story" hx-swap="outerHTML"
                 class={"font-bold hover:underline hover:cursor-pointer", templ.KV("invisible", storyId==storyLength-1)}>
-                Next
+			    { i18n.T(ctx, "next") }
             </div>
         </div>
     </div>

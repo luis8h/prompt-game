@@ -1,3 +1,9 @@
 de:
   welcome: "Wilkommen im Prompt Kingdom!"
   start_game: "Spiel starten"
+  evaluate: "Bewerten"
+  next: "weiter"
+  back: "zurück"
+  reset_chat: "Chat leeren"
+  submit: "Abgeben"
+  reveal_strategy: "Strategie anschauen"
