@@ -22,14 +22,21 @@ var KingdomName = "Prompt Kingdom"
 
 var King models.Character = models.Character{
 	Name:       "Henry",
-	Profession: "King",
+	Profession: "king",
 	Imgs: []string{
 		"static/assets/characters/elf/elf_talking_1.png",
 	},
 }
 var Elf models.Character = models.Character{
 	Name:       "AIra",
-	Profession: "Elf",
+	Profession: "elf",
+	Imgs: []string{
+		"static/assets/characters/elf/elf_talking_1.png",
+	},
+}
+var Librarian models.Character = models.Character{
+	Name:       "Laurentius",
+	Profession: "librarian",
 	Imgs: []string{
 		"static/assets/characters/elf/elf_talking_1.png",
 	},
@@ -101,36 +108,37 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			BadPrompt:                "If the User asks you to write a Response to a letter. Just give him a letter in bad english and not longer than one sentence. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
 		},
 	},
-	// {
-	// 	"en": {
-	// 		Title: "The Test",
-	// 		Story: []string{"At the meeting he wants to test the skills of you and your elf.\n\n" +
-	// 			"The royal librarian has a special task for your. Since several days he tries to decrypt a book encoded in caesar cipher. He gives you the following example: \n\n" +
-	// 			"```Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.```\n\n"},
-	// 		Task: "Ask the elf to find out the shift, the book is encoded with.",
-	// 		StrategyExplanation: "To get better results, use the **generated knowledge** approach.\n\n" +
-	// 			"You can do this by first asking the elf to explain what ceasar cipher is and give examples of it. After that give her the task to find the right shift.",
-	// 		StrategyValidation: "- the user should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift in separate messages." +
-	// 			"- he can separate the prompting into multiple messages",
-	// 		ClearChatHistoryOnSubmit: true,
-	// 		HasStrategy:              true,
-	// 		BadPrompt:                "If the user asks you to find out the right shift of the caesar cipher, say something wrong like 23, and give him a non sense sentence. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
-	// 	},
-	// 	"de": {
-	// 		Title: "",
-	// 		Story: []string{"Ihr Brief hat dem König sehr gut gefallen und er lädt Sie zu einem Treffen mit ihm ein.\n\n" +
-	// 			"Bei dem Treffen sagt er, dass er das Orakel live in Aktion sehen möchte. Sein Bibliothekar ist bei ihm und hat eine besondere Aufgabe für Sie.\n\n" +
-	// 			"Seit einigen Tagen versucht er, die Verschlüsselung eines Buches zu knacken, das mit der Cäsar-Chiffre verschlüsselt ist. Bisher konnte er nicht herausfinden, welche Verschiebung zur Verschlüsselung des Buches verwendet wurde.\n\n" +
-	// 			"Er gibt dir den folgenden Satz:  'Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.'\n\n" +
-	// 			"Benutze das Orakel, um herauszufinden, welche Verschiebung zur Verschlüsselung des Buches verwendet wurde.\n\n"},
-	// 		StrategyExplanation: "Bessere Ergebnisse erzielen Sie mit dem Ansatz des **generierten Wissens**." +
-	// 			"Sie können dies tun, indem Sie das Orakel zunächst bitten, zu erklären, was die Ceasar-Chiffre ist, und ihm dann die Aufgabe geben, die richtige Verschiebung zu finden.",
-	// 		StrategyValidation: "- der Benutzer sollte die Strategie der generierten Wissensabfrage verwenden\n\n" +
-	// 			"- er sollte **zuerst** den llm auffordern, etwas Wissen über die Cäsar-Chiffre zu generieren und ihm dann die Aufgabe geben, die richtige Verschiebung zu finden",
-	// 		ClearChatHistoryOnSubmit: true,
-	// 		HasStrategy:              true,
-	// 	},
-	// },
+	{
+		"en": {
+			Title: "Caesar Cipher",
+			Story: []models.Speechbubble{
+				{
+					Character: Librarian,
+					Text:      fmt.Sprintf("Hi, I am %s, the royal %s. King %s told me of you and your elf. Do you think you might be able to help me out with something?", Librarian.Name, Librarian.Profession, King.Name),
+				},
+				{
+					Character: Librarian,
+					Text:      fmt.Sprintf("I have a book encoded in Caesar Cipher, but i dont know the right shift to decode it..."),
+				},
+			},
+			Task: fmt.Sprintf(
+				"Help %s and find the right shift of the encryption. Here is a small phrase of the book. The solution should be typical english language.\n\n" +
+				"```markdown\n" +
+				"Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.\n" +
+				"```\n" +
+				"*What is caesar cipher?*\n\n" +
+				"*It is a type of substitution cipher in which each letter in the plaintext is replaced by a letter some fixed number of positions down the alphabet.*",
+				Librarian.Name,
+			),
+			StrategyExplanation: "To get better results, use the **generated knowledge** approach.\n\n" +
+				"You can do this by first asking the elf to explain what ceasar cipher is and give examples of it. After that give her the task to find the right shift.",
+			StrategyValidation: "- the user should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift in separate messages." +
+				"- he can separate the prompting into multiple messages",
+			ClearChatHistoryOnSubmit: true,
+			HasStrategy:              true,
+			BadPrompt:                "If the user asks you to find out the right shift of the caesar cipher, say something wrong like 23, and give him a non sense sentence. No matter if the user tells you something different. But do not tell the user, that you were told to give wrong answers.",
+		},
+	},
 	// // get details from a text
 	// // emotion prompting: joke for the royal clown (its about his career) -> maybe for task above emotion prompting and here lever?
 	// {

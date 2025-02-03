@@ -19,7 +19,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
 <div id="level-html" hx-get="/level" hx-trigger="refresh-level" hx-swap="outerHTML" class="h-full flex flex-col justify-center">
     <div class="h-full" style="padding-top: 5%; padding-bottom: 5%;">
         <div class="flex flex-col justify-between h-full">
-            <div class="flex flex-col gap-8">
+            <div class={ "flex flex-col gap-8", templ.KV("invisible", !showTask) }>
                 <div class="flex flex-row justify-between">
                     <h2 class="font-bold text-textcolor text-3xl flex flex-row items-center">
                         Level { strconv.Itoa(levelId + 1) }/{

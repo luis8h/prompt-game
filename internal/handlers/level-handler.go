@@ -106,6 +106,8 @@ func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 
 		utils.GameLogger.PrintS(ctx, fmt.Sprintf("revealed strategy"))
 
+		ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
+
 		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, withStrategy, levelId, storyId, showTask))
 	}
 }
