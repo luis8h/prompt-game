@@ -40,7 +40,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                     <div class={ "text-textcolor rounded-xl p-4 bg-secondary relative" }>
                         if !withStrategy {
                         <div class="z-10 absolute cursor-pointer text-center w-full left-0 top-0 h-full flex justify-center items-center hover:brightness-150"
-                            id="submit-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
+                            id="reveal-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
                             hx-indicator="#validation-indicator"
                             hx-vals="js:{messages: localStorage.getItem('message-history')}">
                             <div class="text-highlight font-bold text-xl">

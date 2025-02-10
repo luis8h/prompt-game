@@ -5,6 +5,16 @@ document.body.addEventListener("htmx:configRequest", function(evt) {
     }
 });
 
+function highlightSubmit() {
+    const submitButton = document.querySelector("#submit-button");
+    submitButton.classList.add("animation-pulse");
+    console.log("adding")
+    setTimeout(() => {
+        submitButton.classList.remove("animation-pulse");
+        console.log("removing")
+    }, 1500);
+}
+
 document.body.addEventListener("htmx:afterRequest", function(evt) {
     if (evt.detail.pathInfo.requestPath === "/message/user") {
         document.querySelector("#chat-loading").style.display = "block";
@@ -33,6 +43,7 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
                     });
                 messages.push({ role: "assistant", content: data.answer })
                 localStorage.setItem("message-history", JSON.stringify(messages))
+                highlightSubmit();
             })
     }
 });
