@@ -138,10 +138,10 @@ function refreshLevel() {
 }
 document.body.addEventListener("refreshLevel", refreshLevel);
 
-function showInvalidAnswerPopup() {
+function showInvalidAnswerPopup(event) {
     Toastify({
-        text: "Sorry, the answer/strategy was not correct. Try again.",
-        duration: 3000,
+        text: event.detail.value,
+        duration: 5000,
         close: true,
         gravity: "top",
         position: "center",

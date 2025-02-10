@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/a-h/templ"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/invopop/ctxi18n"
 )
 
 func render(ctx *gin.Context, status int, template templ.Component) {
@@ -22,6 +25,15 @@ func getLocale(ctx *gin.Context) string {
 		locale = cookie
 	}
 	return locale
+}
+
+func GetTranslationContext(ctx *gin.Context) context.Context {
+    lang := getLocale(ctx)
+    transCtx, err := ctxi18n.WithLocale(ctx.Request.Context(), lang)
+	if err != nil {
+		fmt.Println("Error unmarshalling messages:", err)
+	}
+	return transCtx
 }
 
 func GetSessionId(ctx *gin.Context) string {

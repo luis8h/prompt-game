@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/invopop/ctxi18n/i18n"
 )
 
 type LevelHandler struct {
@@ -37,7 +38,7 @@ func (h *LevelHandler) GetLevelStoryPrev() gin.HandlerFunc {
 		storyId := GetStoryId(ctx)
 
 		newStoryId := storyId - 1
-		if (len(level.Story) <= newStoryId || newStoryId < 0) {
+		if len(level.Story) <= newStoryId || newStoryId < 0 {
 			newStoryId = 0
 		}
 
@@ -62,12 +63,12 @@ func (h *LevelHandler) GetLevelStoryNext() gin.HandlerFunc {
 
 		newStoryId := storyId + 1
 
-		if (len(level.Story)-1 == newStoryId) {
+		if len(level.Story)-1 == newStoryId {
 			SetShowTask(ctx, true)
 			ctx.Writer.Header().Set("HX-Trigger", "refreshLevel")
 		}
 
-		if (len(level.Story) <= newStoryId || newStoryId < 0) {
+		if len(level.Story) <= newStoryId || newStoryId < 0 {
 			newStoryId = 0
 		}
 
@@ -133,13 +134,22 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		utils.GameLogger.PrintS(ctx, fmt.Sprintf("submitted"))
 
 		// verify answer
-		valid := h.validateLevel(ctx, messages, stores.GetLevel(levelId, locale))
+		validAnswer, validStrategy := h.validateLevel(ctx, messages, stores.GetLevel(levelId, locale))
+		transCtx := GetTranslationContext(ctx)
+		var message string
+		if (!validAnswer) {
+			message = i18n.T(transCtx, "invalid_answer")
+		} else if (!validStrategy) {
+			message = i18n.T(transCtx, "invalid_strategy")
+		}
 
 		// render invalid template
-		if !valid {
+		if !validAnswer || !validStrategy {
 			utils.GameLogger.PrintS(ctx, fmt.Sprintf("solution NOT valid"))
 			// render template
-			ctx.Writer.Header().Set("HX-Trigger", "invalidAnswer")
+			headerValue := fmt.Sprintf(`{"invalidAnswer": "%s"}`, message)
+			ctx.Writer.Header().Set("HX-Trigger", headerValue)
+
 			render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, false, levelId, storyId, showTask))
 			return
 		}
@@ -153,7 +163,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		newStoryId := SetStoryId(ctx, 0)
 		showTask = SetShowTask(ctx, false)
 
-		if (stores.GetLevel(levelId, locale).ClearChatHistoryOnSubmit) {
+		if stores.GetLevel(levelId, locale).ClearChatHistoryOnSubmit {
 			ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
 		}
 
@@ -170,33 +180,26 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 	}
 }
 
-func (h *LevelHandler) validateLevel(ctx *gin.Context, messages []openai.Message, level models.Level) (bool) {
+func (h *LevelHandler) validateLevel(ctx *gin.Context, messages []openai.Message, level models.Level) (bool, bool) {
 	if len(messages) == 0 {
-		return false
+		return false, false
 	}
 
 	// verify answer
 	isAnswerValid, err := h.isValidAnswer(ctx, messages, level)
 	if err != nil {
 		fmt.Printf("error when validating answer: %v", err)
-		return false
-	}
-
-	if !level.HasStrategy {
-		return isAnswerValid;
+		return false, false
 	}
 
 	// verify strategy
 	isStrategyValid, err := h.isValidStrategy(ctx, messages, level)
 	if err != nil {
 		fmt.Printf("error when validating strategy: %v", err)
-		return false
+		return false, false
 	}
 
-	if isStrategyValid && isAnswerValid {
-		return true
-	}
-	return false
+	return isAnswerValid, isStrategyValid
 }
 
 func (h *LevelHandler) isValidAnswer(ctx *gin.Context, messages []openai.Message, level models.Level) (bool, error) {
