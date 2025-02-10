@@ -3,6 +3,7 @@ package components
 templ Button1(disabled bool) {
 <button disabled?={ disabled }
     class="
+        button-1
         h-full
         flex flex-row items-center justify-center
         font-bold
@@ -10,6 +11,29 @@ templ Button1(disabled bool) {
         bg-highlight
         rounded-xl
         p-4
+        hover:brightness-150
+        duration-300
+        transition-all
+        hover:transition-all
+        disabled:bg-secondary
+        disabled:hover:brightness-100
+        disabled:text-highlightDisabled
+    ">
+    { children... }
+</button>
+}
+
+templ Button2(disabled bool) {
+<button disabled?={ disabled }
+    class="
+        button-2
+        h-full
+        flex flex-row items-center justify-center
+        font-bold
+        text-primary
+        bg-highlight
+        rounded-xl
+        p-2
         hover:brightness-150
         duration-300
         transition-all

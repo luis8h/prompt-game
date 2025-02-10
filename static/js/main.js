@@ -43,13 +43,52 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
                     });
                 messages.push({ role: "assistant", content: data.answer })
                 localStorage.setItem("message-history", JSON.stringify(messages))
-                highlightSubmit();
+                updateSubmit();
+                updateSendButton();
             })
     }
 });
 
+function updateSubmit() {
+    let messages = getMessageHistory();
+    console.log("updatei: ", messages)
+    const button = document.querySelector("#submit-button .button-1");
+    console.log(button.disabled);
+    if (messages.length === 0) {
+        button.disabled = true;
+    } else if (button.disabled === true) {
+        button.disabled = false;
+        highlightSubmit();
+    }
+}
+
+function updateSendButton() {
+    const input = document.querySelector("#prompt-input");
+    const button = document.querySelector("#send-button .button-2");
+    const initialValue = input.value.trim();
+    button.disabled = initialValue === "";
+    updateSubmit();
+}
+
+// enable/disable send button
+document.querySelector("#prompt-input").addEventListener("input", function(event) {
+    updateSendButton();
+    adjustHeight(event.target);
+});
+
+// initial check when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    updateSendButton();
+    updateSubmit();
+});
+
+
+// check for (shift)enter press in input field
 document.querySelector("#prompt-input").addEventListener("keydown", function(event) {
     const button = document.querySelector("#send-button");
+    if (event.target.value.trim() === "") {
+        return;
+    }
     if (event.keyCode === 13 && !event.shiftKey) {
         event.preventDefault();
         button.click();
@@ -74,6 +113,7 @@ function getMessageHistory() {
 function resetHistory() {
     localStorage.setItem("message-history", JSON.stringify([]));
     htmx.trigger(document.body, "reset-trigger");
+    updateSubmit();
 }
 
 function refreshLevel() {
