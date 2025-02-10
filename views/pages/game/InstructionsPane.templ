@@ -17,7 +17,7 @@ templ InstructionsPane(level models.Level, withStrategy bool, validation bool, l
 }
 
 templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId int, storyId int, showTask bool) {
-<div id="level-html" hx-get="/level" hx-trigger="refresh-level" hx-swap="outerHTML" class="h-full flex flex-col justify-center">
+<div id="level-html" with-strategy={ templ.JSONString(withStrategy) } has-strategy={ templ.JSONString(level.HasStrategy) } hx-get="/level" hx-trigger="refresh-level" hx-swap="outerHTML" class="h-full flex flex-col justify-center">
     <div class="h-full" style="padding-top: 5%; padding-bottom: 5%;">
         <div class="flex flex-col justify-between h-full">
             <div class={ "flex flex-col gap-8", templ.KV("invisible", !showTask) }>
@@ -37,7 +37,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                         </div>
                     </div>
                     if level.HasStrategy {
-                    <div class={ "text-textcolor rounded-xl p-4 bg-secondary relative" }>
+                    <div id="strategy" class={ "text-textcolor rounded-xl p-4 bg-secondary relative" }>
                         if !withStrategy {
                         <div class="z-10 absolute cursor-pointer text-center w-full left-0 top-0 h-full flex justify-center items-center hover:brightness-150"
                             id="reveal-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"

@@ -90,6 +90,8 @@ func (h *LevelHandler) GetLevel() gin.HandlerFunc {
 
 		level := stores.GetLevel(levelId, locale)
 
+		ctx.Writer.Header().Set("HX-Trigger-After-Settle", "refreshShowStrategy")
+
 		render(ctx, http.StatusOK, game.LevelHtml(level, withStrategy, false, levelId, storyId, showTask))
 	}
 }
@@ -107,6 +109,7 @@ func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 		utils.GameLogger.PrintS(ctx, fmt.Sprintf("revealed strategy"))
 
 		ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
+		ctx.Writer.Header().Set("HX-Trigger-After-Settle", "refreshSubmitButton")
 
 		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, withStrategy, levelId, storyId, showTask))
 	}

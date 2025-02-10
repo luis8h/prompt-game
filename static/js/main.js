@@ -45,30 +45,48 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
                 localStorage.setItem("message-history", JSON.stringify(messages))
                 updateSubmit();
                 updateSendButton();
+                updateShowStrategy();
             })
     }
 });
 
 function updateSubmit() {
     let messages = getMessageHistory();
-    console.log("updatei: ", messages)
     const button = document.querySelector("#submit-button .button-1");
-    console.log(button.disabled);
-    if (messages.length === 0) {
+    const withStrategy = JSON.parse(document.getElementById("level-html").getAttribute("with-strategy"));
+    const hasStrategy = JSON.parse(document.getElementById("level-html").getAttribute("has-strategy"));
+    if (messages.length === 0 || (!withStrategy && hasStrategy)) {
         button.disabled = true;
     } else if (button.disabled === true) {
         button.disabled = false;
         highlightSubmit();
     }
 }
+window.updateSubmit = updateSubmit;
 
 function updateSendButton() {
     const input = document.querySelector("#prompt-input");
     const button = document.querySelector("#send-button .button-2");
     const initialValue = input.value.trim();
     button.disabled = initialValue === "";
-    updateSubmit();
 }
+window.updateSendButton = updateSendButton;
+
+function updateShowStrategy() {
+    const messages = getMessageHistory();
+    const strategy = document.querySelector("#strategy");
+    if (!strategy) {
+        return;
+    }
+    const withStrategy = JSON.parse(document.getElementById("level-html").getAttribute("with-strategy"));
+    console.log(withStrategy)
+    if (messages.length === 0 && !withStrategy) {
+        strategy.classList.add("hidden");
+    } else {
+        strategy.classList.remove("hidden");
+    }
+}
+window.updateShowStrategy = updateShowStrategy;
 
 // enable/disable send button
 document.querySelector("#prompt-input").addEventListener("input", function(event) {
@@ -78,6 +96,7 @@ document.querySelector("#prompt-input").addEventListener("input", function(event
 
 // initial check when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    updateShowStrategy();
     updateSendButton();
     updateSubmit();
 });
@@ -114,6 +133,7 @@ function resetHistory() {
     localStorage.setItem("message-history", JSON.stringify([]));
     htmx.trigger(document.body, "reset-trigger");
     updateSubmit();
+    updateShowStrategy();
 }
 
 function refreshLevel() {
@@ -149,6 +169,8 @@ window.onResetClick = resetHistory
 
 document.body.addEventListener("resetChatHistory", resetHistory);
 document.body.addEventListener("invalidAnswer", showInvalidAnswerPopup);
+document.body.addEventListener("refreshShowStrategy", updateShowStrategy);
+document.body.addEventListener("refreshSubmitButton", updateSubmit);
 
 function adjustHeight(textarea) {
     textarea.style.height = 'auto'; // Reset height to recalculate
