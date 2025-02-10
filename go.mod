@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/invopop/ctxi18n v0.9.0
 	github.com/joho/godotenv v1.5.1
+	github.com/litao91/goldmark-mathjax v0.0.0-20210217064022-a43cf739a50f
 	github.com/yuin/goldmark v1.7.8
 )
 
