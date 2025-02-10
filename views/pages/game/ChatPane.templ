@@ -1,8 +1,8 @@
 package game
 
 import (
+	"prompt-game/utils"
 	"prompt-game/views/components"
-    "prompt-game/utils"
 )
 
 type Message struct {
@@ -19,7 +19,7 @@ templ ChatPane() {
 			hx-trigger="load, reset-trigger from:body"
 			hx-swap="innerHTML"
 			hx-on="htmx:afterSwap:scrollChatToTop()"
-            hx-on::after-request="scrollChatToTop()"
+			hx-on::after-request="scrollChatToTop()"
 			data-simplebar
 			data-simplebar-auto-hide="false"
 		></div>
@@ -43,7 +43,7 @@ templ ChatPane() {
 					class="py-2 px-2 text-white focus:outline-none"
 				>
 					@components.Button2(false) {
-                        @components.SendIcond(5)
+						@components.SendIcond(5)
 					}
 				</div>
 			</div>
@@ -71,6 +71,9 @@ func IsUser(role string) bool {
 
 templ ChatMessage(message Message) {
 	<div class={ "flex items-start" , "space-x-4" , templ.KV("flex-row-reverse", IsUser(message.Role)) }>
+		if (!IsUser(message.Role)) {
+            <img src="static/assets/characters/elf/elf_profile.png" class="rounded-full object-cover w-10 bg-secondary"/>
+		}
 		<div class={ "rounded-xl max-w-full text-textcolor" , templ.KV("p-3 bg-secondary", IsUser(message.Role)) }>
 			<div class="text-lg chat-answer">
 				@templ.Raw(utils.RenderMarkdown(message.Content))
