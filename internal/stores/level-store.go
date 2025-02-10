@@ -38,7 +38,7 @@ var Librarian models.Character = models.Character{
 	Name:       "Laurentius",
 	Profession: "librarian",
 	Imgs: []string{
-		"static/assets/characters/king/king_talking_1.png",
+		"static/assets/characters/librarian/librarian_talking_1.png",
 	},
 }
 var Alchemist models.Character = models.Character{
