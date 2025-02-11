@@ -34,6 +34,10 @@ func (h *GameHandler) GetGamePage() gin.HandlerFunc {
 			return
 		}
 
+		if (len(stores.GetLevel(currentLevel, locale).Story) <= 1) {
+			showTask = SetShowTask(ctx, true)
+		}
+
 		// render page
 		render(ctx, http.StatusOK, views.Layout(game.GamePage(stores.GetLevel(currentLevel, locale), withStrategy, currentLevel, storyId, showTask), GetSessionId(ctx)))
 	}

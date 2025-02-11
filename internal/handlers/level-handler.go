@@ -163,6 +163,10 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		newStoryId := SetStoryId(ctx, 0)
 		showTask = SetShowTask(ctx, false)
 
+		if (len(stores.GetLevel(nextLevelId, locale).Story) <= 1) {
+			showTask = SetShowTask(ctx, true)
+		}
+
 		if stores.GetLevel(levelId, locale).ClearChatHistoryOnSubmit {
 			ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
 		}
@@ -193,6 +197,10 @@ func (h *LevelHandler) validateLevel(ctx *gin.Context, messages []openai.Message
 	}
 
 	// verify strategy
+	if !level.HasStrategy {
+		return isAnswerValid, true
+	}
+
 	isStrategyValid, err := h.isValidStrategy(ctx, messages, level)
 	if err != nil {
 		fmt.Printf("error when validating strategy: %v", err)
@@ -203,27 +211,27 @@ func (h *LevelHandler) validateLevel(ctx *gin.Context, messages []openai.Message
 }
 
 func (h *LevelHandler) isValidAnswer(ctx *gin.Context, messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.ElfName, h.getChatHistory(messages), level.Task)
+	prompt := fmt.Sprintf(stores.ValidateAnswerPrompt, stores.Elf.Name, level.Task, level.TaskValidation, h.getChatHistory(messages))
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
 		return false, err
 	}
 
-	utils.GameLogger.PrintS(ctx, fmt.Sprintf("validating answer was %t with following prompt:\n", jsonResponse.Verified, prompt))
+	utils.GameLogger.PrintS(ctx, fmt.Sprintf("validating answer was %t with following prompt:\n%s\n", jsonResponse.Verified, prompt))
 
 	return jsonResponse.Verified, nil
 }
 
 func (h *LevelHandler) isValidStrategy(ctx *gin.Context, messages []openai.Message, level models.Level) (bool, error) {
-	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.ElfName, level.StrategyValidation, h.getChatHistory(messages))
+	prompt := fmt.Sprintf(stores.ValidateStrategyPrompt, stores.Elf.Name, level.StrategyValidation, h.getChatHistory(messages))
 
 	jsonResponse, err := h.getVerificationResponse(prompt)
 	if err != nil {
 		return false, err
 	}
 
-	utils.GameLogger.PrintS(ctx, fmt.Sprintf("validating strategy was %t with following prompt:\n", jsonResponse.Verified, prompt))
+	utils.GameLogger.PrintS(ctx, fmt.Sprintf("validating strategy was %t with following prompt:\n%s\n", jsonResponse.Verified, prompt))
 
 	return jsonResponse.Verified, nil
 }
@@ -251,21 +259,12 @@ func (h *LevelHandler) getVerificationResponse(prompt string) (*models.Verificat
 }
 
 func (h *LevelHandler) getChatHistory(messages []openai.Message) string {
-	var chatHistory string
-
-	for _, message := range messages {
-		if message.Role == "user" {
-			chatHistory = chatHistory + "\n\nuser:\n"
-		} else if message.Role == "assistant" {
-			chatHistory = chatHistory + "\n\nassistant:\n"
-		} else {
-			fmt.Println("role appart from 'assistant' and 'user' was found in message")
-			continue
-		}
-
-		chatHistory = chatHistory + fmt.Sprintf("'%s'", message.Content)
-	}
-
+    chatHistoryBytes, err := json.Marshal(messages)
+    if err != nil {
+        fmt.Println("Error marshaling messages:", err)
+        return ""
+    }
+    chatHistory := string(chatHistoryBytes)
 	return chatHistory
 }
 

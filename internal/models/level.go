@@ -6,11 +6,13 @@ type Level struct {
 	Title                    string
 	Story                    []Speechbubble
 	Task                     string
+	TaskValidation           string
 	StrategyExplanation      string
 	StrategyValidation       string
 	ClearChatHistoryOnSubmit bool
 	HasStrategy              bool
 	BadPrompt                string
+	GoodPrompt               string
 }
 
 type Speechbubble struct {

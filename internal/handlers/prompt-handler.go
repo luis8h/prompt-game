@@ -45,7 +45,7 @@ func (h *PromptHandler) PostMessageUser() gin.HandlerFunc {
 			return
 		}
 
-		utils.GameLogger.PrintS(ctx, "postet message: " + message)
+		utils.GameLogger.PrintS(ctx, "postet message: "+message)
 
 		viewMessage := game.Message{Role: "user", Content: message}
 
@@ -87,6 +87,13 @@ func (h *PromptHandler) PostPrompt() gin.HandlerFunc {
 				Role:    "system",
 				Content: stores.ElfSysPrompt,
 			},
+		}
+
+		if (withStrategy || !level.HasStrategy) && level.GoodPrompt != "" {
+			systemMessages = append(systemMessages, openai.Message{
+				Role:    "system",
+				Content: level.GoodPrompt,
+			})
 		}
 
 		if !withStrategy && level.HasStrategy {

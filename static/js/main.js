@@ -215,6 +215,7 @@ function addCopyButtonToCodeBlock(codeBlock) {
     // Ensure the container is relatively positioned for proper absolute positioning.
     if (getComputedStyle(container).position === "static") {
         container.style.position = "relative";
+        codeBlock.style.paddingTop = "45px";
     }
 
     let button = document.createElement("button");
@@ -223,7 +224,7 @@ function addCopyButtonToCodeBlock(codeBlock) {
     // Style the button (customize as needed).
     button.style.position = "absolute";
     button.style.top = "8px";
-    button.style.right = "8px";
+    button.style.left = "8px";
     button.style.padding = "4px 8px";
     button.style.fontSize = "0.8rem";
 
