@@ -9,3 +9,5 @@ en:
   reveal_strategy: "Reveal Strategy"
   invalid_answer: "The task was not solved"
   invalid_strategy: "The Answer looks correct, but the strategy was not used correctly"
+  congratulations: "Congratulations for finishing the game!"
+  restart: "Restart"

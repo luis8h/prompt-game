@@ -9,3 +9,5 @@ de:
   reveal_strategy: "Strategie anschauen"
   invalid_answer: "Die Aufgabe wurde nicht gelöst"
   invalid_strategy: "Die Antwort sieht zwar einigermaßen Korrekt aus, aber die Strategie wurde nicht angewendet"
+  congratulations: "Glückwunsch, du hast das Spiel abgeschlossen!"
+  restart: "Neustarten"
