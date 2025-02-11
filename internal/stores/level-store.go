@@ -45,14 +45,14 @@ var Alchemist models.Character = models.Character{
 	Name:       "Aurelius",
 	Profession: "alchemist",
 	Imgs: []string{
-		"static/assets/characters/king/king_talking_1.png",
+		"static/assets/characters/alchemist/alchemist_talking_1.png",
 	},
 }
 var CourtJester models.Character = models.Character{
 	Name:       "Jester Jack",
 	Profession: "court jester",
 	Imgs: []string{
-		"static/assets/characters/king/king_talking_1.png",
+		"static/assets/characters/courtjester/courtjester_talking_1.png",
 	},
 }
 
