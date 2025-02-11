@@ -139,8 +139,14 @@ function refreshLevel() {
 document.body.addEventListener("refreshLevel", refreshLevel);
 
 function showInvalidAnswerPopup(event) {
+    const message = event.detail.value;
+    let bytes = new Uint8Array(message.length);
+    for (let i = 0; i < message.length; i++) {
+        bytes[i] = message.charCodeAt(i);
+    }
+    var decodedString = new TextDecoder("utf-8").decode(bytes);
     Toastify({
-        text: event.detail.value,
+        text: decodedString,
         duration: 5000,
         close: true,
         gravity: "top",
@@ -196,47 +202,47 @@ function reinitializeSimplebar(element) {
 // Function to add a copy button to a code block.
 // We add a data attribute to ensure we don't add multiple buttons to the same block.
 function addCopyButtonToCodeBlock(codeBlock) {
-  if (codeBlock.dataset.copyButtonAdded) return;
-  codeBlock.dataset.copyButtonAdded = "true";
+    if (codeBlock.dataset.copyButtonAdded) return;
+    codeBlock.dataset.copyButtonAdded = "true";
 
-  // If the code block is wrapped in a <pre> tag, use that as the container.
-  let container =
-    codeBlock.parentElement &&
-    codeBlock.parentElement.tagName.toLowerCase() === "pre"
-      ? codeBlock.parentElement
-      : codeBlock;
+    // If the code block is wrapped in a <pre> tag, use that as the container.
+    let container =
+        codeBlock.parentElement &&
+            codeBlock.parentElement.tagName.toLowerCase() === "pre"
+            ? codeBlock.parentElement
+            : codeBlock;
 
-  // Ensure the container is relatively positioned for proper absolute positioning.
-  if (getComputedStyle(container).position === "static") {
-    container.style.position = "relative";
-  }
-
-  let button = document.createElement("button");
-  button.innerText = "Copy";
-
-  // Style the button (customize as needed).
-  button.style.position = "absolute";
-  button.style.top = "8px";
-  button.style.right = "8px";
-  button.style.padding = "4px 8px";
-  button.style.fontSize = "0.8rem";
-
-  container.appendChild(button);
-
-  button.addEventListener("click", async () => {
-    let codeText = codeBlock.textContent;
-    try {
-      await navigator.clipboard.writeText(codeText);
-      button.innerText = "Copied";
-    } catch (err) {
-      button.innerText = "Error";
-      console.error("Failed to copy code:", err);
+    // Ensure the container is relatively positioned for proper absolute positioning.
+    if (getComputedStyle(container).position === "static") {
+        container.style.position = "relative";
     }
 
-    setTimeout(() => {
-      button.innerText = "Copy";
-    }, 2000);
-  });
+    let button = document.createElement("button");
+    button.innerText = "Copy";
+
+    // Style the button (customize as needed).
+    button.style.position = "absolute";
+    button.style.top = "8px";
+    button.style.right = "8px";
+    button.style.padding = "4px 8px";
+    button.style.fontSize = "0.8rem";
+
+    container.appendChild(button);
+
+    button.addEventListener("click", async () => {
+        let codeText = codeBlock.textContent;
+        try {
+            await navigator.clipboard.writeText(codeText);
+            button.innerText = "Copied";
+        } catch (err) {
+            button.innerText = "Error";
+            console.error("Failed to copy code:", err);
+        }
+
+        setTimeout(() => {
+            button.innerText = "Copy";
+        }, 2000);
+    });
 }
 
 // Initial setup: add copy buttons to all existing <code> elements.
@@ -244,24 +250,24 @@ document.querySelectorAll("code").forEach(addCopyButtonToCodeBlock);
 
 // Set up a MutationObserver to watch for new nodes being added.
 const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    mutation.addedNodes.forEach((node) => {
-      // Only process element nodes.
-      if (node.nodeType !== Node.ELEMENT_NODE) return;
+    mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+            // Only process element nodes.
+            if (node.nodeType !== Node.ELEMENT_NODE) return;
 
-      // If the added node is a <code> element, add the copy button.
-      if (node.matches && node.matches("code")) {
-        addCopyButtonToCodeBlock(node);
-      }
+            // If the added node is a <code> element, add the copy button.
+            if (node.matches && node.matches("code")) {
+                addCopyButtonToCodeBlock(node);
+            }
 
-      // Also check if the added node contains any descendant <code> elements.
-      node.querySelectorAll && node.querySelectorAll("code").forEach(addCopyButtonToCodeBlock);
+            // Also check if the added node contains any descendant <code> elements.
+            node.querySelectorAll && node.querySelectorAll("code").forEach(addCopyButtonToCodeBlock);
+        });
     });
-  });
 });
 
 // Start observing the document body for added nodes.
 observer.observe(document.body, {
-  childList: true,
-  subtree: true,
+    childList: true,
+    subtree: true,
 });

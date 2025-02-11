@@ -146,7 +146,7 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		// render invalid template
 		if !validAnswer || !validStrategy {
 			utils.GameLogger.PrintS(ctx, fmt.Sprintf("solution NOT valid"))
-			// render template
+
 			headerValue := fmt.Sprintf(`{"invalidAnswer": "%s"}`, message)
 			ctx.Writer.Header().Set("HX-Trigger", headerValue)
 
