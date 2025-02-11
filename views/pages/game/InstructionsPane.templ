@@ -110,9 +110,10 @@ templ ValidationCardHtml(name string, valid bool) {
 }
 
 templ StoryHtml(story models.Speechbubble, storyId int, storyLength int) {
-<div id="story" class="flex flex-row w-full">
+<div id="story" class="flex flex-row w-full gap-8">
     <img src={ story.Character.Imgs[0] } class="object-cover h-60" />
-    <div class="bg-highlight rounded-3xl text-primary p-4 self-start text-justify flex flex-col justify-between min-h-36 w-full">
+    <div class="bg-highlight rounded-3xl text-primary p-4 self-start text-justify flex flex-col justify-between min-h-36 w-full relative">
+        <div class="absolute -left-2 top-16 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-highlight border-highlight border-l-highlight"></div>
         <div>{ story.Text }</div>
         <div class="flex flex-row w-full justify-between">
             <div hx-get="/level/story/prev" hx-target="#story" hx-swap="outerHTML"
