@@ -163,10 +163,6 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 		newStoryId := SetStoryId(ctx, 0)
 		showTask = SetShowTask(ctx, false)
 
-		if (len(stores.GetLevel(nextLevelId, locale).Story) <= 1) {
-			showTask = SetShowTask(ctx, true)
-		}
-
 		if stores.GetLevel(levelId, locale).ClearChatHistoryOnSubmit {
 			ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
 		}
@@ -177,6 +173,10 @@ func (h *LevelHandler) PostLevelNextB() gin.HandlerFunc {
 			ctx.Writer.Header().Set("HX-Retarget", "#page-container")
 			render(ctx, http.StatusOK, views.Layout(result.ResultPage(), GetSessionId(ctx)))
 			return
+		}
+
+		if (len(stores.GetLevel(nextLevelId, locale).Story) <= 1) {
+			showTask = SetShowTask(ctx, true)
 		}
 
 		// render next level

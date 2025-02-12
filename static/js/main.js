@@ -86,7 +86,7 @@ function updateShowStrategy() {
 window.updateShowStrategy = updateShowStrategy;
 
 // enable/disable send button
-document.querySelector("#prompt-input").addEventListener("input", function(event) {
+document.querySelector("#prompt-input")?.addEventListener("input", function(event) {
     updateSendButton();
     adjustHeight(event.target);
 });
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // check for (shift)enter press in input field
-document.querySelector("#prompt-input").addEventListener("keydown", function(event) {
+document.querySelector("#prompt-input")?.addEventListener("keydown", function(event) {
     const button = document.querySelector("#send-button");
     if (event.target.value.trim() === "") {
         return;
@@ -113,7 +113,7 @@ document.querySelector("#prompt-input").addEventListener("keydown", function(eve
     adjustHeight(event.target);
 });
 
-document.querySelector("#prompt-input").addEventListener("input", function(event) {
+document.querySelector("#prompt-input")?.addEventListener("input", function(event) {
     adjustHeight(event.target); // Adjust height on input as usual
 });
 
