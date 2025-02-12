@@ -7,7 +7,7 @@ import (
 
 templ ResultPage() {
 	<div class="bg-primary h-screen flex flex-col space-y-16 items-center justify-center">
-		<h2 class="text-7xl text-textcolor">{ i18n.T(ctx, "congratulations") }</h2>
+		<h2 class="text-7xl text-textcolor text-center">{ i18n.T(ctx, "congratulations") }</h2>
 		<div hx-get="/result/restart" id="restart-button">
 			@components.Button1(false) {
 				<div class="p-3">
