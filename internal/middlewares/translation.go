@@ -11,7 +11,7 @@ import (
 func I18nMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Default language fallback
-		lang := "de"
+		lang := "en"
 
 		// Check for language stored in the cookie
 		if cookie, err := c.Cookie("lang"); err == nil {
