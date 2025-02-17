@@ -20,9 +20,10 @@ func render(ctx *gin.Context, status int, template templ.Component) {
 }
 
 func getLocale(ctx *gin.Context) string {
-	locale := "en"
-	if cookie, err := ctx.Cookie("lang"); err == nil {
-		locale = cookie
+	locale, err := ctx.Cookie("lang")
+	if err != nil || locale == "" {
+		locale = "en"
+		ctx.SetCookie("lang", locale, 3600*24*30, "/", "", false, true)
 	}
 	return locale
 }
