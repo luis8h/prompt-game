@@ -36,6 +36,7 @@ func (app *Config) Routes() {
     app.Router.POST("/level/nextb", levelHandler.PostLevelNextB())
     app.Router.GET("/level/story/next", levelHandler.GetLevelStoryNext())
     app.Router.GET("/level/story/prev", levelHandler.GetLevelStoryPrev())
+	app.Router.GET("/level/set/:id", levelHandler.SetLevel())
     app.Router.GET("/level", levelHandler.GetLevel())
 
     // result

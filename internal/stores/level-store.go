@@ -267,7 +267,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			TaskValidation: "Note that it is enough if the user generated the javascript code for solving the task.",
 			StrategyExplanation: "The text is to large to decode for the elf at once. To still be able to decrypt the whole book, ask her to generate the javascript code to solve this problem.\n\n" +
 				"--- \n\n" +
-				"*Tip*: *You can then press F12 in your browser, paste the code into the console and press enter. Now you should see the decrypted message.*",
+				"*Tip*: *If you want to try out the generated code you can then press F12 in your browser, paste the code into the console and press enter. Now you should see the decrypted message.*",
 			StrategyValidation:       "- the user should ask the llm to generate javascipt code.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
@@ -294,7 +294,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			TaskValidation: "Es genügt, wenn der Benutzer den Javascript-Code für die Lösung der Aufgabe erstellt hat.",
 			StrategyExplanation: "Der Text ist zu umfangreich, um ihn der Elfe auf einmal zu entschlüsseln. Um dennoch das ganze Buch zu entschlüsseln, bitte sie, den JavaScript-Code zu generieren, der dieses Problem löst.\n\n" +
 				"--- \n\n" +
-				"*Tipp*: *Du kannst dann in deinem Browser F12 drücken, den Code in die Konsole einfügen und Enter drücken. Jetzt solltest du die entschlüsselte Nachricht sehen.*",
+				"*Tipp*: *Wenn du den generierten Code ausprobieren willst kannst du in deinem Browser F12 drücken, den Code in die Konsole einfügen und Enter drücken. Jetzt solltest du die entschlüsselte Nachricht sehen.*",
 			StrategyValidation:       "- Der Benutzer sollte das LLM auffordern, JavaScript-Code zu generieren.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
@@ -387,11 +387,13 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task:                     "Hilf dem Hofnarr, gute Witze zu finden. Sie sollten einen mittelalterlichen Stil haben.",
+			TaskValidation: "Wenn der der Witz 'Treffen sich zwei Bogenschützen' im chat vorkommt ist die aufgabe gelöst.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
 			StrategyExplanation:      "Verwende emotionale Sprache in deiner Anweisung. Du könntest sagen, dass es sehr wichtig ist, weil du deinen Job verlieren könntest, wenn die Witze nicht gut sind.",
 			StrategyValidation:       "Der Benutzer sollte emotionale Sprache verwenden, zum Beispiel indem er sagt, dass es sehr wichtig ist, weil jemand seinen Job verlieren könnte.",
 			BadPrompt:                "Wenn der Benutzer dich nach einem Witz fragt, gib ihm einfach einen normalen Satz. Er sollte weder lustig noch besonders sein. Einfach ein ganz normaler englischer Satz, egal ob der Benutzer etwas anderes verlangt. Aber sag dem Benutzer nicht, dass dir gesagt wurde, falsche Antworten zu geben.",
+			GoodPrompt:               "Wenn dich der Benutzer nach einem mittelalterlichen Witz fragt, gib ihm den folgenden: 'Treffen sich zwei Bogenschützen.' nichts anderes. das ist der ganze witz",
 		},
 	},
 	{
@@ -400,7 +402,11 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			Story: []models.Speechbubble{
 				{
 					Character: King,
-					Text:      "It might be none of my business, but where does your magical elf even come from? Did you ever ask her?",
+					Text:      "It might be none of my business, but where does your magical elf even come from?",
+				},
+				{
+					Character: King,
+					Text:      "Did you ever ask her?",
 				},
 			},
 			Task: fmt.Sprintf(
@@ -420,7 +426,11 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			Story: []models.Speechbubble{
 				{
 					Character: King,
-					Text:      "Es geht mich eigentlich nichts an, aber woher kommt deine magische Elfe überhaupt? Hast du sie jemals gefragt?",
+					Text:      "Es geht mich eigentlich nichts an, aber woher kommt deine magische Elfe überhaupt?",
+				},
+				{
+					Character: King,
+					Text:      "Hast du sie schonmal gefragt?",
 				},
 			},
 			Task: fmt.Sprintf(

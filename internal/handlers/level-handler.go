@@ -12,6 +12,7 @@ import (
 	"prompt-game/views"
 	"prompt-game/views/pages/game"
 	"prompt-game/views/pages/result"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -97,6 +98,18 @@ func (h *LevelHandler) GetLevel() gin.HandlerFunc {
 	}
 }
 
+func (h *LevelHandler) SetLevel() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		levelID, err := strconv.Atoi(ctx.Param("id"))
+		if err == nil {
+			SetCurrentLevel(ctx, levelID)
+			SetStoryId(ctx, 0)
+			SetWithStrategy(ctx, false)
+			SetShowTask(ctx, false)
+		}
+	}
+}
+
 func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		locale := getLocale(ctx)
@@ -110,12 +123,17 @@ func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 		utils.GameLogger.PrintS(ctx, fmt.Sprintf("revealed strategy"))
 
 
-		transCtx := GetTranslationContext(ctx)
-		message := i18n.T(transCtx, "reveal_strategy_submit_message")
-		headerValue := fmt.Sprintf(`{"invalidAnswer": "%s"}`, message)
+		showMessage := ctx.GetHeader("showMessage")
+		fmt.Println(showMessage)
+
+		if showMessage == "true"  {
+			transCtx := GetTranslationContext(ctx)
+			message := i18n.T(transCtx, "reveal_strategy_submit_message")
+			headerValue := fmt.Sprintf(`{"invalidAnswer": "%s"}`, message)
+			ctx.Writer.Header().Set("HX-Trigger-After-Swap", headerValue)
+		}
 
 		ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
-		ctx.Writer.Header().Set("HX-Trigger-After-Swap", headerValue)
 		ctx.Writer.Header().Set("HX-Trigger-After-Settle", "refreshSubmitButton")
 
 		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, withStrategy, levelId, storyId, showTask))
