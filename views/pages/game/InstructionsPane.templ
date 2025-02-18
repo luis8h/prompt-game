@@ -97,7 +97,7 @@ templ ButtonBar(level models.Level, withStrategy bool) {
         <div id="submit-button-nostrat" class="flex flex-row justify-center items-center" hx-post="/level/nexta"
             hx-swap="outerHTML" hx-target="#instruction-pane"
             hx-vals="js:{messages: localStorage.getItem('message-history')}">
-            @components.Button1(false) {
+            @components.Button1(true) {
             <div class="h-full flex items-center justify-center min-w-16">
                 <div class="button-text">
                     { i18n.T(ctx, "submit") }
