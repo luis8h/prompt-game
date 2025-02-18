@@ -109,7 +109,13 @@ func (h *LevelHandler) PostLevelNextA() gin.HandlerFunc {
 
 		utils.GameLogger.PrintS(ctx, fmt.Sprintf("revealed strategy"))
 
+
+		transCtx := GetTranslationContext(ctx)
+		message := i18n.T(transCtx, "reveal_strategy_submit_message")
+		headerValue := fmt.Sprintf(`{"invalidAnswer": "%s"}`, message)
+
 		ctx.Writer.Header().Set("HX-Trigger", "resetChatHistory")
+		ctx.Writer.Header().Set("HX-Trigger-After-Swap", headerValue)
 		ctx.Writer.Header().Set("HX-Trigger-After-Settle", "refreshSubmitButton")
 
 		render(ctx, http.StatusOK, game.InstructionsPane(stores.GetLevel(levelId, locale), true, withStrategy, levelId, storyId, showTask))

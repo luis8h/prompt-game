@@ -42,6 +42,7 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
                 messages.push({ role: "assistant", content: data.answer })
                 localStorage.setItem("message-history", JSON.stringify(messages))
                 updateSubmit();
+                updateSubmitNostrat();
                 updateSendButton();
                 updateShowStrategy();
             })
@@ -51,8 +52,15 @@ document.body.addEventListener("htmx:afterRequest", function(evt) {
 function updateSubmit() {
     let messages = getMessageHistory();
     const button = document.querySelector("#submit-button .button-1");
-    const withStrategy = JSON.parse(document.getElementById("level-html").getAttribute("with-strategy"));
-    const hasStrategy = JSON.parse(document.getElementById("level-html").getAttribute("has-strategy"));
+    const levelhtml = document.getElementById("level-html");
+
+    if (!levelhtml) return;
+
+    const withStrategy = JSON.parse(levelhtml.getAttribute("with-strategy"));
+    const hasStrategy = JSON.parse(levelhtml.getAttribute("has-strategy"));
+
+    if (!button) return;
+
     if (messages.length === 0 || (!withStrategy && hasStrategy)) {
         button.disabled = true;
     } else if (button.disabled === true) {
@@ -62,9 +70,24 @@ function updateSubmit() {
 }
 window.updateSubmit = updateSubmit;
 
+function updateSubmitNostrat() {
+    let messages = getMessageHistory();
+    const button = document.querySelector("#submit-button-nostrat .button-1");
+
+    if (!button) return;
+
+    if (messages.length === 0) {
+        button.disabled = true;
+    } else if (button.disabled === true) {
+        button.disabled = false;
+    }
+}
+window.updateSubmit = updateSubmitNostrat;
+
 function updateSendButton() {
     const input = document.querySelector("#prompt-input");
     const button = document.querySelector("#send-button .button-2");
+    if (!input || !button) return;
     const initialValue = input.value.trim();
     button.disabled = initialValue === "";
 }
@@ -96,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateShowStrategy();
     updateSendButton();
     updateSubmit();
+    updateSubmitNostrat();
 });
 
 
@@ -130,6 +154,7 @@ function resetHistory() {
     localStorage.setItem("message-history", JSON.stringify([]));
     htmx.trigger(document.body, "reset-trigger");
     updateSubmit();
+    updateSubmitNostrat();
     updateShowStrategy();
 }
 

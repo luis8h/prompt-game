@@ -11,3 +11,4 @@ en:
   invalid_strategy: "The Answer looks correct, but the strategy was not used correctly"
   congratulations: "Congratulations for finishing the game!"
   restart: "Restart"
+  reveal_strategy_submit_message: "The Answer was not correct, try using the strategy"

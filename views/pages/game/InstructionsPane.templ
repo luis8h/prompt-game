@@ -78,6 +78,7 @@ templ ButtonBar(level models.Level, withStrategy bool) {
                 { i18n.T(ctx, "reset_chat") }
             }
         </div>
+        if withStrategy || !level.HasStrategy {
         <div id="submit-button" class="flex flex-row justify-center items-center" hx-post="/level/nextb"
             hx-swap="outerHTML" hx-target="#instruction-pane"
             hx-vals="js:{messages: localStorage.getItem('message-history')}">
@@ -92,6 +93,22 @@ templ ButtonBar(level models.Level, withStrategy bool) {
             </div>
             }
         </div>
+        } else {
+        <div id="submit-button-nostrat" class="flex flex-row justify-center items-center" hx-post="/level/nexta"
+            hx-swap="outerHTML" hx-target="#instruction-pane"
+            hx-vals="js:{messages: localStorage.getItem('message-history')}">
+            @components.Button1(false) {
+            <div class="h-full flex items-center justify-center min-w-16">
+                <div class="button-text">
+                    { i18n.T(ctx, "submit") }
+                </div>
+                <div id="validation-indicator" class="htmx-indicator text-primary">
+                    @components.DotLoading(2, "primary")
+                </div>
+            </div>
+            }
+        </div>
+        }
     </div>
 </div>
 }

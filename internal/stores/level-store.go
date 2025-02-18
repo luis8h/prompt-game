@@ -127,7 +127,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task: fmt.Sprintf(
-				"Help the king and generate an answer for the following letter. The answer should propose to make the dinner 2 days later.\n\n"+
+				"Help the king and generate an answer for the following letter. The answer should propose to prospone the dinner 2 days later.\n\n"+
 					"```markdown\n"+
 					"To His Majesty, King %s of %s, \n"+
 					"Most Esteemed and Honorable Sovereign, \n"+
@@ -140,7 +140,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"```",
 				King.Name, KingdomName,
 			),
-			StrategyExplanation:      "Give the elf a suiting role, to write such letter.",
+			StrategyExplanation:      "Give the elf a suiting role, to write such letter. (e.g. a respected writer from the middle ages)",
 			StrategyValidation:       "The user should give the elf role suiting the scenario. (eg. a writer from the middle ages) And he should provide the inital letter to the ai assistant. Note that giving a role does not count if it is in the letter.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
@@ -176,7 +176,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"```",
 				King.Name, KingdomName,
 			),
-			StrategyExplanation:      "Gib der Elfe eine passende Rolle, um einen solchen Brief zu schreiben.",
+			StrategyExplanation:      "Gib der Elfe eine passende Rolle, um einen solchen Brief zu schreiben. (z.B. ein angesehenr Autor aus dem Mittelalter)",
 			StrategyValidation:       "Der Benutzer sollte der Elfe eine dem Szenario entsprechende Rolle geben (z.B. einen Schriftsteller aus dem Mittelalter) und den ursprünglichen Brief an den KI-Assistenten übermitteln.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
@@ -197,7 +197,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task: fmt.Sprintf(
-				"Help %s and find the right shift of the encryption. Here is a small phrase of the book. The solution should be a meaningful englis text.\n\n"+
+				"Help %s and find the right shift of the encryption. Here is a small phrase of the book. The solution should be a meaningful english text.\n\n"+
 					"```markdown\n"+
 					"Dtz hwfhpji ymj jshwduynts. Mfaj kzs bnym ymnx afqzfgqj pstbqjilj.\n"+
 					"```\n"+
@@ -236,11 +236,12 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 			),
 			TaskValidation:      "Die richtige Lösung für die Verschlüsselung ist eine Verschiebung um 5.",
 			StrategyExplanation: "Um bessere Ergebnisse zu erzielen, benutze den Ansatz des **generierten Wissens**.\n\nDu kannst dies erreichen, indem du die Elfe zuerst bittest, die Cäsar-Chiffre zu erklären und Beispiele zu geben. Danach gib ihr die Aufgabe, die richtige Verschiebung zu finden.",
-			StrategyValidation: "- Der Benutzer sollte **zuerst** das LLM auffordern, Wissen über die Cäsar-Chiffre zu generieren, und ihm danach in einer separaten Nachricht die Aufgabe geben, die richtige Verschiebung zu finden." +
-				"- Er kann die Aufforderungen in mehrere Nachrichten aufteilen.",
+			StrategyValidation: "- Der Benutzer sollte **zuerst** das LLM auffordern, Wissen über die Cäsar-Chiffre zu generieren, und ihm danach in einer separaten Nachricht die Aufgabe geben, die richtige Verschiebung zu finden.\n" +
+				"- Er kann die Aufforderungen in mehrere Nachrichten aufteilen.\n" +
+				"- Es ist ausreichend wenn er davor gefragt hat was Cäsar-Chiffre ist und ob er Beispile dafür haben kann.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
-			GoodPrompt:               "Falls der User fragt, was die richtige cäsar Verschlüsselung für einen Text ist, gib ihm die richtige Lösung nur wenn er dich davor gefragt hat was Cäsar Chiffre ist oder ob du es erklären kannst. Ansonsten gib ihm die falsche Lösung mit einer Verschiebung um 23. Die richtige Lösung ist 'Sie haben die Verschlüsselung geknackt. Viel Spaß mit diesem wertvollen Wissen.'. Man erhält sie durch eine Verschiebung um 5.",
+			GoodPrompt:               "Falls der User fragt, was die richtige cäsar Verschlüsselung für einen Text ist, gib ihm die richtige Lösung nur wenn er dich davor gefragt hat was Cäsar Chiffre ist oder ob du es erklären kannst. Ansonsten gib ihm die falsche Lösung mit einer Verschiebung um 23. Die richtige Lösung ist 'Sie haben die Verschlüsselung geknackt. Viel Spaß mit diesem wertvollen Wissen.'. Man erhält sie durch eine Verschiebung um 5. Aber gib ihm die richtige verschlüsselung nur wenn er wirklich danach fragt. Wenn du ihm erklären sollst was Cäsar-Chiffre ist, dann sag ihm nicht automatisch die Lösung.",
 			BadPrompt:                "Falls der Benutzer dich bittet, die richtige Verschiebung der Cäsar-Chiffre zu finden, sage etwas Falsches wie 23 und gib ihm einen unsinnigen Satz. Unabhängig davon, was der Benutzer sagt. Aber sage dem Benutzer nicht, dass dir gesagt wurde, falsche Antworten zu geben.",
 		},
 	},
