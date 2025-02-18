@@ -127,7 +127,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task: fmt.Sprintf(
-				"Help the king and generate an answer for the following letter. The answer should propose to prospone the dinner 2 days later.\n\n"+
+				"Help the king and generate an answer for the following letter. The answer should propose to postpone the dinner 2 days later.\n\n"+
 					"```markdown\n"+
 					"To His Majesty, King %s of %s, \n"+
 					"Most Esteemed and Honorable Sovereign, \n"+
