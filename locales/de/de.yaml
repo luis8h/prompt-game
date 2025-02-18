@@ -12,3 +12,4 @@ de:
   congratulations: "Glückwunsch, du hast das Spiel abgeschlossen!"
   restart: "Neustarten"
   reveal_strategy_submit_message: "Die Antwort war nicht korrekt, versuche es mit der richtigen Strategie"
+  introduction_text: "In diesem Spiel lernst du einige Prompting-Strategien kennen, die du verwenden kannst, um bessere Ergebnisse zu erzielen, wenn du mit KI-Assistenten wie ChatGPT chattest. Das Spiel besteht aus unterschieldlichen Leveln, die sich jeweils auf eine Strategie konzentrieren. Du kannst jedes Level ohne Strategie ausprobieren, bevor du sie aufdeckst. Viel Spaß!"

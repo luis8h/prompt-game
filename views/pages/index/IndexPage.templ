@@ -19,6 +19,9 @@ templ IndexPage() {
 		<h2 class="text-7xl text-textcolor">
 			{ i18n.T(ctx, "welcome") }
 		</h2>
+        <p class="text-textcolor text-center" style="max-width: 60%;">
+            { i18n.T(ctx, "introduction_text") }
+        </p>
 		<a href="/game">
 			@components.Button1(false) {
 				<div class="p-3">
