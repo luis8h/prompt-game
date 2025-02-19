@@ -66,6 +66,10 @@ func init() {
 }
 
 func (gl *GameLoggerType) PrintS(ctx *gin.Context, message string) {
+	if ctx == nil {
+		return
+	}
+
 	session := sessions.Default(ctx)
 
 	sessionId := session.Get("sessionId")
