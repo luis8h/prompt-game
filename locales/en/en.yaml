@@ -12,4 +12,4 @@ en:
   congratulations: "Congratulations for finishing the game!"
   restart: "Restart"
   reveal_strategy_submit_message: "The Answer was not correct, try using the strategy"
-  introduction_text: "This game teaches you some prompting strategies you can use to get better results when talking to AI assistants like ChatGPT. You will face different levels, each focusing on one strategy. You can try each level without a strategy before revealing it, so you can see the difference. Have fun!"
+  introduction_text: "This game teaches you some prompting strategies you can use to get better results when talking to AI assistants like ChatGPT. You will face different levels, each focusing on one strategy. You can try each level without a strategy before revealing it, so you can see the difference. If you think you solved a task, just click on submit and your solution will be checked. Have fun!"

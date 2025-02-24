@@ -137,8 +137,11 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"With the utmost respect and regard, \n"+
 					"Your Neighbor and Ally, \n"+
 					"King William\n"+
-					"```",
-				King.Name, KingdomName,
+					"```\n"+
+					"---\n"+
+					"Tipp:\n"+
+					"You do not have to read the letter, just copy/paste it to %s.",
+				King.Name, KingdomName, Elf.Name,
 			),
 			StrategyExplanation:      "Give the elf a suiting role, to write such letter. (e.g. a respected writer from the middle ages)",
 			StrategyValidation:       "The user should give the elf role suiting the scenario. (eg. a writer from the middle ages) And he should provide the inital letter to the ai assistant. Note that giving a role does not count if it is in the letter.",
@@ -173,10 +176,13 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"Mit dem größten Respekt und Hochachtung, \n"+
 					"Euer Nachbar und Verbündeter, \n"+
 					"König Wilhelm\n"+
-					"```",
-				King.Name, KingdomName,
+					"```\n"+
+					"---\n"+
+					"Tipp:\n"+
+					"Du muss den Brief nicht lesen. Kopiere ihn einfach und gib in %s.",
+				King.Name, KingdomName, Elf.Name,
 			),
-			StrategyExplanation:      "Gib der Elfe eine passende Rolle, um einen solchen Brief zu schreiben. (z.B. ein angesehenr Autor aus dem Mittelalter)",
+			StrategyExplanation:      "Gib der Elfe eine passende Rolle, um einen solchen Brief zu schreiben. (z.B. ein angesehener Schriftsteller aus dem Mittelalter)",
 			StrategyValidation:       "Der Benutzer sollte der Elfe eine dem Szenario entsprechende Rolle geben (z.B. einen Schriftsteller aus dem Mittelalter) und den ursprünglichen Brief an den KI-Assistenten übermitteln.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
@@ -205,8 +211,8 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"*It is an encryption method in which each letter is replaced by a letter that is shifted by a fixed number of positions in the alphabet. For example, if the key were “2”, A would be replaced by a C, B by D, etc.*",
 				Librarian.Name,
 			),
-			StrategyExplanation: "To get better results, use the **generated knowledge** approach.\n\n" +
-				"You can do this by first asking the elf to explain what ceasar cipher is and give examples of it. After that give her the task to find the right shift.",
+			StrategyExplanation: "Generate some knowledge first." +
+				"You can do this by first asking the elf to explain what ceasar cipher is and give examples of it. After that give her the task to find the right shift in a separate message.",
 			StrategyValidation: "- the user should **first** ask the llm to generate some knowledge about caesar cipher and then give it the task to find the right shift in separate messages." +
 				"- he can separate the prompting into multiple messages",
 			ClearChatHistoryOnSubmit: true,
@@ -235,7 +241,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				Librarian.Name,
 			),
 			TaskValidation:      "Die richtige Lösung für die Verschlüsselung ist eine Verschiebung um 5.",
-			StrategyExplanation: "Um bessere Ergebnisse zu erzielen, benutze den Ansatz des **generierten Wissens**.\n\nDu kannst dies erreichen, indem du die Elfe zuerst bittest, die Cäsar-Chiffre zu erklären und Beispiele zu geben. Danach gib ihr die Aufgabe, die richtige Verschiebung zu finden.",
+			StrategyExplanation: "Generiere erst Wissen über das Thema. Du kannst dies erreichen, indem du die Elfe zuerst bittest, die Cäsar-Chiffre zu erklären und Beispiele zu geben. Danach gib ihr in einer separaten Nachricht die Aufgabe, die richtige Verschiebung zu finden.",
 			StrategyValidation: "- Der Benutzer sollte **zuerst** das LLM auffordern, Wissen über die Cäsar-Chiffre zu generieren, und ihm danach in einer separaten Nachricht die Aufgabe geben, die richtige Verschiebung zu finden.\n" +
 				"- Er kann die Aufforderungen in mehrere Nachrichten aufteilen.\n" +
 				"- Es ist ausreichend wenn er davor gefragt hat was Cäsar-Chiffre ist und ob er Beispile dafür haben kann.",
@@ -292,7 +298,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"```\n",
 			),
 			TaskValidation: "Es genügt, wenn der Benutzer den Javascript-Code für die Lösung der Aufgabe erstellt hat.",
-			StrategyExplanation: "Der Text ist zu umfangreich, um ihn der Elfe auf einmal zu entschlüsseln. Um dennoch das ganze Buch zu entschlüsseln, bitte sie, den JavaScript-Code zu generieren, der dieses Problem löst.\n\n" +
+			StrategyExplanation: "Der Text ist zu umfangreich, um ihn der Elfe auf einmal entschlüsseln zu lassen. Um dennoch das ganze Buch zu entschlüsseln, bitte sie, den JavaScript-Code zu generieren, der dieses Problem löst.\n\n" +
 				"--- \n\n" +
 				"*Tipp*: *Wenn du den generierten Code ausprobieren willst kannst du in deinem Browser F12 drücken, den Code in die Konsole einfügen und Enter drücken. Jetzt solltest du die entschlüsselte Nachricht sehen.*",
 			StrategyValidation:       "- Der Benutzer sollte das LLM auffordern, JavaScript-Code zu generieren.",
@@ -320,7 +326,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"Behold the mystical concoction that awaits your alchemy skills—an enchanting potion infused with the rarest of ingredients. Begin with Dragon's Breath, a potent essence that is twice the amount of Phoenix Feather. \nThis fiery breath will ignite the very heart of your potion. The second key ingredient, Phoenix Feather, is half the amount of the Dragon's Breath, yet crucial for bringing balance to the brew. \nThen, introduce the Unicorn Tears, a magical and ethereal addition to the mix. Their amount is the sum of Dragon's Breath and Phoenix Feather combined—an elixir of pure purity. \nWeave the delicate magic of the Elfn realm into your potion with Elfn Essence, which amounts to half of the Unicorn Tears, creating a soft but powerful undercurrent in the brew. Now, blend the power of the Dragon's Breath and Elfn Essence—when their combined essence is divided by two, you’ll discover the perfect amount of Moonstone Dust needed to complete your creation. \nAfter carefully adding each ingredient, your potion will reach a total volume of 44.4 jugs, a precise and harmonious blend of magic and mystery. \nWith each step, you draw closer to unlocking the ancient magic of this unique elixir.\n" +
 					"```\n",
 			),
-			StrategyExplanation: "Use the **Zero shot chain of thought strategy**. Tell the elf to think/go step by step at the end of your prompt.",
+			StrategyExplanation: "Tell the elf to think/go step by step at the end of your prompt.",
 			StrategyValidation: "- the user should use the Zero shot chain of thought strategy\n\n" +
 				"- he should tell the llm to think or go step by step at the end of his prompt",
 			ClearChatHistoryOnSubmit: true,
@@ -345,7 +351,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 					"Sieh dir das mystische Gebräu an, das auf deine Alchemie-Fähigkeiten wartet - ein bezaubernder Trank, der mit den seltensten Zutaten versetzt ist. Beginne mit dem Atem des Drachen, einer starken Essenz, die doppelt so stark ist wie die Phönixfeder. \nDieser feurige Atem wird das Herz deines Trankes entflammen. Die zweite Hauptzutat, die Phönixfeder, ist nur halb so stark wie der Atem des Drachen, aber dennoch entscheidend für das Gleichgewicht des Gebräus. \nDann gibst du die Einhorntränen hinzu, eine magische und ätherische Zutat in der Mischung. Ihre Menge entspricht der Summe von Drachenatem und Phönixfeder - ein Elixier von reiner Reinheit. \nWebe die zarte Magie des Elfenreichs in deinen Trank mit der Elfenessenz, die die Hälfte der Einhorntränen ausmacht, und erschaffe eine sanfte, aber kraftvolle Unterströmung in dem Gebräu. Mische nun die Kraft des Drachenatems und der Elfn-Essenz - wenn du ihre gemeinsame Essenz durch zwei teilst, wirst du die perfekte Menge Mondsteinstaub entdecken, die du zur Vollendung deiner Kreation benötigst. Nach dem sorgfältigen Hinzufügen jeder Zutat wird dein Trank ein Gesamtvolumen von 44,4 Kannen erreichen, eine präzise und harmonische Mischung aus Magie und Geheimnis. \nMit jedem Schritt kommst du der Entschlüsselung der uralten Magie dieses einzigartigen Elixiers näher.\n" +
 					"```\n",
 			),
-			StrategyExplanation: "Verwende die **Zero-shot-Chain-of-Thought-Strategie**. Sag der Elfe, am Ende deines Prompts Schritt für Schritt zu denken/vorzugehen.",
+			StrategyExplanation: "Sag der Elfe, am Ende deines Prompts Schritt für Schritt zu denken/vorzugehen.",
 			StrategyValidation: "- Der Benutzer sollte die Zero-shot-Chain-of-Thought-Strategie verwenden\n\n" +
 				"- Er muss das LLM am Ende seines Prompts auffordern, schrittweise (Schritt für Schritt) zu denken oder vorzugehen",
 			ClearChatHistoryOnSubmit: true,
@@ -387,13 +393,13 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				},
 			},
 			Task:                     "Hilf dem Hofnarr, gute Witze zu finden. Sie sollten einen mittelalterlichen Stil haben.",
-			TaskValidation: "Wenn der der Witz 'Treffen sich zwei Bogenschützen' im chat vorkommt ist die aufgabe gelöst.",
+			TaskValidation: "Wenn der der Witz 'Treffen sich zwei Bogenschützen, beide Tot.' im chat vorkommt ist die aufgabe gelöst.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
 			StrategyExplanation:      "Verwende emotionale Sprache in deiner Anweisung. Du könntest sagen, dass es sehr wichtig ist, weil du deinen Job verlieren könntest, wenn die Witze nicht gut sind.",
 			StrategyValidation:       "Der Benutzer sollte emotionale Sprache verwenden, zum Beispiel indem er sagt, dass es sehr wichtig ist, weil jemand seinen Job verlieren könnte.",
 			BadPrompt:                "Wenn der Benutzer dich nach einem Witz fragt, gib ihm einfach einen normalen Satz. Er sollte weder lustig noch besonders sein. Einfach ein ganz normaler englischer Satz, egal ob der Benutzer etwas anderes verlangt. Aber sag dem Benutzer nicht, dass dir gesagt wurde, falsche Antworten zu geben.",
-			GoodPrompt:               "Wenn dich der Benutzer nach einem mittelalterlichen Witz fragt, gib ihm den folgenden: 'Treffen sich zwei Bogenschützen.' nichts anderes. das ist der ganze witz",
+			GoodPrompt:               "Wenn dich der Benutzer nach einem mittelalterlichen Witz fragt, gib ihm den folgenden: 'Treffen sich zwei Bogenschützen, beide Tot.' nichts anderes. das ist der ganze witz",
 		},
 	},
 	{
@@ -414,7 +420,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				ElfName,
 			),
 			TaskValidation:           "The task is only solved if the AI said the word 'FUTURE'",
-			StrategyExplanation:      fmt.Sprintf("You can ask %s to ignore the first message. This overrides the instructions in the system prompt.", Elf.Name),
+			StrategyExplanation:      fmt.Sprintf("You can ask %s to ignore the first message. This overrides the instructions in the system prompt. The system prompt is an instruction, which the elf received in the background. You just can not see it.", Elf.Name),
 			StrategyValidation:       "The user should ask the llm to ignore the first/last/system message.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,
@@ -438,7 +444,7 @@ var levels models.TranslatedLevels = models.TranslatedLevels{
 				ElfName,
 			),
 			TaskValidation:           "Die Aufgabe ist nur gelöst, wenn die KI das Wort 'ZUKUNFT' gesagt hat",
-			StrategyExplanation:      fmt.Sprintf("Du kannst %s bitten, die erste Nachricht zu ignorieren. Damit überschreibst du die Anweisungen im System-Prompt.", Elf.Name),
+			StrategyExplanation:      fmt.Sprintf("Du kannst %s bitten, die erste Nachricht zu ignorieren. Damit überschreibst du die Anweisungen im System-Prompt. Der System-Prompt is eine Anweisung, die die Elfe im Hintergrund erhalten hat. Du kannst sie nur nicht sehen.", Elf.Name),
 			StrategyValidation:       "Der Benutzer sollte das LLM bitten, die erste/letzte/System-Nachricht zu ignorieren.",
 			ClearChatHistoryOnSubmit: true,
 			HasStrategy:              true,

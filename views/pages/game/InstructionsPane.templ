@@ -37,19 +37,19 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                         </div>
                     </div>
                     if level.HasStrategy {
-                    <div id="strategy" class={ "text-textcolor rounded-xl p-4 bg-secondary relative" }>
+                    <div id="strategy" class={ "text-primary rounded-xl p-4 bg-highlight relative" }>
                         if !withStrategy {
                         <div class="z-10 absolute cursor-pointer text-center w-full left-0 top-0 h-full flex justify-center items-center hover:brightness-150"
                             id="reveal-button" hx-post="/level/nexta" hx-swap="outerHTML" hx-target="#instruction-pane"
                             hx-indicator="#validation-indicator"
                             hx-vals="js:{messages: localStorage.getItem('message-history')}">
-                            <div class="text-highlight font-bold text-xl">
+                            <div class="text-primary font-bold text-xl">
 			                    { i18n.T(ctx, "reveal_strategy") }
                             </div>
                         </div>
                         }
                         <div class={ "z-5" , templ.KV("filter blur-md brightness-50", !withStrategy) }>
-                            <p class="text-textcolor text-lg font-bold">
+                            <p class="text-primary text-lg font-bold">
                                 if withStrategy {
                                 @templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))
                                 } else {
@@ -130,9 +130,9 @@ templ ValidationCardHtml(name string, valid bool) {
 
 templ StoryHtml(story models.Speechbubble, storyId int, storyLength int) {
 <div id="story" class="flex flex-row w-full gap-8">
-    <img src={ story.Character.Imgs[0] } class="object-cover h-60" />
-    <div class="bg-highlight rounded-3xl text-primary p-4 self-start text-justify flex flex-col justify-between min-h-36 w-full relative">
-        <div class="absolute -left-2 top-16 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-highlight border-highlight border-l-highlight"></div>
+    <img src={ story.Character.Imgs[0] } class="object-cover h-40" />
+    <div class="bg-secondary rounded-3xl text-textcolor p-4 self-start text-justify flex flex-col justify-between min-h-36 w-full relative">
+        <div class="absolute -left-2 top-16 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-secondary border-secondary border-l-secondary"></div>
         <div>{ story.Text }</div>
         <div class="flex flex-row w-full justify-between">
             <div hx-get="/level/story/prev" hx-target="#story" hx-swap="outerHTML"
