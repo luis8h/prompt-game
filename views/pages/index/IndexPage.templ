@@ -16,12 +16,38 @@ func isLocale(ctx context.Context, expected string) bool {
 
 templ IndexPage() {
 	<div class="bg-primary h-screen flex flex-col space-y-16 items-center justify-center">
+		<div class="flex space-x-2">
+			<button
+				type="button"
+				hx-post="/language"
+				hx-trigger="click"
+				hx-swap="none"
+				hx-vals='{ "lang": "en" }'
+				hx-on="htmx:afterRequest:window.location.reload()"
+				disabled?={ isLocale(ctx, "en" ) }
+				class="bg-none py-2 px-4 rounded-md text-highlight focus:outline-none focus:ring-2 border border-highlight focus:ring-indigo-500 transition duration-300 ease-in-out disabled:bg-highlight disabled:text-primary disabled:font-bold"
+			>
+				English
+			</button>
+			<button
+				type="button"
+				hx-post="/language"
+				hx-trigger="click"
+				hx-swap="none"
+				hx-vals='{ "lang": "de" }'
+				hx-on="htmx:afterRequest:window.location.reload()"
+				disabled?={ isLocale(ctx, "de" ) }
+				class="bg-none py-2 px-4 rounded-md text-highlight focus:outline-none focus:ring-2 border border-highlight focus:ring-indigo-500 transition duration-300 ease-in-out disabled:bg-highlight disabled:text-primary disabled:font-bold"
+			>
+				Deutsch
+			</button>
+		</div>
 		<h2 class="text-7xl text-textcolor">
 			{ i18n.T(ctx, "welcome") }
 		</h2>
-        <p class="text-textcolor text-center" style="max-width: 60%;">
-            { i18n.T(ctx, "introduction_text") }
-        </p>
+		<p class="text-textcolor text-center" style="max-width: 60%;">
+			{ i18n.T(ctx, "introduction_text") }
+		</p>
 		<a href="/game">
 			@components.Button1(false) {
 				<div class="p-3">
