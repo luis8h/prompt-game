@@ -13,6 +13,7 @@ type Level struct {
 	HasStrategy              bool
 	BadPrompt                string
 	GoodPrompt               string
+	InfoText                 string
 }
 
 type Speechbubble struct {

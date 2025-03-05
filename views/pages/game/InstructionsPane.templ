@@ -31,7 +31,7 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                 <div class={"flex flex-col gap-4", templ.KV("invisible", !showTask)}>
                     <div class="text-textcolor rounded-xl p-4 bg-secondary">
                         <div>
-                            <p class="text-textcolor text-lg">
+                            <p class="text-textcolor text-lg text-justify">
                                 @templ.Raw(utils.RenderMarkdown(level.Task))
                             </p>
                         </div>
@@ -51,7 +51,28 @@ templ LevelHtml(level models.Level, withStrategy bool, validation bool, levelId 
                         <div class={ "z-5" , templ.KV("filter blur-md brightness-50", !withStrategy) }>
                             <p class="text-primary text-lg font-bold">
                                 if withStrategy {
-                                @templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))
+                                    <div class="inline-flex items-center space-x-2">
+                                      <span class="inline text-justify">
+                                        @templ.Raw(utils.RenderMarkdown(level.StrategyExplanation))
+                                      </span>
+                                      <button type="button"
+                                              onclick="document.getElementById('infoPopup').classList.toggle('hidden')"
+                                              class="bg-highlight inline rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 ease-in-out">
+                                        @components.InfoIcon(8)
+                                      </button>
+                                    </div>
+
+                                <div id="infoPopup" class="fixed inset-0 flex hidden items-center z-50 justify-center bg-black bg-opacity-50">
+                                  <div class="bg-secondary text-textcolor p-6 rounded-xl shadow-lg relative" style="width: 60%">
+                                    <div class="mb-4 text-justify">{level.InfoText}</div>
+                                    <button type="button"
+                                            onclick="document.getElementById('infoPopup').classList.add('hidden')"
+                                            class="absolute bottom-2 right-6 text-highlight hover:text-gray-700 font-bold focus:outline-none">
+                                      Close
+                                    </button>
+                                  </div>
+                                </div>
+
                                 } else {
                                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
                                 invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
