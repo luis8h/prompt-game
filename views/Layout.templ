@@ -47,12 +47,6 @@ templ Layout(page templ.Component, sessionId string) {
     <div id="page-container">
         @page
     </div>
-    <a
-        target="_blank" rel="noopener noreferer" href={templ.SafeURL(getEvaluationLink(sessionId))}
-        class="fixed top-2 left-2 text-red-500 hover:underline font-bold"
-    >
-		{ i18n.T(ctx, "evaluate") }
-    </a>
     <div class="fixed top-4 right-4 z-50 rounded-lg shadow-lg">
         <select name="lang" hx-post="/language" hx-include="[name=lang]" hx-trigger="change" hx-swap="none"
             hx-on="htmx:afterRequest:window.location.reload()"
